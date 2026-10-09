@@ -1,0 +1,27 @@
+MAPS FAIL:
+  - cms/STACK.md: first-line stamp missing or malformed
+  - cms/INTEGRATIONS.md: first-line stamp missing or malformed
+  - cms/ARCHITECTURE.md: first-line stamp missing or malformed
+  - cms/STRUCTURE.md: first-line stamp missing or malformed
+  - cms/CONVENTIONS.md: first-line stamp missing or malformed
+  - cms/TESTING.md: first-line stamp missing or malformed
+  - cms/CONCERNS.md: first-line stamp missing or malformed
+  - parrot/STACK.md: first-line stamp missing or malformed
+  - parrot/INTEGRATIONS.md: first-line stamp missing or malformed
+  - parrot/ARCHITECTURE.md: first-line stamp missing or malformed
+  - parrot/STRUCTURE.md: first-line stamp missing or malformed
+  - parrot/CONVENTIONS.md: first-line stamp missing or malformed
+  - parrot/TESTING.md: first-line stamp missing or malformed
+  - parrot/TESTING.md: secret-shaped string (dotenv assignment)
+  - parrot/CONCERNS.md: first-line stamp missing or malformed
+  - legacy/STACK.md: first-line stamp missing or malformed
+  - legacy/INTEGRATIONS.md: first-line stamp missing or malformed
+  - legacy/ARCHITECTURE.md: first-line stamp missing or malformed
+  - legacy/STRUCTURE.md: first-line stamp missing or malformed
+  - legacy/CONVENTIONS.md: first-line stamp missing or malformed
+  - legacy/TESTING.md: first-line stamp missing or malformed
+  - legacy/CONCERNS.md: first-line stamp missing or malformed
+exit 1
+RELATIONSHIP FAIL:
+  - relationship doc missing: .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/PARROT-RELATIONSHIP.md
+exit 1

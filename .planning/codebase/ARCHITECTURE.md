@@ -1,241 +1,171 @@
+<!-- generated from internjobs-cms @ d1658aa5ba0ce397788cd79c34b425c459eaa0da on 2026-10-08 -->
 # Architecture
 
-**Analysis Date:** 2026-05-24
+**Analysis Date:** 2026-10-08
+**Mapped commit:** `d1658aa5ba0ce397788cd79c34b425c459eaa0da` (merged main)
 
 ## Architectural Context Loaded
 
-- Locked source: `.planning/PROJECT.md` — "Auth: two Clerk apps, not one — Students=LinkedIn-only at app.internjobs.ai, Employees=phone-OTP-only at workspace.internjobs.ai. Don't merge them."
-- Locked source: `.planning/ROADMAP.md` — "Phase 18: Graph Bridge Runtime — Workers RESP3 path was researched and ruled out — `cloudflare:sockets` blocks private IPs and no Cypher lib runs in Workers today." (REST proxy via `infra/graph-api/` is the chosen path)
-- Locked source: memory `project-llm-via-ai-gateway.md` — "Parrot LLM calls route through CF AI Gateway for per-employee daily caps; student app stays on direct REST. Don't migrate as side effect."
-- Locked source: memory `project-auth-architecture.md` — Two separate Clerk instances; no shared user pool; no organization-membership gate needed.
-
----
+- `.planning/NORTH-STAR.md`, `AGENTS.md`, `CLAUDE.md` (repo root): not present in this repo.
+- Locked decisions come from user memory. They are treated as intentional design, not gaps:
+  - Two Clerk apps, not one. Students use LinkedIn-only auth at `app.internjobs.ai`. Employees use phone-OTP-only auth at `workspace.internjobs.ai`. A third Clerk app serves startups at `employers.internjobs.ai` (Phase 28.5). Do not merge them.
+  - Only `sub` is guaranteed in a Clerk session JWT. Do not require email or phone claims.
+  - Parrot LLM calls go through CF AI Gateway. The student app stays on direct REST.
+  - Workspace deploys are a full replace. Deploy `internjobs-parrot` only from `main`.
+  - Workspace panes are thin entry points into real backing services (Mail to Agent Inbox, Chat to Mattermost, SMS/phone to Parrot).
+  - The Phone/SMS dialer and Daily.co vanity domain are future work.
+- Say "Workspace" in narrative. `apps/parrot/` is its directory name.
 
 ## Pattern Overview
 
-**Overall:** Hybrid monorepo — multiple independently-deployed services sharing a common repo and a `packages/shared` contract layer.
+**Overall:** Polyglot monorepo of independently deployed services. There is no shared runtime. Each app has its own deploy target, auth boundary and datastore. Services talk over HTTPS with shared-secret or JWT auth.
 
 **Key Characteristics:**
-- Three distinct runtime environments in one repo: Cloudflare Workers (edge), Fly.io Node (server), Cloudflare Pages (static)
-- Two fully-separated user planes: students (`app.internjobs.ai`) and employees/startups (`workspace.internjobs.ai`), each with a dedicated Clerk instance
-- Durable Objects (per-entity SQLite-in-edge) for employee mailboxes, todos, and workspace directory — not a centralized database for the employee plane
-- Fail-soft posture everywhere: every external integration (graph, Lakera, push, LLM) is wrapped with a fail-open path so a downstream outage never crashes the core agent loop
-- Agent-first autonomy: the student agent drafts AND sends without human pre-approval (v1.2 pivot); `/ops/drafts` is a read-only audit trail
+- Root npm workspaces cover only `apps/marketing`, `apps/app`, `apps/employers`, `apps/email-worker`, `apps/mac-bridge`, `apps/mattermost-proxy` and `packages/*`. `apps/parrot`, `apps/startup` and `apps/agentic-inbox` are excluded and have their own `package-lock.json` (`package.json`).
+- Student side is a plain Node HTTP server on Fly with hand-written routing. Workspace and startup MCP sides are Cloudflare Workers using Hono.
+- Postgres on Fly (`infra/student-db`) is the student and startup system of record. Workspace state lives in Durable Object SQLite plus R2 plus KV.
+- A FalkorDB knowledge graph on Fly sits behind an HTTP proxy, `infra/graph-api`.
+- Process is gated by RRR (`.planning/`). CI enforces team submission markers (`scripts/check-submission.mjs`).
 
----
+## Deployable Units
+
+| Unit | Path | Runtime / host | Public surface |
+|------|------|----------------|----------------|
+| Marketing site | `apps/marketing/` | Vite + React SPA on Cloudflare Pages (`wrangler.toml`, `dist`) | internjobs.ai |
+| Student app | `apps/app/` | Node ESM on Fly (`fly.toml`, app `internjobs-ai-student-app`, port 3000) | app.internjobs.ai |
+| Workspace | `apps/parrot/` | CF Worker, Hono API + React Router 7 SSR (`wrangler.jsonc`, `internjobs-parrot`) | workspace.internjobs.ai |
+| Startup MCP | `apps/startup/` | CF Worker, Hono + MCP (`internjobs-startup-mcp`) | mcp.internjobs.ai |
+| Employers portal | `apps/employers/` | Vite SPA plus Pages Functions `functions/api/[[path]].ts` | employers.internjobs.ai |
+| Email ingest | `apps/email-worker/` | CF Email Worker (`internjobs-email-ingest`) | catch-all email routing |
+| Mattermost proxy | `apps/mattermost-proxy/` | CF Worker (`internjobs-mattermost-proxy`) | chat.internjobs.ai |
+| Mattermost | `apps/parrot-mattermost/` | Fly Docker (`internjobs-mattermost`) | via proxy |
+| Mac bridge | `apps/mac-bridge/` | Node on a Mac mini (BlueBubbles, launchd) | bridge.internjobs.ai |
+| Agentic Inbox | `apps/agentic-inbox/` | Upstream CF Worker fork; Email tab iframe target | `workers.dev` |
+| Graph API | `infra/graph-api/` | Node on Fly | internal, called by `apps/app` and `apps/parrot` |
+| Startup API | `infra/startup-api/` | Node on Fly (`internjobs-startup-api`) | internal, called by `apps/startup` |
+| Databases | `infra/student-db/`, `infra/mattermost-db/`, `infra/falkordb/` | Fly Docker | internal |
 
 ## Layers
 
-**Marketing Layer:**
-- Purpose: Public static site (no auth, no server)
-- Location: `apps/marketing/`
-- Contains: Vite + React/HTML, static assets, Cloudflare Pages deployment config
-- Depends on: None (standalone)
-- Used by: Public users at `internjobs.ai`
+**Presentation (Marketing):**
+- Location: `apps/marketing/src/` (`App.tsx`, `main.tsx`, `components/StartupAccessSection.tsx`)
+- Depends on: `public/` assets only, plus a CTA to the startup Worker `/api/*`.
 
-**Student App Layer (Fly.io / Node):**
-- Purpose: LinkedIn-auth student onboarding, SMS pairing, Mastra agent loop, graph memory, FalkorDB
-- Location: `apps/app/`
-- Contains: `src/server.mjs` (HTTP server entry), `src/workflows/` (Mastra agent), `src/memory/graph.mjs` (FalkorDB Graphiti-style temporal facts), `src/sms/` (SMS providers), `src/safety/screen.mjs` (Lakera Guard, Node runtime), `src/routes/`, `src/email/`, `db/migrations/` (Postgres SQL migrations)
-- Depends on: Clerk (LinkedIn OAuth), Neon Postgres (student DB), FalkorDB (`internjobs-graph` Fly app), Mastra, Cloudflare Workers AI (direct REST), Spectrum/BlueBubbles SMS
-- Used by: Students at `app.internjobs.ai`
+**Presentation (Workspace):**
+- Location: `apps/parrot/app/`
+- Contains: React Router routes (`routes/`), panes (`components/`), client helpers (`lib/api.ts`, `lib/auth.ts`).
+- Depends on: Clerk (employee instance) and the Worker `/api/*`.
+- Panes: `WorkspaceShell.tsx` stays mounted. `InboxPane`, `ChatPane`, `MeetingsPane` and `ParrotEmbedPane` are children. `crosspane/` holds cross-pane actions.
 
-**Parrot Worker Layer (Cloudflare Worker):**
-- Purpose: Employee workspace — email inbox, cross-channel todo extraction, AI Gateway LLM, Mattermost integration, Daily.co meetings, OIDC SSO bridge
-- Location: `apps/parrot/`
-- Contains:
-  - `workers/index.ts` — Hono API routes entry
-  - `workers/app.ts` — Hono root with Clerk JWT verification (phone-OTP employee Clerk instance)
-  - `workers/types.ts` — `Env` interface for all Worker bindings and secrets
-  - `workers/durableObject/index.ts` — `EmployeeMailboxDO` (per-employee SQLite via Drizzle)
-  - `workers/durableObject/workspace.ts` — `WorkspaceDO` (singleton, employee directory + OIDC code/token tables)
-  - `workers/durableObject/migrations.ts` — DO SQLite migrations (8 migrations through v1.2)
-  - `workers/lib/` — `ai.ts` (Workers AI via CF AI Gateway), `graph.ts` (FalkorDB proxy calls), `inbound-email.ts` (postal-mime MIME parsing), `mattermost.ts`, `daily.ts`, `safety.ts` (Lakera Guard, Worker runtime), `mailbox.ts`, `email-sender.ts`, `vapid.ts`, `auto-clear.ts`
-  - `workers/routes/` — `admin-employees.ts`, `agent.ts`, `oidc.ts`, `ops-safety.ts`, `reply-forward.ts`
-  - `workers/db/schema.ts` — Drizzle SQLite schema (folders, emails, attachments, todos, push_subscriptions)
-  - `app/` — React Router v7 SPA (employee UI, SSR via the same Worker)
-  - `app/routes/` — `dashboard.tsx`, `inbox.tsx`, `chat.tsx`, `meetings.tsx`, `phone.tsx`, `sms.tsx`, `ops.safety.tsx`, `admin.tsx`, `admin.invite.tsx`, `login.tsx`
-  - `shared/` — `Folders` enum shared between worker and app layers within this app
-- Depends on: Clerk employee app (JWKS at `clerk.workspace.internjobs.ai`), `EmployeeMailboxDO`, `WorkspaceDO`, R2 bucket, `internjobs-graph-api` Fly proxy (v1.3 Phase 18), Mattermost REST API, Daily.co REST API, CF AI Gateway → kimi-k2.6
-- Used by: Employees/startups at `workspace.internjobs.ai`
+**Workspace API (edge):**
+- Location: `apps/parrot/workers/`
+- `app.ts`: top-level Hono. It verifies the Clerk JWT with `jose` against `PARROT_CLERK_JWKS_URL`. It sends `/api/*` to `index.ts` and everything else to the React Router SSR handler. It also exports the DO classes.
+- `index.ts`: large Hono API.
+  - `/api/me` and `/api/health` plus `/healthz`.
+  - `/api/inbox/*`.
+  - `/api/chat/*` (Mattermost bridge plus the WebSocket proxy).
+  - `/api/dev/*` smoke routes.
+  - Mounted sub-routers: `routes/agent.ts`, `routes/admin-employees.ts`, `routes/oidc.ts`, `routes/ops-safety.ts`, `routes/chat-files.ts`.
+- `lib/`: integration clients and domain logic. `mattermost.ts`, `mm-ws-proxy.ts`, `daily.ts`, `graph.ts`, `ai.ts`, `safety.ts`, `inbound-email.ts`, `email-sender.ts`, `embed-jwt.ts`, `mailbox.ts` (`requireEmployeeMailbox` middleware), `operator.ts`, `agent-tools.ts`, `spam-purge.ts`, `auto-clear.ts`.
+- `durableObject/`: `EmployeeMailboxDO` (per-employee SQLite mailbox, `index.ts`, `migrations.ts`) and `WorkspaceDO` (`workspace.ts`).
+- Bindings: `BUCKET` (R2 `internjobs-parrot-attachments`), `PARROT_FEATURE_FLAGS` (KV), `EMAIL` (send_email), the two DOs, and a cron `*/5 * * * *`.
+- `shared/` (`dates.ts`, `folders.ts`) is imported by both Worker and UI.
 
-**Agentic Inbox Worker Layer (Cloudflare Worker):**
-- Purpose: Maya identity mailbox — inbound email to MCP server, R2 attachments, CF Access SSO, search/threading
-- Location: `apps/agentic-inbox/`
-- Contains:
-  - `workers/index.ts` — Hono API + email export entry
-  - `workers/app.ts` — root Hono app
-  - `workers/durableObject/index.ts` — `MailboxDO` (per-mailbox SQLite, predecessor pattern to `EmployeeMailboxDO`)
-  - `workers/agent/` — EmailAgent with Mastra-style onNewEmail dispatch
-  - `workers/mcp/` — MCP server for Claude Desktop / external agent access
-  - `workers/routes/` — mailbox CRUD routes
-  - `app/routes/` — `home.tsx`, `mailbox.tsx`, `mailbox-index.tsx`, `email-list.tsx`, `search-results.tsx`, `settings.tsx`
-- Depends on: CF Access (SSO), R2 attachments, Cloudflare Email Routing
-- Used by: Agent-to-agent mailbox at `agent.internjobs.ai`
+**Student app (Node):**
+- Location: `apps/app/src/`
+- `server.mjs`: single `http.createServer` with an if-chain on `req.method` and `url.pathname`.
+  - Student routes: `/waitlist`, `/auth/callback`, `/onboard/*`, `/pairing/*`, `/profile`, `/linkedin/profile-url`.
+  - Webhooks: `/webhooks/photon`, `/webhooks/mac-bridge`, `/webhooks/email`.
+  - Internal: `/internal/safety-events*`.
+  - Startup pages: `/startup/*`.
+  - Health: `/healthz`, `/config/status`.
+- Domain modules: `auth.mjs`, `config.mjs`, `store.mjs` (Postgres access), `messaging.mjs`, `outbound.mjs`, `mastra.mjs` (agent core), `embeddings.mjs`, `views.mjs` (server-rendered HTML), `http.mjs`.
+- Subfolders: `workflows/` (`student-inbound.mjs`, `reply-to.mjs`), `sms/` (`provider.mjs` selects `mac-bridge.mjs` or `spectrum.mjs`; `SMS_PROVIDER=mac-bridge` in `fly.toml`), `safety/screen.mjs`, `memory/graph.mjs`, `onboarding/` (`brightdata.mjs`, `pairing.mjs`), `email/outbound.mjs`, `storage/r2.mjs`, `routes/admin.mjs`.
+- Schema: SQL migrations in `apps/app/db/migrations/` applied by `apps/app/scripts/migrate.mjs`.
 
-**Email Worker (Cloudflare Worker):**
-- Purpose: Cloudflare Email Routing catch-all receiver — routes inbound startup emails into the Parrot EmployeeMailboxDO
-- Location: `apps/email-worker/`
-- Contains: `src/index.ts` — thin email export handler
-- Depends on: Parrot Worker (via DO binding or Service Binding)
-- Used by: Cloudflare Email Routing for `*@agent.internjobs.ai`
+**Startup MCP Worker:**
+- Location: `apps/startup/workers/`
+- `app.ts` is the Hono root. Routes: `/mcp` (per-request `McpServer` built in `server.ts`; never share one across requests), `/admin/*`, `/api/*` (marketing CTA receiver), `/healthz`, Telnyx and voice routes, inbound email (`/internal/email/inbound`), and a Monday cron (`0 14 * * 1`) in `routes/scheduled.ts`.
+- Tools: `tools/` (`search`, `me`, `discover-actions`, `execute`).
+- Auth: per-startup Bearer token validated against the Fly `startup-api` by SHA-256 hash (`lib/auth.ts`).
+- Bindings: `AI`, `EMAIL`, KV `TOUCHBASE_CURSORS`, R2 `VOICE_AUDIT`.
 
-**Mattermost Proxy Worker (Cloudflare Worker):**
-- Purpose: Reverse proxy for chat.internjobs.ai → Mattermost Fly app; strips iframe-blocking headers (`X-Frame-Options`, `CSP frame-ancestors`) so Mattermost can be embedded inside the Parrot Workspace UI
-- Location: `apps/mattermost-proxy/`
-- Contains: `workers/index.ts` — HTTP + WebSocket upgrade proxy
-- Depends on: `MATTERMOST_ORIGIN` (Fly Mattermost), `ALLOWED_PARENT` (workspace.internjobs.ai)
-- Used by: `chat.internjobs.ai`
-
-**Mac Bridge (Local Node process):**
-- Purpose: BlueBubbles iMessage bridge — receives SMS/iMessage events from the self-hosted Mac mini (HostMyApple) via Cloudflare Tunnel and forwards to the student app's inbound SMS endpoint
-- Location: `apps/mac-bridge/`
-- Contains: `src/server.mjs`, `src/listener.mjs`, `src/bluebubbles-client.mjs`, `src/security.mjs`, `src/config.mjs`, `launchd/` (macOS launch daemon plist)
-- Depends on: BlueBubbles REST API, Cloudflare Tunnel, student app `/sms/inbound` webhook
-- Used by: Student SMS inbound pipeline
-
-**Graph API Proxy (Fly.io / Node + Hono):**
-- Purpose: Thin HTTP REST proxy fronting FalkorDB so the Cloudflare Parrot Worker can reach it (Workers cannot open RESP3/Redis sockets to private Fly IPs)
-- Location: `infra/graph-api/`
-- Contains: `src/index.ts` (Hono app), `smoke.mjs` (smoke test script)
-- Depends on: FalkorDB at `internjobs-graph.internal:6379` (Fly private network), `GRAPH_API_SECRET` Bearer auth
-- Used by: Parrot Worker `workers/lib/graph.ts` (v1.3 Phase 18)
-
-**Shared Package:**
-- Purpose: Shared TypeScript contracts and utilities used by multiple apps
-- Location: `packages/shared/src/`
-- Depends on: Nothing external
-- Used by: `apps/parrot`, `apps/agentic-inbox`
-
----
+**Shared types:**
+- `packages/shared/src/index.ts` (`@internjobs/shared`): audience, channel and waitlist TypeScript types. Used by the workspace packages only.
 
 ## Data Flow
 
-**Student Inbound SMS Flow:**
+**Student inbound message:**
+1. iMessage reaches the BlueBubbles Mac, and `apps/mac-bridge/src/listener.mjs` or `server.mjs` forwards it to `POST /webhooks/mac-bridge` on `apps/app`. Photon Spectrum arrives at `/webhooks/photon`.
+2. `safety/screen.mjs` screens the message.
+3. `workflows/student-inbound.mjs` runs the Mastra agent (`mastra.mjs`) using Postgres, embeddings and graph memory (`memory/graph.mjs` to `infra/graph-api`).
+4. Replies go out via `sms/provider.mjs` and `outbound.mjs`.
 
-1. Student texts the Spectrum/BlueBubbles number
-2. Mac Bridge (`apps/mac-bridge`) receives the iMessage event via BlueBubbles webhook and forwards to student app `/sms/inbound`
-3. Student app `src/server.mjs` receives the POST, looks up the verified student via normalized phone routing
-4. `src/safety/screen.mjs` — Lakera Guard pre-LLM screen (v1.3 Phase 20); fail-open
-5. `src/workflows/student-inbound.mjs` — Mastra agent loop:
-   - Load student profile from Neon Postgres
-   - `getStudentSummary()` — inject FalkorDB graph context (temporal facts) as first block of prompt
-   - Vector match against `role_embeddings` (pgvector, bge-base-en-v1.5, 768-dim)
-   - Call Cloudflare Workers AI directly (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`, direct REST)
-   - Fire-and-forget post-reply fact extraction → FalkorDB (`recordFact()`)
-6. `src/outbound.mjs` — autonomous send (no human approval gate); routes back via SMS provider
+**Inbound email:**
+1. Cloudflare Email Routing hits `apps/email-worker/src/index.js`.
+2. The worker POSTs to `app.internjobs.ai/webhooks/email` (`FLY_INGEST_URL`). Mail for `*@employers.internjobs.ai` goes to `mcp.internjobs.ai/internal/email/inbound` (`STARTUP_EMAIL_HANDOFF_URL`), authenticated by `EMAIL_HANDOFF_SECRET`.
+3. Employee mail (`*@internjobs.ai`) is handled in Workspace `lib/inbound-email.ts` and stored in the `EmployeeMailboxDO`.
 
-**Employee Inbound Email Flow:**
+**Workspace chat:**
+1. The browser calls `/api/chat/*` with a Clerk JWT.
+2. `lib/mattermost.ts` mints per-user tokens and calls Mattermost REST at `MATTERMOST_URL` (`chat.internjobs.ai`, the CSP-rewriting `apps/mattermost-proxy`).
+3. Live updates use `lib/mm-ws-proxy.ts`, a Worker-proxied WebSocket. It upgrades directly to `MATTERMOST_WS_URL` (the Fly backend) because the proxy does not pass `Upgrade`.
 
-1. Startup email arrives at `*@agent.internjobs.ai`
-2. Cloudflare Email Routing → `apps/email-worker` Worker email export
-3. `apps/parrot/workers/lib/inbound-email.ts` — postal-mime parsing, resolves recipient via `WorkspaceDO.getEmployeeByWorkspaceEmail()`
-4. `workers/lib/safety.ts` — Lakera Guard pre-LLM screen (v1.3 Phase 20); fail-open
-5. `EmployeeMailboxDO.createEmail()` — store in DO SQLite (Inbox folder), fire-and-forget todo extraction
-6. `workers/lib/ai.ts` — `extractTodosFromEmail()` via CF AI Gateway → kimi-k2.6 (per-employee daily cap enforcement)
-7. Graph context injected: `getEmployeeContext()` → `infra/graph-api` Fly proxy → FalkorDB
-8. `recordTodoFact()` — write :Todo node into FalkorDB with sha256-deduplication
-
-**Employee Mattermost Poll Flow:**
-
-1. `EmployeeMailboxDO` sets a Durable Object alarm (scheduled)
-2. Alarm fires: DO polls Mattermost REST API for new posts (`getMmPostsSince()`)
-3. New posts → `extractTodosFromText()` via CF AI Gateway → kimi-k2.6
-4. Todos written to DO SQLite + FalkorDB graph (same dedup pattern)
-5. Web Push VAPID notification sent to subscribed employee browsers
+**Workspace email pane and Parrot pane:**
+- The Email tab embeds Agentic Inbox (`AGENTIC_INBOX_URL`).
+- `lib/embed-jwt.ts` mints short-lived RS256 tokens for the `PARROT_EMBED_URL` pane (`ParrotEmbedPane.tsx`).
 
 **State Management:**
-- Student side: Neon Postgres (system of record) + FalkorDB (temporal graph facts) + Mastra thread memory
-- Employee side: `EmployeeMailboxDO` SQLite per employee (emails, todos, push subscriptions) + `WorkspaceDO` SQLite singleton (employee directory, OIDC codes/tokens) + FalkorDB (Parrot label namespace: :Employee, :Todo, :Person, :Email, :ChatMsg)
-- Graph isolation: student labels and Parrot labels coexist in the same FalkorDB instance (`internjobs` graph name) but NEVER overlap on nodes or edges — isolation is by Cypher label namespace, not by separate graph
-
----
+- Student app: Postgres (`store.mjs`) plus session cookies.
+- Workspace: DO SQLite (mailboxes and workspace state), R2 attachments, KV flags, 30-second in-isolate caches for graph health in `workers/index.ts`.
+- Client: React state in panes. There is no global store.
 
 ## Key Abstractions
 
-**EmployeeMailboxDO:**
-- Purpose: Per-employee persistent SQLite store at the edge. Keyed by Clerk user ID (not email). Holds emails, folders, attachments, todos, push subscriptions. Runs Durable Object alarm loop for Mattermost polling.
-- Examples: `apps/parrot/workers/durableObject/index.ts`
-- Pattern: Cloudflare Durable Object with Drizzle ORM over SQLite-in-DO. Schema applied via internal migration runner (`applyMigrations()`).
+**`requireEmployeeMailbox` / `ParrotContext`:** Hono middleware in `apps/parrot/workers/lib/mailbox.ts`. It resolves the Clerk `sub` to an employee and mailbox DO stub. Every authenticated API route uses it.
 
-**WorkspaceDO:**
-- Purpose: Singleton DO (one instance, pinned via `idFromName("workspace")`) for cross-employee state — employee directory and OIDC auth codes/tokens for Mattermost SSO bridge.
-- Examples: `apps/parrot/workers/durableObject/workspace.ts`
-- Pattern: Cloudflare Durable Object with raw SQLite (not Drizzle). One instance across all employees.
+**Durable Object stubs:** `getWorkspaceStub()` in `apps/parrot/workers/durableObject/workspace.ts`.
 
-**SmsProvider Interface:**
-- Purpose: Seam between the student agent loop and the actual SMS transport. Lets Telnyx swap in as a drop-in adapter without touching call-sites.
-- Examples: `apps/app/src/sms/` (spectrum.mjs, mac-bridge.mjs)
-- Pattern: Interface + factory pattern. `SMS_PROVIDER=mac-bridge` (production) or `spectrum` (legacy/test).
+**SMS provider seam:** `apps/app/src/sms/provider.mjs` is selected by `SMS_PROVIDER`.
 
-**Graph Memory (Graphiti-style):**
-- Purpose: Temporal fact store for cross-conversation recall. Facts have `valid_from` / `valid_to`; a new conflicting fact closes out the prior one in the same transaction.
-- Examples: `apps/app/src/memory/graph.mjs` (student, Node/Fly), `apps/parrot/workers/lib/graph.ts` (employee, Worker via REST proxy)
-- Pattern: FalkorDB Cypher + temporal fact model. sha256-based deduplication prevents duplicate facts on replay. Fail-soft everywhere.
-
-**Fail-Soft Wrappers:**
-- Purpose: Every integration (graph, Lakera, push notifications, AI Gateway, Daily.co) returns a safe default on error and logs a structured one-line JSON warning. The agent turn always completes.
-- Examples: `workers/lib/graph.ts` `getEmployeeContext()`, `workers/lib/safety.ts` `screenMessage()`, `workers/lib/daily.ts`
-- Pattern: try/catch returning null/[]/false + `console.warn(JSON.stringify({ level: "warn", message: "...", error: ... }))`
-
----
+**Per-request MCP server:** `buildMcpHandler()` in `apps/startup/workers/server.ts`.
 
 ## Entry Points
 
-**Student App (`apps/app`):**
-- Location: `apps/app/src/server.mjs`
-- Triggers: Fly.io process startup (`node src/server.mjs`)
-- Responsibilities: HTTP server setup, Clerk auth middleware, SMS webhook receiver, Mastra init, FalkorDB schema bootstrap, Spectrum/mac-bridge listener startup, all student route handlers, `/healthz`
-
-**Parrot Worker (`apps/parrot`):**
-- Location: `apps/parrot/workers/app.ts` (exports root Hono handler + DO classes)
-- Triggers: Cloudflare Worker fetch event + email export + DO alarm
-- Responsibilities: Clerk JWT verification (employee Clerk app, phone-OTP), route dispatch to `workers/index.ts` Hono API, React Router SSR for the SPA, inbound email handling via `inbound-email.ts`, DO export for `EmployeeMailboxDO` + `WorkspaceDO`
-
-**Agentic Inbox Worker (`apps/agentic-inbox`):**
-- Location: `apps/agentic-inbox/workers/index.ts`
-- Triggers: Cloudflare Worker fetch event + email export
-- Responsibilities: CF Access SSO, mailbox CRUD, MCP server, EmailAgent dispatch
-
-**Graph API Proxy (`infra/graph-api`):**
-- Location: `infra/graph-api/src/index.ts`
-- Triggers: Fly.io process (Node + Hono)
-- Responsibilities: Bearer auth verification (`GRAPH_API_SECRET`), Cypher query forwarding to FalkorDB at `internjobs-graph.internal:6379`, `/health` endpoint
-
-**Marketing Site (`apps/marketing`):**
-- Location: `apps/marketing/src/` (Vite entry)
-- Triggers: Cloudflare Pages build/deploy
-- Responsibilities: Static marketing pages (`/`, `/startups`, `/privacy`, `/terms`), deploy verification script
-
----
+- `apps/parrot/workers/app.ts`: Worker `fetch` plus `scheduled`. `wrangler.jsonc` main.
+- `apps/startup/workers/app.ts`: Worker entry.
+- `apps/app/src/server.mjs`: `npm run start:app`.
+- `apps/marketing/src/main.tsx`: SPA entry (`index.html`).
+- `apps/employers/src/main.tsx` and `apps/employers/functions/api/[[path]].ts`.
+- `apps/email-worker/src/index.js`.
+- `apps/mac-bridge/src/server.mjs`.
+- `infra/graph-api/src/index.mjs` and `infra/startup-api/src/index.mjs`.
 
 ## Error Handling
 
-**Strategy:** Fail-soft / fail-open at every integration boundary. Errors are logged as structured JSON; the agent loop never throws to the user.
+**Strategy:** Fail soft at integration edges. Health checks distinguish proxy-up from DB-down. Auth failures return 401 JSON for `/api/*` and redirect to `/sign-in` otherwise.
 
 **Patterns:**
-- Graph unavailable → return null/[] → agent prompt skips graph-context block → turn completes with degraded recall
-- Lakera Guard unavailable (timeout >1s or 5xx) → `action: 'passed_lakera_unavailable'` → message proceeds to agent (fail-open; logged to `/ops/safety`)
-- AI Gateway error → caught in `ai.ts` → todo extraction skipped → DO createEmail still completes
-- Daily.co API error → `createRoom()` returns null → UI shows "not configured" toast
-
----
+- Parrot posts unhandled errors to Sentry through a minimal envelope POST (no SDK) in `apps/parrot/workers/index.ts`.
+- `apps/app/src/server.mjs` wraps routes in try/catch and returns JSON via `http.mjs`.
+- `/healthz` on Workspace (`apps/parrot/workers/index.ts`), the student app and the startup Worker are the liveness probes.
 
 ## Cross-Cutting Concerns
 
-**Logging:** Structured one-line JSON (`console.log(JSON.stringify({ level, message, ...fields }))`). No sensitive data (PII, tokens) in logs. Sentry DSN optional in Parrot Worker (`SENTRY_DSN`).
-
-**Validation:** Input validation is per-route (Hono middleware + inline checks). No centralized validation layer.
-
+**Logging:** Cloudflare `observability.enabled` on Workers. `console` on Node.
+**Validation:** `workers/lib/schemas.ts` in Workspace. Inline checks in `apps/app`.
+**Safety:** Lakera screening in `apps/app/src/safety/screen.mjs` and `apps/parrot/workers/lib/safety.ts`. Events are stored through `/internal/safety-events` in `apps/app` and viewed at `/ops/safety` in Workspace.
 **Authentication:**
-- Students: `@clerk/backend authenticateRequest()` against `clerk.app.internjobs.ai` JWKS. Handles `__clerk_handshake` URL param for cross-subdomain redirect.
-- Employees: `jose.createRemoteJWKSet()` against `PARROT_CLERK_JWKS_URL` (`clerk.workspace.internjobs.ai`). Cached JWKS resolver. `Authorization: Bearer` header OR `__session` cookie.
-- Agentic Inbox: Cloudflare Access (SSO, not Clerk).
-- Graph API Proxy: Shared Bearer secret (`GRAPH_API_SECRET`).
-- Internal Student API: Shared Bearer secret (`STUDENT_API_SECRET` / `INTERNAL_API_SECRET`).
+- Workspace: Clerk employee instance, JWT verified via JWKS (`apps/parrot/workers/app.ts`). Mattermost SSO runs through `routes/oidc.ts`.
+- Student: Clerk LinkedIn instance (`apps/app/src/auth.mjs`).
+- Startup: Clerk employers instance for the portal. MCP uses a per-startup Bearer token.
+- Service to service: shared secrets (`EMAIL_WORKER_SECRET`, `EMAIL_HANDOFF_SECRET`, and others). Secrets are never in git. They live in Infisical and wrangler or Fly secrets.
 
-**Secrets Management:** All secrets in Infisical (project `26995afd`, env `prod`, path `/internjobs-ai`). Worker secrets via `wrangler secret put`. Fly app secrets via `flyctl secrets set`. Never committed to repo.
+## Governance and CI
+
+- `.github/workflows/ci.yml` jobs: `submission-gate`, `workspaces` (build marketing, build employers, verify app), `parrot` (vitest, advisory wrangler dry-run), `startup` (typecheck, node:test), `email-timeout-invariant` (`scripts/check-email-timeout-invariant.mjs`), `email-worker`.
+- Phase submissions use `scripts/submit-phase.mjs`, which writes `submissions/<phase>.json`. `scripts/check-submission.mjs` validates them. `scripts/verify-v15-promotion.mjs` checks promotion.
 
 ---
 
-*Architecture analysis: 2026-05-24*
+*Architecture analysis: 2026-10-08*

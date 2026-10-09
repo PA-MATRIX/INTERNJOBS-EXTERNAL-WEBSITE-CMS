@@ -1,26 +1,26 @@
 {
   "milestone_id": "v1.6 Repo Split + Code Mapping",
   "phase_id": "38 Code map + coupling inventory",
-  "plan_id": "38-01",
-  "intent": "38-01 executed (Parrot ff done, approved D12); awaiting rrr-verifier",
+  "plan_id": "38-02",
+  "intent": "38-02 executed (21 stamped maps, PARROT-RELATIONSHIP.md, gates green); pending rrr-verifier",
   "allowed_paths": [
     ".planning/",
     "scripts/"
   ],
   "constraints": [
-    "Legacy and Parrot read-only except the approved Parrot ff (fetch + pull --ff-only, after Raj approval)",
+    "Legacy and Parrot strictly read-only (GIT_OPTIONAL_LOCKS=0, no map output inside them)",
     "No .env* reads",
     "No commits/pushes/GitHub writes beyond plan-permitted task commits",
     "TDD-first (RED before GREEN)",
-    "Entry gate (Phase 37 verified) must pass"
+    "Entry gate 38-01 verified: passed"
   ],
   "start_time": "2026-10-09T01:23:33.950089+00:00",
-  "saved_at": "2026-10-09T03:23:44.000Z",
-  "updated_at": "2026-10-09T03:23:44.000Z",
-  "active_plan": "38-01: read-only safety net, baseline, approved Parrot ff",
+  "saved_at": "2026-10-09T04:30:00.000Z",
+  "updated_at": "2026-10-09T04:30:00.000Z",
+  "active_plan": "38-02: code maps (cms, Parrot, legacy) + Parrot relationship",
   "next": [
-    "rrr-verifier 38-01 (write 38-01-VERIFICATION.md)",
-    "then Plan 38-02"
+    "rrr-verifier 38-02 (sample 5 claims per map)",
+    "Then plan 38-03"
   ],
   "handoff": ".planning/ROADMAP.md (Phase 38)"
 }

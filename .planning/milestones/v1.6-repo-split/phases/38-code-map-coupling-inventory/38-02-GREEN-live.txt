@@ -1,0 +1,21 @@
+$ --maps
+MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+exit 0
+$ --relationship
+RELATIONSHIP OK
+exit 0
+$ --guard
+GUARD OK: legacy and Parrot match baseline
+exit 0
+$ --parrot-ff-check
+FF-CHECK OK
+exit 0
+$ parrot status --short
+$ legacy status --porcelain
+ M package-lock.json
+ M package.json
+ M src/app/api/chat/route.ts
+ M tests/e2e/chat-interface.spec.ts
+?? playwright-report/
+?? test-results.json
+?? test-results/

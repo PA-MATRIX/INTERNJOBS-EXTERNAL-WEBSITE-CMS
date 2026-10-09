@@ -1,374 +1,146 @@
+<!-- generated from internjobs-cms @ d1658aa5ba0ce397788cd79c34b425c459eaa0da on 2026-10-08 -->
 # Codebase Structure
 
-**Analysis Date:** 2026-05-24
-
-## Architectural Context Loaded
-
-- Locked source: `.planning/PROJECT.md` — "Repo is a monorepo: `apps/marketing` (Cloudflare Pages), `apps/app` (Fly.io), `packages/shared` for contracts."
-- Locked source: `.planning/ROADMAP.md` — `infra/graph-api/` is the Phase 18 Graph Bridge target location (Hono/Node Fly proxy).
-
----
+**Analysis Date:** 2026-10-08
+**Mapped commit:** `d1658aa5ba0ce397788cd79c34b425c459eaa0da` (from `git ls-tree`; untracked `apps/canary-monitor/` is excluded)
 
 ## Directory Layout
 
 ```
-internjobs-cms/                     # Monorepo root
+internjobs-cms/
 ├── apps/
-│   ├── app/                        # Student app — Fly.io Node server
-│   │   ├── db/
-│   │   │   └── migrations/         # Postgres SQL migration files (0001–0010)
-│   │   ├── scripts/                # Dev/smoke scripts
-│   │   ├── src/
-│   │   │   ├── server.mjs          # HTTP server entry point
-│   │   │   ├── auth.mjs            # Clerk authenticateRequest() + dev paths
-│   │   │   ├── config.mjs          # env config loader
-│   │   │   ├── store.mjs           # Neon Postgres data access layer
-│   │   │   ├── mastra.mjs          # Mastra agent init
-│   │   │   ├── embeddings.mjs      # Workers AI bge-base-en-v1.5 embeddings
-│   │   │   ├── outbound.mjs        # SMS/email autonomous send
-│   │   │   ├── messaging.mjs       # Welcome text composer
-│   │   │   ├── views.mjs           # Server-rendered HTML views
-│   │   │   ├── http.mjs            # HTTP helpers (readBody, redirect, sendHtml)
-│   │   │   ├── spectrum-listener.mjs # Photon/Spectrum webhook listener
-│   │   │   ├── email/              # Inbound email handling (student side)
-│   │   │   ├── memory/
-│   │   │   │   └── graph.mjs       # FalkorDB Graphiti-style temporal facts
-│   │   │   ├── onboarding/
-│   │   │   │   ├── pairing.mjs     # QR/SMS pairing code generation + claim
-│   │   │   │   └── brightdata.mjs  # LinkedIn enrichment (Bright Data)
-│   │   │   ├── routes/
-│   │   │   │   └── admin.mjs       # /ops/* admin route handlers
-│   │   │   ├── safety/
-│   │   │   │   └── screen.mjs      # Lakera Guard pre-LLM screen (Node runtime)
-│   │   │   ├── sms/
-│   │   │   │   ├── spectrum.mjs    # Photon/Spectrum SMS provider
-│   │   │   │   └── mac-bridge.mjs  # BlueBubbles mac-bridge SMS provider
-│   │   │   ├── storage/
-│   │   │   │   └── r2.mjs          # R2 client (private bucket, signed URLs)
-│   │   │   └── workflows/
-│   │   │       ├── student-inbound.mjs  # Mastra agent loop (match→draft→send)
-│   │   │       ├── reply-to.mjs         # Reply-To alias builder
-│   │   │       └── reply-to.test.mjs    # Unit tests
-│   │   └── test/                   # Test fixtures / smoke tests
-│   │
-│   ├── parrot/                     # Employee workspace — Cloudflare Worker + React Router SPA
-│   │   ├── app/
-│   │   │   ├── components/
-│   │   │   │   └── crosspane/      # Cross-pane UI components
-│   │   │   ├── lib/                # SPA-side utilities
-│   │   │   └── routes/             # React Router v7 route components
-│   │   │       ├── dashboard.tsx   # Cross-channel todo dashboard
-│   │   │       ├── inbox.tsx       # Email inbox
-│   │   │       ├── chat.tsx        # Mattermost iframe embed
-│   │   │       ├── meetings.tsx    # Daily.co personal rooms
-│   │   │       ├── phone.tsx       # SMS/phone tab
-│   │   │       ├── sms.tsx         # SMS tab
-│   │   │       ├── ops.safety.tsx  # Safety event audit view (v1.3)
-│   │   │       ├── admin.tsx       # Operator admin panel
-│   │   │       ├── admin.invite.tsx # Invite flow
-│   │   │       └── login.tsx       # Clerk phone-OTP sign-in
-│   │   ├── shared/
-│   │   │   └── folders.ts          # Folders enum (shared worker ↔ SPA)
-│   │   ├── workers/
-│   │   │   ├── app.ts              # Hono root — Clerk JWT verification + SSR handler
-│   │   │   ├── index.ts            # Hono API routes (/api/*)
-│   │   │   ├── types.ts            # Env interface for all Worker bindings
-│   │   │   ├── db/
-│   │   │   │   └── schema.ts       # Drizzle SQLite schema (emails, todos, etc.)
-│   │   │   ├── durableObject/
-│   │   │   │   ├── index.ts        # EmployeeMailboxDO (per-employee SQLite)
-│   │   │   │   ├── migrations.ts   # DO SQLite migrations runner
-│   │   │   │   └── workspace.ts    # WorkspaceDO (singleton directory + OIDC)
-│   │   │   ├── lib/
-│   │   │   │   ├── ai.ts           # Workers AI via CF AI Gateway (kimi-k2.6)
-│   │   │   │   ├── graph.ts        # FalkorDB via graph-api REST proxy
-│   │   │   │   ├── inbound-email.ts # postal-mime MIME parsing + email ingestion
-│   │   │   │   ├── safety.ts       # Lakera Guard pre-LLM screen (Worker runtime)
-│   │   │   │   ├── mattermost.ts   # Mattermost REST API calls
-│   │   │   │   ├── daily.ts        # Daily.co REST API (room management)
-│   │   │   │   ├── mailbox.ts      # requireEmployeeMailbox middleware
-│   │   │   │   ├── email-sender.ts # Cloudflare Email Service outbound
-│   │   │   │   ├── email-helpers.ts # HTML ↔ text, stripHtml, generateMessageId
-│   │   │   │   ├── email.ts        # Email threading helpers
-│   │   │   │   ├── vapid.ts        # VAPID signing for Web Push
-│   │   │   │   ├── auto-clear.ts   # Todo auto-resolution (Phase 19 cron)
-│   │   │   │   ├── operator.ts     # isOperator() check against publicMetadata
-│   │   │   │   ├── attachments.ts  # R2 attachment helpers
-│   │   │   │   ├── schemas.ts      # Shared Zod/type schemas
-│   │   │   │   └── clerk-admin.ts  # Clerk backend admin calls
-│   │   │   ├── routes/
-│   │   │   │   ├── admin-employees.ts  # /api/admin/employees (invite, list)
-│   │   │   │   ├── agent.ts            # /api/inbox/agent/* (summarize, draft, chat)
-│   │   │   │   ├── oidc.ts             # /oidc/* (Mattermost OIDC SSO bridge)
-│   │   │   │   ├── ops-safety.ts       # /api/ops/safety (safety event log)
-│   │   │   │   └── reply-forward.ts    # /api/inbox/send, reply, forward
-│   │   │   └── mcp/                # (not present in parrot; lives in agentic-inbox)
-│   │   ├── public/                 # Static assets
-│   │   ├── scripts/                # Deploy / smoke scripts
-│   │   └── build/                  # Compiled output (gitignored)
-│   │
-│   ├── agentic-inbox/              # Maya identity mailbox — Cloudflare Worker
-│   │   ├── app/
-│   │   │   ├── components/
-│   │   │   │   └── email-panel/    # Email panel UI components
-│   │   │   ├── hooks/              # React hooks
-│   │   │   ├── lib/                # SPA-side utilities
-│   │   │   ├── queries/            # Data fetching queries
-│   │   │   ├── routes/             # React Router route components
-│   │   │   ├── services/           # Service layer (SPA)
-│   │   │   └── types/              # SPA-side TypeScript types
-│   │   ├── shared/                 # Shared worker ↔ app types
-│   │   ├── workers/
-│   │   │   ├── app.ts              # Hono root
-│   │   │   ├── index.ts            # API routes + email export
-│   │   │   ├── types.ts            # Env interface
-│   │   │   ├── email-sender.ts     # Outbound email
-│   │   │   ├── agent/              # EmailAgent (Mastra onNewEmail dispatch)
-│   │   │   ├── db/                 # Drizzle schema
-│   │   │   ├── durableObject/      # MailboxDO (predecessor to EmployeeMailboxDO)
-│   │   │   ├── lib/                # Shared worker utilities
-│   │   │   ├── mcp/                # MCP server (Claude Desktop / external agents)
-│   │   │   └── routes/             # CRUD route handlers
-│   │   ├── public/
-│   │   └── build/
-│   │
-│   ├── email-worker/               # Cloudflare Email Routing catch-all (thin)
-│   │   └── src/
-│   │       └── index.ts            # email export → Parrot DO routing
-│   │
-│   ├── mattermost-proxy/           # Cloudflare Worker — iframe header rewrite proxy
-│   │   └── workers/
-│   │       └── index.ts            # HTTP + WebSocket proxy to Mattermost Fly app
-│   │
-│   ├── mac-bridge/                 # Local Node process (Mac mini / HostMyApple)
-│   │   ├── launchd/                # macOS launchd plist (daemon management)
-│   │   └── src/
-│   │       ├── server.mjs          # HTTP server (receives BlueBubbles webhooks)
-│   │       ├── listener.mjs        # BlueBubbles event listener
-│   │       ├── bluebubbles-client.mjs # BlueBubbles REST API client
-│   │       ├── security.mjs        # Webhook signature validation
-│   │       └── config.mjs          # Config loader
-│   │
-│   ├── marketing/                  # Public site — Cloudflare Pages (Vite)
-│   │   ├── public/
-│   │   │   └── images/             # Static images
-│   │   ├── scripts/                # Build verification scripts
-│   │   ├── src/
-│   │   │   ├── components/         # React/HTML components
-│   │   │   └── lib/                # Utility functions
-│   │   └── dist/                   # Built output (gitignored, but present)
-│   │
-│   ├── parrot-mattermost/          # (scaffold / placeholder — not described in detail)
-│   └── ai-worker/                  # (torn-out proxy Worker; retained as tombstone)
-│       └── src/
-│           └── index.ts            # Legacy Workers AI proxy (now unused; direct REST in apps/app)
-│
-├── packages/
-│   └── shared/
-│       └── src/                    # Shared TypeScript contracts (used by parrot + agentic-inbox)
-│
-├── infra/
-│   ├── falkordb/                   # FalkorDB Fly app config (Dockerfile + entrypoint.sh)
-│   ├── graph-api/                  # internjobs-graph-api Fly proxy (v1.3 Phase 18)
-│   │   ├── src/
-│   │   │   └── index.ts            # Hono app — Bearer auth + Cypher forwarding
-│   │   └── smoke.mjs               # Smoke test (4 Cypher ops against production)
-│   ├── mattermost-db/              # Mattermost Postgres on Fly (self-hosted)
-│   ├── student-db/                 # Student DB Fly Postgres (post Neon-exit migration)
-│   └── NEON-EXIT.md                # Neon-exit migration handoff doc
-│
-├── .planning/                      # RRR planning docs (not deployed)
-│   ├── codebase/                   # Codebase analysis (this directory)
-│   ├── milestones/                 # Per-milestone plans and archives
-│   ├── debug/                      # Debugging session notes
-│   └── artifacts/                  # Verification artifacts
-│
-├── package.json                    # Monorepo root (npm workspaces)
+│   ├── marketing/        # Marketing CMS site (Vite + React, Cloudflare Pages)
+│   ├── app/              # Student app (Node ESM on Fly)
+│   ├── parrot/           # Workspace (employee-facing; CF Worker + React Router 7)
+│   ├── startup/          # Startup MCP Worker (mcp.internjobs.ai)
+│   ├── employers/        # Startup/employer portal (Vite SPA + Pages Functions)
+│   ├── email-worker/     # CF Email Worker ingest/router
+│   ├── mattermost-proxy/ # CF Worker, chat.internjobs.ai CSP-rewriting proxy
+│   ├── parrot-mattermost/# Mattermost Fly deploy (Dockerfile, fly.toml)
+│   ├── mac-bridge/       # BlueBubbles iMessage bridge on a Mac mini
+│   └── agentic-inbox/    # Upstream Agentic Inbox fork (Email tab target)
+├── packages/shared/      # @internjobs/shared TypeScript types
+├── infra/                # Fly services and ops docs
+│   ├── graph-api/        # HTTP proxy to FalkorDB
+│   ├── startup-api/      # Startup data API
+│   ├── student-db/       # Postgres on Fly
+│   ├── mattermost-db/    # Mattermost Postgres on Fly (MIGRATION.md)
+│   ├── falkordb/         # FalkorDB on Fly
+│   └── *.md              # NEON-EXIT, LAKERA-PRICING, LAKERA-VERIFY-LIVE
+├── scripts/              # Repo-level Node tooling (phase submission, CI checks, smoke)
+├── docs/                 # VOICE_AGENT_CONFIG.md
+├── .github/workflows/ci.yml
+├── .planning/            # RRR state: milestones, workstreams, codebase maps
+├── package.json          # Root npm workspaces
 ├── package-lock.json
-└── README.md
+├── README.md
+└── TEAM-WORKFLOW.md
 ```
-
----
 
 ## Directory Purposes
 
-**`apps/app/`:**
-- Purpose: Student-facing authenticated app (Node.js / Express-style HTTP server on Fly.io)
-- Contains: All student flows — LinkedIn auth, SMS pairing, Mastra agent loop, FalkorDB graph memory, Neon Postgres queries, SMS providers, operator ops views
-- Key files: `src/server.mjs` (entry), `src/workflows/student-inbound.mjs` (agent loop), `src/memory/graph.mjs` (FalkorDB), `db/migrations/` (Postgres SQL)
-
-**`apps/parrot/`:**
-- Purpose: Employee workspace app (Cloudflare Worker + React Router v7 SPA)
-- Contains: Two interleaved subsystems — the Hono API Worker (`workers/`) and the React Router SPA (`app/`), built together and served from one Worker
-- Key files: `workers/app.ts` (Worker root + Clerk auth), `workers/index.ts` (API routes), `workers/durableObject/index.ts` (EmployeeMailboxDO), `workers/durableObject/workspace.ts` (WorkspaceDO), `workers/lib/graph.ts` (FalkorDB proxy), `workers/lib/ai.ts` (CF AI Gateway)
-
-**`apps/agentic-inbox/`:**
-- Purpose: Maya identity mailbox — MCP-accessible email inbox with CF Access SSO
-- Contains: Cloudflare Worker + React Router SPA (same structure as parrot), plus an MCP server layer (`workers/mcp/`) and an EmailAgent (`workers/agent/`)
-- Key files: `workers/index.ts` (API + email export), `workers/durableObject/index.ts` (MailboxDO — the predecessor pattern Parrot forked from)
-
-**`apps/email-worker/`:**
-- Purpose: Thin Cloudflare Email Routing catch-all; routes inbound emails to `EmployeeMailboxDO` in the Parrot Worker
-- Contains: Single `src/index.ts` — no business logic
-
-**`apps/mattermost-proxy/`:**
-- Purpose: iframe embedding proxy; strips `X-Frame-Options` + rewrites `CSP frame-ancestors` so Mattermost can be embedded in the Parrot workspace
-- Contains: Single `workers/index.ts` — HTTP + WebSocket passthrough
-
-**`apps/mac-bridge/`:**
-- Purpose: Local bridge between BlueBubbles (iMessage on Mac mini) and the student app's SMS inbound endpoint; runs as a launchd daemon on the HostMyApple Mac mini
-- Contains: 5 `.mjs` files + a launchd plist
-
 **`apps/marketing/`:**
-- Purpose: Public static site (`internjobs.ai`) deployed to Cloudflare Pages
-- Contains: Vite + React components for `/`, `/startups`, `/privacy`, `/terms`
+- Contains: `src/App.tsx`, `src/main.tsx`, `src/components/StartupAccessSection.tsx`, `src/styles.css`, `public/` (logos, images, `_redirects`), `scripts/verify-*.mjs` (brand, site-assets and phone-animation checks), `wrangler.toml`, `tailwind.config.ts`, `vite.config.ts`.
+- Do not start a Cleo-style animation overhaul. A previous attempt was reverted by the owner.
 
-**`infra/graph-api/`:**
-- Purpose: Hono/Node REST proxy fronting FalkorDB so Cloudflare Workers can reach it (Phase 18 target)
-- Contains: `src/index.ts` (Hono app with Bearer auth), `smoke.mjs` (4-op verification script invokable via `npm run smoke:parrot-graph`)
+**`apps/app/`:**
+- `src/`: server and domain modules. Subfolders are `email/`, `memory/`, `onboarding/`, `routes/`, `safety/`, `sms/`, `storage/`, `workflows/`.
+- `db/migrations/`: numbered SQL files, `0001` to `0014` (no `0006`; `0003b_email_inbound.sql` is a suffix variant).
+- `scripts/`: `migrate.mjs`, `verify-app.mjs`, `smoke-*.mjs`.
+- `docs/`, `test/` (runbooks and verification markdown), `Dockerfile`, `fly.toml`, `.env.example`.
 
-**`infra/falkordb/`:**
-- Purpose: Docker/Fly config for the FalkorDB graph DB Fly app (`internjobs-graph`)
-- Contains: Dockerfile + entrypoint.sh (custom password-injection fix)
+**`apps/parrot/` (Workspace):**
+- `app/`: UI. `routes.ts` (route table), `root.tsx`, `entry.server.tsx`, `routes/*.tsx`, `components/` (with `crosspane/` and `icons/`), `lib/`.
+- `workers/`: `app.ts` (Worker entry and auth), `index.ts` (API), `routes/`, `lib/`, `durableObject/`, `db/schema.ts`, `types.ts`.
+- `workers/tests/`: vitest suites in `lib/` and `routes/`, plus `helpers.ts` and `__mocks__/cloudflare-workers.ts`.
+- `shared/`: code used by both UI and Worker.
+- `public/` (icons, `sw.js`, `ringtone.wav`), `scripts/smoke-parrot-graph.mjs`, `docs/`, `test/` (runbooks), `.dev.vars.example`.
+- Config: `wrangler.jsonc`, `vite.config.ts`, `vitest.config.ts`, `react-router.config.ts`, `tsconfig*.json`.
 
-**`infra/student-db/`:**
-- Purpose: Fly Postgres config for the student database (migrated off Neon via Neon-exit)
-- Contains: Fly app configuration
+**`apps/startup/`:**
+- `workers/app.ts` (Hono root), `workers/server.ts` (MCP builder), `workers/routes/` (`admin`, `api`, `email`, `scheduled`, `telnyx`, `voice`), `workers/lib/`, `workers/tools/`, `workers/types.ts`. Tests sit next to the source (`*.test.ts`). Also `CHANNELS.md` and `wrangler.jsonc`.
 
-**`infra/mattermost-db/`:**
-- Purpose: Fly Postgres config for the Mattermost database (self-hosted)
-- Contains: Fly app configuration
+**`apps/employers/`:**
+- `src/pages/` (`Dashboard`, `RoleDetail`, `RolesNew`, `SignIn`, `ThreadView`, `CandidateDetail`), `src/components/` (with `ui/`), `src/lib/api.ts`, `functions/api/[[path]].ts` (Pages Functions proxy), `e2e/founder-flow.spec.ts` (Playwright).
 
-**`packages/shared/`:**
-- Purpose: Shared TypeScript types and utilities consumed by both `apps/parrot` and `apps/agentic-inbox`
-- Contains: `src/` — exported contracts (not application code)
+**`apps/email-worker/`:** `src/index.js`, `src/constants.js`, `src/index.test.js`, `wrangler.toml`.
 
----
+**`apps/mac-bridge/`:** `src/` (`server.mjs`, `listener.mjs`, `bluebubbles-client.mjs`, `config.mjs`, `security.mjs`), `launchd/` plist, `setup.sh`, `.env.example`.
+
+**`apps/mattermost-proxy/`:** `workers/index.ts`, `wrangler.jsonc`.
+
+**`apps/agentic-inbox/`:** upstream fork with `app/`, `workers/`, `shared/`. Change it only when the change is intentional (Parrot forks its config).
+
+**`infra/`:** each service has a `Dockerfile`, `fly.toml`, `src/index.mjs` and `smoke.mjs` where applicable.
+
+**`scripts/`:** `submit-phase.mjs`, `check-submission.mjs`, `check-email-timeout-invariant.mjs`, `verify-v15-promotion.mjs` (+ `.test.mjs`), `33-clerk-restrictions-config.mjs`, `26-kgraph-*.mjs`.
+
+**`.planning/`:** `PROJECT.md`, `ROADMAP.md`, `REQUIREMENTS.md`, `WORKSTREAMS.md`, `team-mode.json`, `milestones/<version>/`, `workstreams/team-cms` and `team-workspace`, `codebase/`.
 
 ## Key File Locations
 
 **Entry Points:**
-- `apps/app/src/server.mjs`: Student app HTTP server startup
-- `apps/parrot/workers/app.ts`: Parrot Worker root (Clerk auth + SSR handler export)
-- `apps/parrot/workers/index.ts`: Parrot Hono API routes (`/api/*`)
-- `apps/agentic-inbox/workers/index.ts`: Agentic inbox Worker + email export
-- `infra/graph-api/src/index.ts`: Graph API proxy Hono app
+- `apps/parrot/workers/app.ts`, `apps/startup/workers/app.ts`, `apps/app/src/server.mjs`, `apps/marketing/src/main.tsx`, `apps/employers/src/main.tsx`, `apps/email-worker/src/index.js`, `apps/mac-bridge/src/server.mjs`
 
 **Configuration:**
-- `package.json` (root): npm workspace definitions + monorepo-level scripts
-- `apps/parrot/workers/types.ts`: All Parrot Worker environment bindings (canonical reference for secrets + DO bindings)
-- `apps/app/src/config.mjs`: Student app env config loader
-- `infra/graph-api/smoke.mjs`: Graph proxy smoke test (invoked via `npm run smoke:parrot-graph`)
+- `package.json` (workspaces), `apps/parrot/wrangler.jsonc`, `apps/startup/wrangler.jsonc`, `apps/mattermost-proxy/wrangler.jsonc`, `apps/email-worker/wrangler.toml`, `apps/marketing/wrangler.toml`, `apps/app/fly.toml`, `infra/*/fly.toml`
+- Env templates only: `apps/app/.env.example`, `apps/parrot/.dev.vars.example`, `apps/mac-bridge/.env.example`, `apps/employers/.env.example`
 
 **Core Logic:**
-- `apps/app/src/workflows/student-inbound.mjs`: Mastra agent loop (student SMS → match → draft → send)
-- `apps/app/src/memory/graph.mjs`: Student-side FalkorDB Graphiti temporal facts
-- `apps/parrot/workers/durableObject/index.ts`: EmployeeMailboxDO — core of the employee-side persistence layer
-- `apps/parrot/workers/lib/graph.ts`: Parrot Worker FalkorDB access via REST proxy
-- `apps/parrot/workers/lib/ai.ts`: Workers AI via CF AI Gateway (kimi-k2.6 todo extraction)
-- `apps/parrot/workers/lib/safety.ts`: Lakera Guard (Worker runtime)
-- `apps/app/src/safety/screen.mjs`: Lakera Guard (Node runtime — student app)
-
-**Database:**
-- `apps/app/db/migrations/`: Neon/Fly Postgres SQL migrations (numbered `0001_*` → `0010_*`)
-- `apps/parrot/workers/db/schema.ts`: Drizzle SQLite schema for EmployeeMailboxDO
-- `apps/parrot/workers/durableObject/migrations.ts`: DO SQLite migration runner
+- Workspace API: `apps/parrot/workers/index.ts`
+- Mattermost bridge: `apps/parrot/workers/lib/mattermost.ts`, `apps/parrot/workers/lib/mm-ws-proxy.ts`
+- Student request routing: `apps/app/src/server.mjs`
+- Student agent: `apps/app/src/mastra.mjs`, `apps/app/src/workflows/`
+- DB schema: `apps/app/db/migrations/`
 
 **Testing:**
-- `apps/app/src/workflows/reply-to.test.mjs`: Unit tests for reply-to alias logic
-- `apps/app/src/auth.test.mjs`: Auth helper unit tests
-- `apps/app/test/`: Additional test fixtures
-- `infra/graph-api/smoke.mjs`: Integration smoke test for graph proxy
-
----
+- `apps/parrot/workers/tests/` (vitest)
+- `apps/startup/workers/**/*.test.ts` (node:test via tsx)
+- `apps/app/src/**/*.test.mjs` (co-located)
+- `apps/email-worker/src/index.test.js`
+- `apps/employers/e2e/` (Playwright)
+- `scripts/verify-v15-promotion.test.mjs`
 
 ## Naming Conventions
 
 **Files:**
-- Student app (`apps/app/src/`): `kebab-case.mjs` — all files use `.mjs` (ES modules, Node)
-- Parrot Worker (`apps/parrot/workers/`): `kebab-case.ts` — TypeScript, Cloudflare Workers runtime
-- Parrot SPA (`apps/parrot/app/routes/`): `kebab-case.tsx` for routes; `PascalCase.tsx` for components; nested routes use dot notation (`admin.invite.tsx`, `ops.safety.tsx`)
-- DB migrations: `NNNN_descriptive_name.sql` (zero-padded 4-digit prefix, sequential)
-- Agentic inbox follows the same `.ts`/`.tsx` pattern as parrot
+- Node ESM modules in `apps/app`, `apps/mac-bridge`, `infra/*`: lowercase kebab-case `.mjs` (`student-inbound.mjs`).
+- Workers (TS) in `apps/parrot/workers` and `apps/startup/workers`: kebab-case, or camelCase in startup (`resolveChannelLink.ts`, `workEmail.ts`).
+- React components: PascalCase `.tsx` (`WorkspaceShell.tsx`).
+- Workspace route files: lowercase, dot-separated for nesting (`admin.invite.tsx`, `ops.safety.tsx`).
+- Tests: `*.test.ts` or `*.test.mjs`, co-located in `apps/app` and `apps/startup`, and under `workers/tests/` mirroring `lib/` and `routes/` in `apps/parrot`.
+- SQL migrations: `NNNN_vX_Y_description.sql`.
+- Phase scripts: `NN-description.mjs` where NN is the phase number.
 
-**Directories:**
-- `workers/` — Cloudflare Worker-specific code within a Worker app
-- `app/` — React Router SPA code within a Worker app
-- `shared/` — Code shared between the worker layer and the SPA layer within one app
-- `lib/` — Utility/helper modules (not routes, not DO classes)
-- `routes/` — HTTP route handlers (both Hono backend and React Router frontend)
-- `durableObject/` — Durable Object class definitions + migrations
-
-**Exports:**
-- Each Cloudflare Worker app exports its DO classes from `workers/app.ts` (e.g., `export { EmployeeMailboxDO } from "./durableObject"`)
-- `packages/shared/src/index.ts` is the barrel for the shared package
-
----
+**Directories:** lowercase, with `durableObject/` camelCase in Workspace.
 
 ## Where to Add New Code
 
-**New student-side feature (agent loop, SMS, Neon data):**
-- Business logic: `apps/app/src/workflows/` or `apps/app/src/` (new `.mjs` module)
-- Route handler: `apps/app/src/routes/` (new `.mjs` handler, registered in `server.mjs`)
-- DB schema change: add `apps/app/db/migrations/NNNN_v1_X_description.sql`
-- Tests: `apps/app/src/` or `apps/app/test/` as `*.test.mjs`
+**New Workspace API endpoint:** a Hono sub-router in `apps/parrot/workers/routes/<name>.ts`, mounted in `apps/parrot/workers/index.ts` behind `requireEmployeeMailbox`. Put integration logic in `apps/parrot/workers/lib/`. Tests go in `apps/parrot/workers/tests/routes/` or `tests/lib/`.
 
-**New employee-side feature (Worker, DO, SPA route):**
-- Worker API route: `apps/parrot/workers/routes/` (new `.ts` file), registered in `apps/parrot/workers/index.ts`
-- Worker utility/lib: `apps/parrot/workers/lib/` (new `.ts` file)
-- DO schema change: add a migration entry to `apps/parrot/workers/durableObject/migrations.ts`
-- SPA route: `apps/parrot/app/routes/` (new `.tsx` file following React Router v7 conventions)
-- SPA component: `apps/parrot/app/components/`
+**New Workspace page or pane:** add a route file in `apps/parrot/app/routes/`, register it in `apps/parrot/app/routes.ts`, and put UI in `apps/parrot/app/components/`.
 
-**New Durable Object method:**
-- Add to `apps/parrot/workers/durableObject/index.ts` (EmployeeMailboxDO) or `workspace.ts` (WorkspaceDO)
-- Add corresponding migration in `migrations.ts` if schema changes
+**New student-app route or webhook:** a branch in `apps/app/src/server.mjs`, or a handler module under `apps/app/src/routes/`. Domain logic goes in `apps/app/src/<area>/`, with a co-located `*.test.mjs`.
 
-**New infra service:**
-- New Fly app: new directory under `infra/` (e.g., `infra/new-service/`)
-- Follow the `infra/graph-api/` pattern: `src/index.ts` (Hono) + `smoke.mjs` + Fly `fly.toml`
+**New student DB change:** the next migration file in `apps/app/db/migrations/` (use `0015_...`).
 
-**New shared type/utility:**
-- `packages/shared/src/` — export from `index.ts`
+**New startup MCP tool:** `apps/startup/workers/tools/<name>.ts`, registered in `apps/startup/workers/server.ts`. HTTP routes go in `apps/startup/workers/routes/`.
 
-**Utilities:**
-- Student side: `apps/app/src/` top-level `.mjs` file (matches existing `http.mjs`, `views.mjs`, `store.mjs` pattern)
-- Worker side: `apps/parrot/workers/lib/` `.ts` file
+**New marketing section:** `apps/marketing/src/components/`, composed in `apps/marketing/src/App.tsx`. Static assets go in `apps/marketing/public/`.
 
----
+**New shared type:** `packages/shared/src/index.ts`. Parrot and startup do not consume the workspace package, so duplicate or add a local type for them.
+
+**New Fly service:** `infra/<name>/` with `Dockerfile` and `fly.toml`.
+
+**New repo-level script:** `scripts/`.
 
 ## Special Directories
 
-**`.planning/`:**
-- Purpose: RRR planning docs, milestone archives, debug notes, verification artifacts
-- Generated: No (human + Claude authored)
-- Committed: Yes
-
-**`.wrangler/`:**
-- Purpose: Wrangler CLI local state, dev DO SQLite state, cached builds
-- Generated: Yes
-- Committed: No (`.gitignore`d)
-
-**`build/` (inside each Worker app):**
-- Purpose: Compiled Worker + SPA output from Vite/React Router build
-- Generated: Yes
-- Committed: No
-
-**`dist/` (inside `apps/marketing/`):**
-- Purpose: Vite build output for Cloudflare Pages
-- Generated: Yes
-- Committed: Partially present (Pages deploy reads from this)
-
-**`node_modules/`:**
-- Purpose: npm dependencies
-- Generated: Yes
-- Committed: No
-
-**`.claude/worktrees/`:**
-- Purpose: Claude Code agent git worktrees for parallel agent execution
-- Generated: Yes (by Claude Code)
-- Committed: No
+**`.planning/`:** RRR state and phase artifacts, committed. `.planning/codebase/` holds these maps.
+**`apps/*/dist`, `node_modules/`:** generated, not committed.
+**`submissions/`:** per-phase submission JSON written by `scripts/submit-phase.mjs`.
+**`apps/canary-monitor/`:** untracked at this commit and not part of the mapped tree.
 
 ---
 
-*Structure analysis: 2026-05-24*
+*Structure analysis: 2026-10-08*

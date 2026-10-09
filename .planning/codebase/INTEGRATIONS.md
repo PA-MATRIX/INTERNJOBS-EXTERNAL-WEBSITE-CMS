@@ -1,274 +1,116 @@
+<!-- generated from internjobs-cms @ d1658aa5ba0ce397788cd79c34b425c459eaa0da on 2026-10-08 -->
 # External Integrations
 
-**Analysis Date:** 2026-05-24
+**Analysis Date:** 2026-10-08
+**Source:** merged main `d1658aa5ba0ce397788cd79c34b425c459eaa0da`. Only env var NAMES are listed; no values. `.env*` files were not read.
 
-## Architectural Context Loaded
+## Topology (app -> host)
 
-- No `.planning/NORTH-STAR.md` found.
-- Memory context: Parrot LLM calls route through CF AI Gateway (per-employee daily caps); student app stays on direct Workers AI REST — do NOT migrate as a side effect.
-- Two Clerk apps locked: students = LinkedIn-only (`app.internjobs.ai`), employees = phone-OTP only (`workspace.internjobs.ai`). Never merge.
-- Daily.co vanity domain (`meet.internjobs.ai`) deferred to v1.3; ships with default `internjobs.daily.co`.
-- Seam pattern: Cognee v1.1, Telnyx v1.2 are placeholder rows, not active integrations.
+| Surface | Code | Host |
+|---|---|---|
+| Marketing CMS | `apps/marketing` | CF Pages `internjobs-ai` -> `internjobs.ai` |
+| Student app | `apps/app` | Fly `apps/app/fly.toml` -> `app.internjobs.ai` |
+| Employers SPA + API | `apps/employers` | CF Pages `internjobs-employers` -> `employers.internjobs.ai` |
+| Workspace (employees) | `apps/parrot` | CF Worker `internjobs-parrot` -> `workspace.internjobs.ai` |
+| Startup MCP | `apps/startup` | CF Worker `internjobs-startup-mcp` -> `mcp.internjobs.ai` |
+| Agent inbox | `apps/agentic-inbox` | CF Worker `internjobs-agentic-inbox` (workers.dev) |
+| Inbound email router | `apps/email-worker` | CF Worker `internjobs-email-ingest` |
+| Mattermost CSP proxy | `apps/mattermost-proxy` | CF Worker -> `chat.internjobs.ai` |
+| Mattermost | `apps/parrot-mattermost` | Fly `internjobs-mattermost` |
+| Graph API | `infra/graph-api` | Fly `internjobs-graph-api` |
+| Startup API | `infra/startup-api` | Fly `internjobs-startup-api` |
+| FalkorDB | `infra/falkordb` | Fly `internjobs-graph` |
+| Student DB | `infra/student-db` | Fly Postgres+pgvector `internjobs-student-db` |
+| Mattermost DB | `infra/mattermost-db` | Fly Postgres `internjobs-mattermost-db` |
+| iMessage bridge | `apps/mac-bridge` | HostMyApple Mac mini, `bridge.internjobs.ai` |
 
----
+Database history: `infra/NEON-EXIT.md` documents the move off Neon to Fly Postgres (`infra/student-db`); `NEON_AUTH_JWKS_URL` still appears in code as a legacy var name.
+
+## Authentication & Identity (three Clerk apps, do not merge)
+
+Per memory rules "two Clerk apps, not one" and Startup tripod:
+- Students: LinkedIn-only Clerk, `app.internjobs.ai`; vars `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `CLERK_JWKS_URL`, `CLERK_SIGN_IN_URL`, `CLERK_SIGN_UP_URL`, `CLERK_BACKEND_API_URL`; code `apps/app/src/auth.mjs`. Only `sub` is guaranteed in the JWT (memory "Clerk JWT claims are minimal"); do not require email/phone claims.
+- Employees (Workspace): phone-OTP Clerk, `clerk.workspace.internjobs.ai`; vars `PARROT_CLERK_ISSUER`, `PARROT_CLERK_JWKS_URL`, `PARROT_CLERK_SECRET_KEY`; code `apps/parrot/workers/app.ts`, `apps/parrot/workers/lib/clerk-admin.ts`. Operator allowlist `PARROT_OPERATOR_EMAILS`.
+- Startups: Clerk at `clerk.employers.internjobs.ai`; vars `STARTUPS_CLERK_JWKS_URL`, `STARTUPS_CLERK_ISSUER` (in `apps/startup/wrangler.jsonc`), `STARTUPS_CLERK_SECRET_KEY`; code `apps/startup/workers/lib/auth.ts`, `apps/employers/functions/api/[[path]].ts` (Svix webhook verification).
+- Mattermost SSO bridge: Parrot acts as OIDC provider (`apps/parrot/workers/routes/oidc.ts`); vars `OIDC_SIGNING_KEY`, `OIDC_PUBLIC_JWK`, `MATTERMOST_OIDC_CLIENT_ID`, `MATTERMOST_OIDC_CLIENT_SECRET`, `MATTERMOST_OIDC_REDIRECT_URI`.
+- Dev bypass flags: `ENABLE_DEV_AUTH`, `PARROT_DEV_MODE` (must be off in production).
+- Service-to-service: shared-secret headers `STUDENT_API_SECRET`, `STARTUP_API_SECRET`, `GRAPH_API_SECRET`, `INTERNAL_API_SECRET`, `STARTUP_MCP_ADMIN_SECRET`, `BRIDGE_HMAC_SECRET`, `EMAIL_WORKER_SECRET`, `EMAIL_HANDOFF_SECRET` (same value in `apps/email-worker` and `apps/startup`), `APP_SESSION_SECRET`.
 
 ## APIs & External Services
 
-**Authentication:**
-- Clerk (Student app) — LinkedIn-only OAuth for students at `app.internjobs.ai`
-  - SDK/Client: `@clerk/backend@3.4.9` (Node), no React SDK in student app
-  - Auth: `CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `CLERK_JWKS_URL`
-  - JWKS verified in `apps/app/src/auth.mjs`
-  - Only `sub` is guaranteed in JWT — do NOT require email/phone claims
-- Clerk (Employee/Parrot app) — phone-OTP only at `workspace.internjobs.ai`
-  - SDK/Client: `@clerk/backend@3.4.9`, `@clerk/clerk-react^5.61.6`, `@clerk/react-router^3.2.7`
-  - Auth: `PARROT_CLERK_PUBLISHABLE_KEY`, `PARROT_CLERK_SECRET_KEY`, `PARROT_CLERK_JWKS_URL`
-  - Separate Clerk instance — any signed-in user IS an employee by construction
-  - Configured in `apps/parrot/workers/types.ts` and `apps/parrot/workers/app.ts`
-
 **LLM / AI:**
-- Cloudflare Workers AI — direct REST (student app only)
-  - Endpoint: `https://api.cloudflare.com/client/v4/accounts/{id}/ai/run/...`
-  - Auth: `CLOUDFLARE_AI_ACCOUNT_ID` + `CLOUDFLARE_AI_API_TOKEN`
-  - Used in: `apps/app/src/workflows/student-inbound.mjs`, `apps/app/src/embeddings.mjs`
-  - DO NOT route through AI Gateway (no per-user concept in student agent)
-- Cloudflare AI Gateway — Parrot Worker only
-  - Endpoint: `https://gateway.ai.cloudflare.com/v1/{ACCOUNT_ID}/{PARROT_AI_GATEWAY_ID}/workers-ai/{model}`
-  - Auth: `CLOUDFLARE_AI_API_TOKEN`; per-employee quota via `cf-aig-metadata: {"user_id": "<clerk_user_id>"}`
-  - Model: `@cf/moonshotai/kimi-k2.6` (configured as `KIMI_MODEL` var in `apps/parrot/wrangler.jsonc`)
-  - Used in: `apps/parrot/workers/lib/ai.ts`
-  - DO NOT use AI Gateway in student app — architectural separation is intentional
+- Cloudflare Workers AI via `AI` binding (`apps/parrot/workers/lib/ai.ts`, `apps/startup`, `apps/agentic-inbox`); models `KIMI_MODEL`, `PARROT_FAST_MODEL`, `AGENT_MODEL`
+- Cloudflare AI Gateway (`gateway.ai.cloudflare.com`; id `PARROT_AI_GATEWAY_ID`): Parrot LLM calls route through the gateway for per-employee daily caps. Student app stays on direct REST (`CLOUDFLARE_AI_ACCOUNT_ID`, `CLOUDFLARE_AI_API_TOKEN`, `LLM_PROVIDER`, `EMBED_PROVIDER`). Intentional per memory "LLM via AI Gateway not direct REST"; do not migrate the student app as a side effect.
+- Embeddings: Workers AI into pgvector (`apps/app/src/embeddings.mjs`, migration `0005_v1_2_workers_ai_embeddings.sql`, `USE_VECTOR_MATCH`)
 
-**Safety / Content Moderation:**
-- Lakera Guard (now Cisco AI Defense) — pre-LLM prompt injection screen
-  - Endpoint: `https://api.lakera.ai/v2/guard` (env-overridable via `LAKERA_GUARD_ENDPOINT`)
-  - Auth: `LAKERA_GUARD_API_KEY`
-  - Fail-open: 1s timeout; unavailability never blocks student SMS or employee LLM calls
-  - Student app implementation: `apps/app/src/safety/screen.mjs`
-  - Parrot Worker implementation: `apps/parrot/workers/lib/safety.ts`
-  - Scope: student inbound SMS + employee email/chat agent. Mattermost internal channel is excluded.
+**Safety:**
+- Lakera Guard (`api.lakera.ai`): `LAKERA_GUARD_API_KEY`, `LAKERA_GUARD_ENDPOINT`; `apps/app/src/safety/screen.mjs`, `apps/parrot/workers/lib/safety.ts`, `apps/parrot/workers/routes/ops-safety.ts`; docs `infra/LAKERA-PRICING.md`, `infra/LAKERA-VERIFY-LIVE.md`; table `0009_v1_3_safety_events.sql`
 
-**LinkedIn Enrichment:**
-- Bright Data — LinkedIn profile scraping from public URL
-  - Endpoint: `https://api.brightdata.com/datasets/v3/scrape`
-  - Auth: `BRIGHTDATA_API_TOKEN`
-  - Dataset ID: `gd_l1viktl72bvl7bjuj0` (env-overridable via `BRIGHTDATA_LINKEDIN_PROFILE_DATASET_ID`)
-  - Fail-soft: returns `null` when token absent or scrape fails
-  - Used in: `apps/app/src/onboarding/brightdata.mjs`
+**Messaging / telephony:**
+- Spectrum / Photon (iMessage+SMS, `spectrum-ts`): `SPECTRUM_API_BASE_URL`, `SPECTRUM_API_TOKEN`, `SPECTRUM_PROJECT_ID`, `SPECTRUM_FROM_NUMBER`, `SPECTRUM_IMESSAGE_ADDRESS`, `SPECTRUM_WEBHOOK_SECRET`, `PHOTON_*` (`PHOTON_API_BASE_URL`, `PHOTON_API_TOKEN`, `PHOTON_FROM_NUMBER`, `PHOTON_PROJECT_ID`, `PHOTON_WEBHOOK_SECRET`), `PROJECT_ID`, `PROJECT_SECRET`; `apps/app/src/sms/spectrum.mjs`, `apps/app/src/spectrum-listener.mjs` (`ENABLE_SPECTRUM_LISTENER`). Provider selected by `SMS_PROVIDER` (default `spectrum`) in `apps/app/src/sms/provider.mjs`.
+- Mac bridge / BlueBubbles: `apps/app/src/sms/mac-bridge.mjs` -> `MAC_BRIDGE_URL`/`BRIDGE_URL`, HMAC `BRIDGE_HMAC_SECRET`; `apps/mac-bridge/src/{bluebubbles-client,listener,security,server}.mjs`. Health at `bridge.internjobs.ai/health`; SSH firewalled (memory "Mac bridge access").
+- Telnyx (`api.telnyx.com`): `TELNYX_API_KEY`, `TELNYX_FROM_NUMBER`, `TELNYX_MESSAGING_PROFILE_ID`, `TELNYX_WEBHOOK_PUBLIC_KEY`, `TELNYX_USE_MCP_INTEGRATION`; `apps/startup/workers/routes/{telnyx,voice}.ts`; migration `0014_v1_4_telnyx_touchbase.sql`. Workspace phone/SMS UI is a seam per memory "Seam, not integration".
 
-**SMS / iMessage:**
-- BlueBubbles via mac-bridge (production active path)
-  - Self-hosted Mac mini running BlueBubbles, fronted by Cloudflare Tunnel at `bridge.internjobs.ai`
-  - Auth: shared HMAC-SHA256 `BRIDGE_HMAC_SECRET` (both inbound and outbound signed)
-  - Inbound: mac-bridge POSTs to student app `/webhooks/mac-bridge`
-  - Outbound: student app POSTs to `BRIDGE_URL/v1/send`
-  - WebSocket bridge code: `apps/mac-bridge/src/server.mjs`; provider: `apps/app/src/sms/mac-bridge.mjs`
-  - Agent iMessage number: `+14063210019`
-- Photon/Spectrum (legacy — not active in production)
-  - Auth: `PHOTON_API_TOKEN` / `SPECTRUM_API_TOKEN`, webhook verified via `PHOTON_WEBHOOK_SECRET`
-  - Provider: `apps/app/src/sms/spectrum.mjs`
-  - Controlled by `SMS_PROVIDER=spectrum` env var (production uses `mac-bridge`)
+**Meetings:** Daily.co (`api.daily.co`, default `internjobs.daily.co`; custom vanity domain deferred): `DAILY_API_KEY`; `apps/parrot/workers/lib/daily.ts`, `apps/parrot/app/routes/meetings.tsx`.
 
-**Video Meetings:**
-- Daily.co — per-employee video rooms
-  - Endpoint: `https://api.daily.co/v1` (rooms, meeting-tokens)
-  - Auth: `DAILY_API_KEY`
-  - Per-employee room name: `parrot-<clerk_user_id>`; provisioned lazily by `EmployeeMailboxDO`
-  - Default domain: `internjobs.daily.co` (custom `meet.internjobs.ai` deferred to v1.3)
-  - Fail-soft: returns `null` when key absent — UI falls back to toast
-  - Worker client: `apps/parrot/workers/lib/daily.ts`
-  - React components: `apps/parrot/` uses `@daily-co/daily-js^0.87.0` + `@daily-co/daily-react^0.25.2`
+**Chat:** Mattermost on Fly: `MATTERMOST_URL`, `MATTERMOST_WS_URL`, `MATTERMOST_ADMIN_TOKEN`, `MATTERMOST_BOT_TOKEN`; `apps/parrot/workers/lib/{mattermost,mm-ws-proxy}.ts`, `apps/parrot/workers/routes/chat-files.ts`; proxy `apps/mattermost-proxy/workers/index.ts` rewrites CSP so `workspace.internjobs.ai` can iframe (`ALLOWED_PARENT`, `MATTERMOST_ORIGIN`).
 
-**Error Tracking:**
-- Sentry — error tracking in Parrot Worker
-  - Auth: `SENTRY_DSN` (set via `wrangler secret put`)
-  - Optional: Worker boots without it; errors fall back to `console.error`
-  - Referenced in: `apps/parrot/workers/index.ts`, `apps/parrot/wrangler.jsonc`
-  - Inline Sentry envelope pattern (no npm dependency in Worker)
+**Enrichment:** Bright Data LinkedIn (`api.brightdata.com`): `BRIGHTDATA_API_TOKEN`, `BRIGHTDATA_LINKEDIN_PROFILE_DATASET_ID`; `apps/app/src/onboarding/brightdata.mjs`; migrations `0007`, `0010`.
 
-**Email:**
-- Cloudflare Email Routing — inbound email handling
-  - `*@agent.internjobs.ai` catch-all routes to `internjobs-email-ingest` Worker (`apps/email-worker/`)
-  - Employee mailboxes (`name@internjobs.ai`) provisioned at runtime by Parrot Worker
-  - Configured in CF Dashboard (not in wrangler configs)
-- Cloudflare Email Service (outbound transactional)
-  - Auth: `CLOUDFLARE_EMAIL_ACCOUNT_ID` + `CLOUDFLARE_EMAIL_API_TOKEN`
-  - Used in student app outbound (`apps/app/src/email/outbound.mjs`) and Parrot email sender (`apps/parrot/workers/lib/email-sender.ts`)
-- Email Worker → Student App webhook
-  - Worker signs payload with HMAC (`EMAIL_WORKER_SECRET`); POSTs to `https://app.internjobs.ai/webhooks/email`
-  - Fallback: raw mail forwarded to `ops@internjobs.ai` if POST fails
-  - Worker config: `apps/email-worker/wrangler.toml`
+**Push:** Web Push VAPID (`fcm.googleapis.com`): `PUSH_VAPID_PUBLIC_KEY` (public, in `apps/parrot/wrangler.jsonc`), `PUSH_VAPID_PRIVATE_KEY` (secret); `apps/parrot/workers/lib/vapid.ts`.
 
-**Web Push Notifications:**
-- VAPID (W3C Web Push standard) — browser push for Parrot employees
-  - Public key (safe to commit): `BAXYWRDcWvhPxBBU3BYmv97yrSNk2B7soXoniQ5aWI_zn_HUAV7g0WsOO3Nk6VxIC2ioJqlFAEbpqP9OKm-4fQo`
-  - Private key: `PUSH_VAPID_PRIVATE_KEY` (wrangler secret)
-  - Implementation (no npm dep): `apps/parrot/workers/lib/vapid.ts`
+**Cloudflare management API (`api.cloudflare.com`):** `CLOUDFLARE_ACCOUNT_ID`, `CF_ACCOUNT_ID`, `CLOUDFLARE_EMAIL_ACCOUNT_ID`, `CLOUDFLARE_EMAIL_API_TOKEN`, `CLOUDFLARE_EMAIL_ROUTING_API_TOKEN`, `CLOUDFLARE_INTERNJOBS_ZONE_ID` (per-employee mailbox/routing provisioning).
 
----
+**Other:** Cloudflare Turnstile (`challenges.cloudflare.com`, marketing/forms), LinkedIn public URLs, Mastra docs link.
 
 ## Data Storage
 
 **Databases:**
-- Fly Postgres 17 + pgvector (Student DB — primary app DB)
-  - App: `internjobs-student-db` on Fly private network (`internjobs-student-db.internal:5432`)
-  - Accessible only within Fly org private network
-  - Connection: `DATABASE_URL` env var
-  - Client: `pg^8.20.0` (direct) + `@mastra/pg@1.11.0` (Mastra PostgresStore + PgVector)
-  - Schema migrations: `apps/app/db/migrations/` (raw SQL, applied via `apps/app/scripts/migrate.mjs`)
-  - Mastra reserved schema: `mastra` (NOT `public`) — do not change
-  - pgvector index: `internjobs_agent` in `mastra` schema
-- Neon Postgres (Agentic Inbox — `apps/agentic-inbox/` only)
-  - Client: `@neondatabase/serverless^1.1.0` (edge-compatible)
-  - Note: student DB has migrated off Neon to Fly Postgres (Neon-exit 2026-05-21); Agentic Inbox still uses Neon
-- Fly Postgres (Mattermost DB)
-  - App: `internjobs-mattermost-db` on Fly private network
-  - Used exclusively by Mattermost Team Edition
-  - Secret: `MM_SQLSETTINGS_DATASOURCE` on the Mattermost app
+- Student Postgres 17 + pgvector on Fly (`infra/student-db`): `DATABASE_URL`; client `pg` and `@mastra/pg`; schema via `apps/app/db/migrations/*.sql` run by `apps/app/scripts/migrate.mjs` (note: no `0006`). Tables include `inbound_messages`, `conversations`, `drafts`, `draft_feedback`, `student_embeddings`, `role_embeddings`, pairing, safety, startup identity/MCP/agent email, touchbase.
+- Startup API Postgres access via `infra/startup-api/src/index.mjs` (`pg`, `DATABASE_URL`)
+- Mattermost Postgres 17 (`infra/mattermost-db`)
+- FalkorDB graph (`infra/falkordb`, `FALKORDB_URL`) behind `infra/graph-api` (`GRAPH_API_URL`, `GRAPH_API_SECRET`); clients `apps/app/src/memory/graph.mjs`, `apps/parrot/workers/lib/graph.ts`
+- Parrot per-employee mailbox + workspace state: Durable Object SQLite (`EmployeeMailboxDO`, `WorkspaceDO`) with Drizzle (`apps/parrot/workers/db/schema.ts`, `workers/durableObject/migrations.ts`)
 
-**Graph Database:**
-- FalkorDB (Redis-protocol graph)
-  - Fly app: `internjobs-graph` at `internjobs-graph.internal:6379` (private network only, no public IP)
-  - Auth: `REDIS_PASSWORD` (Fly secret)
-  - Graph name: `internjobs` (single graph, label-namespaced between student and Parrot facts)
-  - Student app labels: `:Student`, `:Role`, `:Startup`, `:Fact`
-  - Parrot labels: `:Employee`, `:Todo`, `:Person`, `:Email`, `:ChatMsg`
-  - Student app client: `falkordb@6.6.2` npm in `apps/app/src/memory/graph.mjs`
-  - Parrot Worker: does NOT speak Redis directly — calls HTTP proxy instead
-  - HTTP proxy: `infra/graph-api/` (Hono/Node on Fly at `internjobs-graph-api.fly.dev`)
-    - Auth: shared Bearer `GRAPH_API_SECRET`
-    - Parrot client: `apps/parrot/workers/lib/graph.ts`
+**File Storage:** Cloudflare R2: `internjobs-parrot-attachments` (Parrot), `internjobs-agentic-inbox`, `internjobs-startup-call-audit` (`VOICE_AUDIT`), student-app bucket via S3 API (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`; `apps/app/src/storage/r2.mjs`).
 
-**Cloudflare Durable Objects (SQLite):**
-- Parrot Worker: `EmployeeMailboxDO` (per-employee mailbox + todos + push subscriptions) and `WorkspaceDO` (employee directory + OIDC bridge state)
-  - Storage: DO SQLite (each DO has its own DB)
-  - Schema: `apps/parrot/workers/durableObject/migrations.ts`, `apps/parrot/workers/db/schema.ts`
-- Agentic Inbox: `MailboxDO`, `EmailAgent`, `EmailMCP`
+**Caching/KV:** Cloudflare KV `PARROT_FEATURE_FLAGS`, `TOUCHBASE_CURSORS`.
 
-**Cloudflare KV:**
-- `PARROT_FEATURE_FLAGS` — global feature flag defaults (ID: `4f2791da98bf440895ab9bf9d10d38de`)
-  - Per-employee overrides live in `EmployeeMailboxDO` SQLite `profile.feature_flags` column
-  - Binding declared in `apps/parrot/wrangler.jsonc`
+## Email
 
-**File Storage:**
-- Cloudflare R2 — private artifact store (student app)
-  - Bucket: `internjobs-agent-store` (default; env-overridable via `R2_BUCKET`)
-  - Auth: `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` (S3-compatible)
-  - All sharing via signed URLs; bucket is PRIVATE
-  - Client: `@aws-sdk/client-s3@3.1048.0` + `@aws-sdk/s3-request-presigner`
-  - Implementation: `apps/app/src/storage/r2.mjs`
-- Cloudflare R2 — email attachment store (Parrot Worker)
-  - Bucket: `internjobs-parrot-attachments`
-  - Binding: `BUCKET` (R2Bucket) in Parrot Worker
-- Cloudflare R2 — Agentic Inbox attachments
-  - Bucket: `internjobs-agentic-inbox`
-
-**Caching:**
-- None as a standalone service; module-level JS variables in Workers serve as warm-isolate caches (e.g., `graphReadyCache` with 30s TTL in `apps/parrot/workers/index.ts`)
-
----
-
-## Authentication & Identity
-
-**Auth Provider:**
-- Clerk (two separate instances — never merge):
-  1. Student app (`app.internjobs.ai`): LinkedIn OAuth only, `@clerk/backend` Node SDK, JWT verified via JWKS
-  2. Parrot Worker (`workspace.internjobs.ai`): phone-OTP only, `@clerk/react-router` + `@clerk/backend`
-- OIDC Bridge (Parrot → Mattermost SSO):
-  - Parrot Worker acts as OIDC IdP for Mattermost
-  - Endpoints: `/oidc/authorize`, `/oidc/token`, `/oidc/jwks`, `/oidc/userinfo`
-  - Signing: RS256 private key (`OIDC_SIGNING_KEY`), public JWK (`OIDC_PUBLIC_JWK`)
-  - Client credentials: `MATTERMOST_OIDC_CLIENT_ID` / `MATTERMOST_OIDC_CLIENT_SECRET`
-  - State held in `WorkspaceDO` (`apps/parrot/workers/durableObject/workspace.ts`)
-  - Routes: `apps/parrot/workers/routes/oidc.ts`
-
----
+- Inbound: single zone-wide Email Routing catch-all bound to `internjobs-email-ingest` (`apps/email-worker/src/index.js`). Branches: `conv-{uuid}@agent.internjobs.ai` -> HMAC POST to `FLY_INGEST_URL` (`https://app.internjobs.ai/webhooks/email`); `*@employers.internjobs.ai` -> `STARTUP_EMAIL_HANDOFF_URL` (`https://mcp.internjobs.ai/internal/email/inbound`) with fallback; everything else forwarded to `OPERATOR_FALLBACK_EMAIL`. Do not assume per-subdomain catch-alls (see comment in `apps/email-worker/wrangler.toml`). Timeout coupling enforced by `scripts/check-email-timeout-invariant.mjs`.
+- Outbound: CF `send_email` binding `EMAIL` (Parrot, Startup, Agentic Inbox); student app `apps/app/src/email/outbound.mjs` (`OUTBOUND_DRY_RUN`).
 
 ## Monitoring & Observability
 
-**Error Tracking:**
-- Sentry — Parrot Worker only (optional; `SENTRY_DSN` secret)
-- Student app: no Sentry; uses structured JSON logging to stdout
-
-**Logs:**
-- All apps: structured JSON to stdout/stderr
-  - Format: `{ level, message, ...fields }` via `JSON.stringify`
-- Cloudflare Workers: built-in observability enabled (`"observability": {"enabled": true}` in wrangler configs)
-- Wrangler tail: `npm run tail` in `apps/email-worker` and `apps/mattermost-proxy`
-
----
+- Workers `observability.enabled = true`; `SENTRY_DSN` referenced in code (no SDK dependency in manifests); Fly logs; `wrangler tail`. Health endpoints: Parrot `/healthz` (`apps/parrot/workers/tests/healthz.test.ts`), bridge `/health`. Smoke scripts: `apps/app/scripts/smoke-{ops,graph,mastra}.mjs`, `infra/graph-api/smoke.mjs`, `infra/startup-api/smoke.mjs`, `apps/parrot/scripts/smoke-parrot-graph.mjs`, `scripts/26-kgraph-{smoke,ab}.mjs`.
 
 ## CI/CD & Deployment
 
-**Hosting:**
-- Cloudflare Workers: Parrot, Agentic Inbox, Email Worker, Mattermost Proxy
-- Cloudflare Pages: Marketing site (`internjobs-ai` project)
-- Fly.io (`internjobs-sios-org`, `ord` region): Student app, Graph API, FalkorDB, Student Postgres, Mattermost, Mattermost Postgres
-
-**CI Pipeline:**
-- Not detected (no `.github/workflows/`, no CircleCI, no Buildkite config found)
-- Manual deploy commands in `package.json` scripts: `deploy:pages`, `wrangler deploy`
-
----
-
-## Webhooks & Callbacks
-
-**Incoming (student app — `apps/app/src/server.mjs`):**
-- `/webhooks/email` — inbound email from `internjobs-email-ingest` CF Worker; verified via HMAC (`EMAIL_WORKER_SECRET`)
-- `/webhooks/mac-bridge` — iMessage inbound from mac-bridge; verified via HMAC-SHA256 (`BRIDGE_HMAC_SECRET`)
-- `/webhooks/photon` — legacy Photon/Spectrum SMS inbound (still wired for old callbacks, not active production path)
-
-**Incoming (Parrot Worker):**
-- Email inbound via Cloudflare Email Routing `send_email` binding → `EmployeeMailboxDO`
-
-**Outgoing (student app):**
-- Cloudflare Workers AI REST: `https://api.cloudflare.com/client/v4/accounts/{id}/ai/run/...`
-- Bright Data API: `https://api.brightdata.com/datasets/v3/scrape`
-- Lakera Guard: `https://api.lakera.ai/v2/guard`
-- Mac-bridge: `BRIDGE_URL/v1/send` (iMessage outbound)
-- Graph API proxy: `https://internjobs-graph-api.fly.dev` (Cypher queries)
-
-**Outgoing (Parrot Worker):**
-- CF AI Gateway: `https://gateway.ai.cloudflare.com/v1/...` (LLM)
-- Mattermost REST: `https://chat.internjobs.ai/api/v4/...` (bot token)
-- Daily.co REST: `https://api.daily.co/v1` (room management)
-- Lakera Guard: `https://api.lakera.ai/v2/guard`
-- Graph API proxy: `https://internjobs-graph-api.fly.dev`
-- Student app internal API: `https://app.internjobs.ai/internal/safety-events` (Bearer `STUDENT_API_SECRET`)
-
----
+- GitHub Actions `.github/workflows/ci.yml` (see STACK.md). Phase submission via `scripts/submit-phase.mjs` writing `submissions/<phase>.json`, validated by `scripts/check-submission.mjs`; promotion check `scripts/verify-v15-promotion.mjs`; Clerk restriction config `scripts/33-clerk-restrictions-config.mjs`.
+- Deploys: `wrangler deploy` (Workers), `wrangler pages deploy` (marketing, employers), `fly deploy` (Node/infra). Workspace deploy is a full replace: deploy `internjobs-parrot` only from `main` (memory "Workspace deploy = full replace"; a branch deploy removed a prod feature on 2026-10-08).
 
 ## Environment Configuration
 
-**Required secrets (student app — production Fly):**
-- `CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `CLERK_JWKS_URL`
-- `DATABASE_URL`
-- `BRIDGE_URL`, `BRIDGE_HMAC_SECRET`
-- `FALKORDB_URL`
-- `CLOUDFLARE_AI_ACCOUNT_ID`, `CLOUDFLARE_AI_API_TOKEN`
-- `EMAIL_WORKER_SECRET`
-- `INTERNAL_API_SECRET`
-- `BRIGHTDATA_API_TOKEN`
-- `LAKERA_GUARD_API_KEY`
-- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+**Required env var names (by area):**
+- Student app: `DATABASE_URL`, `APP_URL`, `APP_SESSION_SECRET`, Clerk vars, `R2_*`, `CLOUDFLARE_AI_*`, `BRIGHTDATA_*`, `SPECTRUM_*`/`PHOTON_*`, `LAKERA_*`, `GRAPH_API_*`, `FALKORDB_URL`, `WAITLIST_MODE`, `PAIRING_TTL_HOURS`, `AGENT_NUMBER`, `HOST`, `PORT`
+- Workspace: `PARROT_CLERK_*`, `MATTERMOST_*`, `OIDC_*`, `DAILY_API_KEY`, `PUSH_VAPID_PRIVATE_KEY`, `STUDENT_API_SECRET`, `GRAPH_API_SECRET`, `CLOUDFLARE_*`, `PARROT_AI_GATEWAY_ID`
+- Startup MCP: `STARTUPS_CLERK_*`, `STARTUP_API_SECRET`, `STARTUP_MCP_ADMIN_SECRET`, `TELNYX_*`, `EMAIL_HANDOFF_SECRET`
+- Employers Pages: Clerk keys, Svix webhook secret (`apps/employers/.env.example` names only)
+- Next-style names (`NEXT_PUBLIC_*`) appear in code but no Next.js dependency exists; treat as legacy.
 
-**Required secrets (Parrot Worker — `wrangler secret put`):**
-- `PARROT_CLERK_PUBLISHABLE_KEY`, `PARROT_CLERK_SECRET_KEY`, `PARROT_CLERK_JWKS_URL`
-- `CLOUDFLARE_AI_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `PARROT_AI_GATEWAY_ID`
-- `GRAPH_API_SECRET`, `STUDENT_API_SECRET`
-- `PUSH_VAPID_PRIVATE_KEY`
-- `OIDC_SIGNING_KEY`, `OIDC_PUBLIC_JWK`
-- `MATTERMOST_OIDC_CLIENT_ID`, `MATTERMOST_OIDC_CLIENT_SECRET`
-- `MATTERMOST_BOT_TOKEN`
-- `DAILY_API_KEY`
-- `SENTRY_DSN` (optional)
-- `LAKERA_GUARD_API_KEY`
+**Secrets location:** Infisical, org Projecta, env `prod`, path `/internjobs-ai` (see memory "Infisical project"; `.infisical.json` holds only workspace id and default env). Runtime copies: Fly secrets, Wrangler secrets, Pages env. Persist any newly pasted secret to Infisical first.
 
-**Secrets location:**
-- All production secrets stored in Infisical org `2c12f042...`, project `26995afd...`, env `prod`, path `/internjobs-ai`
-- Fly secrets set via `flyctl secrets set`
-- CF Worker secrets set via `wrangler secret put`
+## Webhooks & Callbacks
+
+**Incoming:**
+- `https://app.internjobs.ai/webhooks/email` (HMAC from email worker, `apps/app/src/server.mjs`)
+- `https://mcp.internjobs.ai/internal/email/inbound` (`apps/startup/workers/routes/email.ts`)
+- Telnyx webhook (`apps/startup/workers/routes/telnyx.ts`, `TELNYX_WEBHOOK_PUBLIC_KEY`), Spectrum/Photon webhook (`SPECTRUM_WEBHOOK_SECRET`), Clerk/Svix webhook in `apps/employers/functions/api/[[path]].ts`
+- Parrot OIDC endpoints for Mattermost (`apps/parrot/workers/routes/oidc.ts`)
+
+**Outgoing:** Email worker -> Fly/startup MCP; app -> `bridge.internjobs.ai`; Parrot -> student API, graph API, Mattermost, Daily, Clerk (`api.clerk.com`).
 
 ---
 
-*Integration audit: 2026-05-24*
+*Integration audit: 2026-10-08*

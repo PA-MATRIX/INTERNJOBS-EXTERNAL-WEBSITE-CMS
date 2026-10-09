@@ -1,325 +1,141 @@
+<!-- generated from internjobs-cms @ d1658aa5ba0ce397788cd79c34b425c459eaa0da on 2026-10-08 -->
 # Testing Patterns
 
-**Analysis Date:** 2026-05-24
-
-## Architectural Context Loaded
-
-- No `.planning/NORTH-STAR.md` or locked memory files that constrain testing approach were found.
-- No AGENTS.md or CLAUDE.md at repo root.
-
----
+**Analysis Date:** 2026-10-08
+**Baseline:** merged main `d1658aa5ba0ce397788cd79c34b425c459eaa0da` (tracked files; `apps/canary-monitor/` excluded)
 
 ## Test Framework
 
-**Runner:**
-- Node.js built-in test runner (`node:test`) — no Jest, Vitest, or Mocha
-- No test framework config file (no `jest.config.*`, no `vitest.config.*`)
-- Available in Node >= 22, which is the required engine across all Node apps
+There are FOUR runners; use the one the target package already uses.
 
-**Assertion Library:**
-- `node:assert/strict` — strict equality mode by default
+| Package | Runner | Config | Script |
+|---|---|---|---|
+| `apps/parrot` (Workspace) | Vitest `^3.2.0` | `apps/parrot/vitest.config.ts` | `npm test` = `vitest run` |
+| `apps/startup` | `node:test` via `tsx` | none | `npm test` = `tsx --test` |
+| `apps/email-worker` | `node:test` (plain JS) | none | `npm test` = `node --test src/*.test.js` |
+| `apps/app` (student) | `node:test` (plain ESM) | none | `npm run test:auth` = `node --test src/auth.test.mjs` (other tests run with `node --test <file>`) |
+| `apps/employers` | `tsx` script (unit), Playwright `^1.60.0` (e2e) | `apps/employers/playwright.config.ts` | `npm test`, `npm run test:e2e` |
+| `scripts/` | `node:test` | none | `node --test scripts/*.test.mjs` |
 
-**Run Commands:**
+`apps/marketing` has NO unit tests; its gates are `npm run verify:dist` (`apps/marketing/scripts/verify-site-assets.mjs`, `verify-phone-animation-source.mjs`) and `verify-brand.mjs`. `packages/shared` has no tests. `apps/agentic-inbox`, `apps/mac-bridge`, `apps/mattermost-proxy`, `apps/parrot-mattermost`, `infra/*` have no tracked test files (infra has smoke scripts such as `infra/graph-api/smoke.mjs`).
+
+**Assertions:** Vitest `expect` in Parrot; `node:assert/strict` (`import assert from "node:assert/strict"`) everywhere else.
+
+**Run commands:**
 ```bash
-# Run auth tests (apps/app)
-npm --workspace @internjobs/app run test:auth
-# Equivalent: node --test apps/app/src/auth.test.mjs
-
-# Run individual test files directly
-node --test apps/app/src/auth.test.mjs
-node --test apps/app/src/workflows/reply-to.test.mjs
-node --test apps/app/src/storage/r2.test.mjs
-node --test apps/app/src/safety/screen.test.mjs
-
-# Integration smoke (requires live server)
-npm --workspace @internjobs/app run smoke:ops
-npm --workspace @internjobs/app run smoke:graph
-node infra/graph-api/smoke.mjs
+cd apps/parrot && npm test                       # vitest run (all workers/tests)
+cd apps/parrot && npx vitest run workers/tests/lib/safety.test.ts   # single file
+cd apps/parrot && npm run typecheck              # tsc gate, run with tests
+cd apps/startup && npm test                      # tsx --test
+cd apps/startup && npx tsx --test workers/routes/email.test.ts
+cd apps/email-worker && npm run check && npm test
+node --test apps/app/src/safety/screen.test.mjs  # student app, per file
+node --test scripts/verify-code-maps.test.mjs scripts/verify-v15-promotion.test.mjs
+node scripts/check-email-timeout-invariant.mjs   # cross-package invariant
+cd apps/employers && npm run test:e2e:install && npm run test:e2e
 ```
+No coverage tooling is configured anywhere.
 
 ## Test File Organization
 
-**Location:**
-- Co-located with source files in the same directory
-- Named `<module>.test.mjs` immediately next to `<module>.mjs`
-
-**Naming:**
-- Pattern: `<source-file-stem>.test.mjs`
-- Examples:
-  - `apps/app/src/auth.mjs` → `apps/app/src/auth.test.mjs`
-  - `apps/app/src/workflows/reply-to.mjs` → `apps/app/src/workflows/reply-to.test.mjs`
-  - `apps/app/src/storage/r2.mjs` → `apps/app/src/storage/r2.test.mjs`
-  - `apps/app/src/safety/screen.mjs` → `apps/app/src/safety/screen.test.mjs`
-
-**Structure:**
+**Parrot (`apps/parrot/vitest.config.ts`):** only `workers/tests/**/*.test.ts` is included (`environment: "node"`, `globals: false`, so import `describe/it/expect/vi` explicitly). Browser or React tests are not supported.
 ```
-apps/app/src/
-├── auth.mjs
-├── auth.test.mjs          ← co-located
-├── workflows/
-│   ├── reply-to.mjs
-│   └── reply-to.test.mjs  ← co-located
-├── storage/
-│   ├── r2.mjs
-│   └── r2.test.mjs        ← co-located
-└── safety/
-    ├── screen.mjs
-    └── screen.test.mjs    ← co-located
+apps/parrot/workers/tests/
+├── __mocks__/cloudflare-workers.ts   # alias target for "cloudflare:workers" (DurableObject stub)
+├── helpers.ts                        # minimalEnv and shared stubs
+├── csp-header.test.ts, healthz.test.ts
+├── lib/*.test.ts                     # unit tests for workers/lib/* (safety, embed-jwt, mattermost-*, inbound-email, spam-purge, ...)
+└── routes/*.test.ts                  # route smoke tests against the inner Hono app
 ```
+**Other packages co-locate** tests: `apps/startup/workers/lib/slug.test.ts`, `apps/startup/workers/routes/{email,scheduled,telnyx}.test.ts`, `apps/app/src/{auth,safety/screen,storage/r2,workflows/reply-to}.test.mjs`, `apps/email-worker/src/index.test.js`, `apps/employers/functions/api/[[path]].test.ts`, `apps/employers/e2e/founder-flow.spec.ts`.
+
+**Naming:** `<subject>.test.ts|mjs|js`; Playwright uses `.spec.ts`. Test names carry plan IDs (`VERIFY-03a:`, `CHAT-HARD-02`).
+
+**Manual and UAT artifacts (not executed):** `apps/parrot/test/*.md|.sh` (runbooks, `agent-uat-results.md`, `25-01-mmctl-commands.sh`) and `apps/app/test/integ-01-*.md`. Live-proof evidence belongs there or in phase SUMMARY files.
 
 ## Test Structure
 
-**Suite Organization:**
-```js
-// File-level comment block with version, phase ref, and what's covered
-// apps/app/src/storage/r2.test.mjs
-//
-// v1.2 STORAGE-01 — smoke unit tests for the R2 scaffold.
-//
-// What's covered:
-//   1. getR2Client() returns null when ANY of the four envs is missing.
-//   2. getR2Client() returns a non-null client when all four envs are set.
+**Parrot route smoke pattern (`apps/parrot/workers/tests/routes/chat-token.test.ts`):**
+```typescript
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { app } from "../../index";          // INNER Hono app, not workers/app.ts
+import type { Env } from "../../types";
 
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { functionUnderTest, __resetSingletonForTest } from "./module.mjs";
+const mockEnv: Partial<Env> = { MATTERMOST_URL: "https://mattermost.example.com" };
+afterEach(() => vi.unstubAllGlobals());
 
-// Shared test fixtures defined as module-level constants
-const STUB_ENV = {
-  R2_ACCOUNT_ID: "stub-acct",
-  R2_ACCESS_KEY_ID: "stub-key-id",
-  // ...
-};
-
-test("descriptive label: scenario → expected outcome", () => {
-  __resetSingletonForTest();
-  const result = functionUnderTest(input);
-  assert.equal(result, expected, "optional failure message");
+it("returns 401/403 without auth", async () => {
+	const req = new Request("https://parrot.example.com/api/admin/chat/backfill-tokens", { method: "POST" });
+	const res = await app.fetch(req, mockEnv as Env, {} as ExecutionContext);
+	expect([401, 403]).toContain(res.status);
 });
 ```
+- Import the INNER `app` from `workers/index.ts`. Clerk auth and the `X-Parrot-Dev-Employee` dev bypass live in `workers/app.ts`, so `c.var.employee` is never populated and auth-gated routes return 401. Route tests therefore assert "mounted (not 404), auth fires, no crash (not 500)", not 200.
+- Happy paths are covered at the `workers/lib/*` unit level (e.g. `lib/mattermost-pat.test.ts`) and in live UAT.
+- Public routes (`/healthz`, `/oidc/...`) can assert 200.
 
-**Patterns:**
-- Each test is a standalone `test()` call — no `describe` nesting
-- Test name format: `"functionName: scenario → expected"` (e.g., `"getR2Client returns null when no envs set"`, `"requireOperatorAuth: dev session with userType=student → 403"`)
-- Section comments used to group related tests: `// ─── Key helper tests ─────────────────────`
-- Singleton reset before each test that uses a singleton: `__resetSingletonForTest()` called at start of each test body
-- Async tests use `async () => {}` arrow function
+**`node:test` pattern (`apps/startup/workers/routes/email.test.ts`, `apps/app/src/safety/screen.test.mjs`):**
+```typescript
+import test from "node:test";
+import assert from "node:assert/strict";
+
+test("VERIFY-03a: missing API key returns fail-open immediately", async () => {
+  const result = await screenMessage("...", "");
+  assert.equal(result.action, "passed_lakera_unavailable");
+});
+```
+Flat `test()` calls, descriptive sentence names, assertion messages as the third argument.
 
 ## Mocking
 
-**Framework:** No external mocking library. Hand-rolled mock objects.
-
-**Patterns:**
-
-```js
-// Mock response object — captures writes for assertion
-function mockRes() {
-  const captured = { status: null, body: null, headers: {} };
-  return {
-    captured,
-    writeHead(status, headers) {
-      captured.status = status;
-      Object.assign(captured.headers, headers);
-    },
-    setHeader(name, value) { captured.headers[name] = value; },
-    end(body) { captured.body = body; },
-  };
-}
-
-// Mock request object — sets headers/cookies manually
-function mockReqWithDevCookie(claims) {
-  const payload = Buffer.from(JSON.stringify(claims)).toString("base64url");
-  const signed = signValue(payload, config.appSessionSecret);
-  return {
-    headers: {
-      cookie: `internjobs_dev_session=${encodeURIComponent(signed)}`,
-    },
-  };
-}
-
-// Mock Clerk client — injects userType for Backend API path
-function mockClerkClient(userType) {
-  return {
-    users: {
-      async getUser(_userId) {
-        return { id: "user_xxx", public_metadata: { userType } };
-      },
-    },
-  };
-}
-
-// Spy pattern — records whether a method was invoked
-let getUserCalled = false;
-const spyClient = {
-  users: {
-    async getUser(_userId) {
-      getUserCalled = true;
-      return { public_metadata: { userType: "student" } };
-    },
-  },
-};
-assert.equal(getUserCalled, false, "dev sessions must NOT call Clerk Backend API");
-```
-
-**What to Mock:**
-- External HTTP clients (Clerk Backend API, Lakera API) — inject mock client objects via function parameters
-- Node `http.ServerResponse` / `http.IncomingMessage` — hand-rolled `mockRes()` / `mockReq()` objects
-- R2 client environment variables — pass stub `STUB_ENV` objects directly to `getR2Client()`
-
-**What NOT to Mock:**
-- The module under test itself
-- Pure utility functions (`signValue`, `parseConversationReplyTo`, `sanitize`) — these are tested directly with real inputs, no mocks needed
-- Live API calls for `VERIFY-01`/`VERIFY-02` tests — these are conditionally skipped unless real credentials are in env
+- Vitest: `vi.stubGlobal("fetch", vi.fn()...)` and `vi.unstubAllGlobals()` in `afterEach`. The `cloudflare:workers` module is aliased to `workers/tests/__mocks__/cloudflare-workers.ts` in `vitest.config.ts`; add new Workers-only module stubs there.
+- `node:test`: replace `globalThis.fetch` directly and restore in a `finally` block. "NO REAL NETWORK CALLS" is the rule (`apps/startup/workers/routes/email.test.ts`).
+- Env vars: save, set and restore `process.env.X` in try/finally (`apps/app/src/safety/screen.test.mjs`). Note modules that read env at import time need a re-import.
+- Env objects for Workers are built as `Partial<Env>` and cast `as Env`.
+- Mock: outbound HTTP (Mattermost, Lakera, Clerk admin, Telnyx, AI Gateway), time. Do NOT mock the Hono router or the code under test.
 
 ## Fixtures and Factories
 
-**Test Data:**
-```js
-// Shared constant env stubs for storage tests
-const STUB_ENV = {
-  R2_ACCOUNT_ID: "stub-acct-1234567890",
-  R2_ACCESS_KEY_ID: "stub-key-id",
-  R2_SECRET_ACCESS_KEY: "stub-secret",
-  R2_BUCKET: "internjobs-agent-store-test",
-};
+- Shared Worker env and request stubs: `apps/parrot/workers/tests/helpers.ts` (`minimalEnv`).
+- Script tests build real throwaway git repos in `os.tmpdir()` using `mkdtempSync` and helper functions `git`, `put`, `makeLegacy` (`scripts/verify-code-maps.test.mjs`), including a planted secret canary (`SECRET_CANARY_9f3a1c77`) to prove secrets never leak into output, and index-stat checks to prove read-only behaviour. Reuse this pattern for any script that touches git.
+- No shared fixture directory exists; keep fixtures inline.
 
-// Config stubs for auth tests
-const config = {
-  appUrl: "http://localhost:3000",
-  appSessionSecret: "test-secret",
-  enableDevAuth: true,
-  isProduction: false,
-  clerk: {
-    secretKey: "sk_test_xxx",
-    backendApiUrl: "https://api.clerk.com",
-    signInUrl: "",
-    jwksUrl: "",
-  },
-};
+## Coverage and CI
 
-// UUID fixture for email alias tests
-const UUID = "abcdef12-3456-7890-abcd-ef1234567890";
-```
+**Requirements:** none enforced. CI (`.github/workflows/ci.yml`, Node 22) on PRs to `main` and `integration/**`, and pushes to `integration/**`:
+- `submission-gate` (`scripts/check-submission.mjs`, PRs only)
+- `workspaces`: `npm ci`, build marketing, build employers, `npm run build:app`
+- `parrot`: `npm ci`, `npm run typecheck`, `npm test` (vitest), `npm run build`, advisory `wrangler deploy --dry-run` on push
+- `startup`: `npm ci`, `npm run typecheck`, `npm test`, advisory dry-run
+- `email-timeout-invariant`: `node scripts/check-email-timeout-invariant.mjs`
+- `email-worker`: `npm run check`, `npm test`
 
-**Location:**
-- Fixtures defined inline at the top of each test file as module-level `const`
-- No shared fixture files or factories across test files
-
-## Coverage
-
-**Requirements:** None enforced. No coverage tooling configured.
-
-**View Coverage:**
-```bash
-# No coverage command available; coverage is not measured
-```
+NOT run in CI: `apps/app` unit tests (`*.test.mjs`), `apps/employers` unit and e2e tests, `scripts/*.test.mjs`, `apps/marketing` `verify:dist`. Run these locally before merging changes there.
 
 ## Test Types
 
-**Unit Tests (primary):**
-- Location: co-located `.test.mjs` files in `apps/app/src/`
-- Scope: single function or module in isolation
-- Dependencies mocked via hand-rolled objects or stub envs
-- Must be "NO database, NO network — pure unit smoke" (documented in `r2.test.mjs`)
-- Run with: `node --test <path-to-test.mjs>`
-
-**Integration / Smoke Tests (secondary):**
-- Location: `apps/app/scripts/smoke-*.mjs`, `apps/parrot/scripts/smoke-parrot-graph.mjs`, `infra/graph-api/smoke.mjs`
-- Scope: full HTTP request lifecycle against a live server or live external service
-- `verify-app.mjs`: spins up the server in-process, fires real HTTP requests, asserts HTML/JSON responses
-- `smoke-ops.mjs`: exercises the `/ops/*` operator endpoints with a dev session cookie
-- `smoke-graph.mjs`, `smoke-parrot-graph.mjs`: exercise FalkorDB graph queries end-to-end
-- Run via `npm run smoke:ops`, `npm run smoke:graph` in the relevant workspace
-
-**Live API Tests (conditional):**
-- Live Lakera Guard API tests (`VERIFY-01`, `VERIFY-02`) live inside `screen.test.mjs`
-- Guarded by `if (process.env.LAKERA_GUARD_API_KEY)` — skip gracefully when key is absent
-- Pattern for conditional live tests:
-  ```js
-  const LAKERA_KEY = process.env.LAKERA_GUARD_API_KEY;
-
-  if (LAKERA_KEY) {
-    test("VERIFY-01: injection flagged by Lakera (live API)", async () => { /* ... */ });
-  } else {
-    test("VERIFY-01/02: SKIPPED — set LAKERA_GUARD_API_KEY to run live API tests", () => {
-      console.log("Skipping live Lakera tests — LAKERA_GUARD_API_KEY not set");
-    });
-  }
-  ```
-
-**E2E Tests:**
-- Not used. `.playwright-mcp` directory exists at root but no Playwright test files found in `apps/`.
+- **Unit:** the bulk. Parrot `workers/tests/lib/*`, startup `slug`/`email`/`scheduled`/`telnyx`, student `auth`/`screen`/`r2`/`reply-to`.
+- **Route smoke:** Parrot `workers/tests/routes/*` (mounted and gated, per above).
+- **Invariant / meta tests:** `scripts/check-email-timeout-invariant.mjs` reads real constants from two packages; `scripts/verify-code-maps.test.mjs` and `verify-v15-promotion.test.mjs` test the repo's own verifiers.
+- **E2E:** Playwright in `apps/employers/e2e/founder-flow.spec.ts`. Targets `https://employers.internjobs.ai` by default, override with `TEST_BASE_URL`. 3 unauthenticated tests always run; 4 authenticated tests are skipped unless `PLAYWRIGHT_CLERK_TEST_TOKEN` is set (never commit a value).
+- **Live and smoke:** `apps/app/scripts/smoke-*.mjs`, `scripts/26-kgraph-*.mjs`, `infra/graph-api/smoke.mjs`, `npm run verify:marketing:production`. These hit real services; run only with approval.
 
 ## Common Patterns
 
-**Async Testing:**
-```js
-test("requireOperatorAuth: dev session with userType=student → 403", async () => {
-  const req = mockReqWithDevCookie({ sub: "dev_student_x", userType: "student" });
-  const res = mockRes();
+**TDD workflow required by the project (global CLAUDE.md):** write the failing test with a negative control, run and record RED output, implement, record GREEN, then refactor. Plan SUMMARY files must contain the RED evidence before the GREEN evidence. Live production steps need a readback that fails before and passes after.
 
-  const auth = await requireOperatorAuth(req, res, config);
-  assert.equal(auth, null, "requireOperatorAuth should return null for non-operator");
-  assert.equal(res.captured.status, 403, "should be rejected with 403");
-  const body = JSON.parse(res.captured.body);
-  assert.equal(body.error, "forbidden");
-  assert.equal(body.reason, "not_operator");
-});
-```
+**Async testing:** `async` test functions with `await app.fetch(...)` or `await fn(...)`; no fake timers convention.
 
-**Error Testing (throws):**
-```js
-test("sanitize: rejects empty, dot, dotdot", () => {
-  assert.throws(() => sanitize(""), /invalid filename/);
-  assert.throws(() => sanitize("   "), /invalid filename/);
-  assert.throws(() => sanitize("."), /invalid filename/);
-});
+**Error / fail-open testing:** assert the degraded result rather than a throw, e.g. dead endpoint gives `action === "passed_lakera_unavailable"` and `flagged === false`.
 
-test("studentKey: throws on missing studentId", () => {
-  assert.throws(() => studentKey("", "x.txt"), /studentId is required/);
-});
-```
+**Honest scope notes:** when a test only proves a local number (e.g. startup timeout constants), say so in the header comment and point to the real guard.
 
-**Null-return Testing (no throw):**
-```js
-test("buildConversationReplyTo: rejects malformed", () => {
-  assert.equal(buildConversationReplyTo(""), null);
-  assert.equal(buildConversationReplyTo(null), null);
-  assert.equal(buildConversationReplyTo(undefined), null);
-  assert.equal(buildConversationReplyTo("not-a-uuid"), null);
-});
-```
-
-**Never-throws Contract Testing:**
-```js
-test("VERIFY-03c: screenMessage never throws regardless of input", async () => {
-  let threw = false;
-  try {
-    await screenMessage(null, undefined);
-  } catch {
-    threw = true;
-  }
-  assert.equal(threw, false, "screenMessage must never throw on null/undefined inputs");
-});
-```
-
-**Singleton Reset Pattern:**
-```js
-test("getR2Client singleton: second call returns same instance", () => {
-  __resetR2ClientForTest();  // always reset before test that checks singleton behavior
-  const a = getR2Client(STUB_ENV);
-  const b = getR2Client(STUB_ENV);
-  assert.equal(a, b, "singleton");
-});
-```
-
-## Gaps
-
-- No TypeScript/Worker test files found (no tests for `apps/parrot/workers/`, `apps/agentic-inbox/workers/`)
-- No test runner integration in root `package.json` (no `npm test` command at workspace root)
-- Coverage tooling absent
-- No tests for React components (no React Testing Library or similar)
+**Adding a test:**
+- Parrot lib or route: new file under `apps/parrot/workers/tests/{lib,routes}/<name>.test.ts`, header comment with path and plan ID.
+- Startup Worker: co-locate `<name>.test.ts` beside the module, `node:test` plus `tsx`.
+- Student app: co-locate `<name>.test.mjs`, then add a script or run with `node --test`; consider wiring into CI.
+- New root script: `scripts/<name>.test.mjs` using temp-dir fixtures.
 
 ---
 
-*Testing analysis: 2026-05-24*
+*Testing analysis: 2026-10-08*

@@ -1,181 +1,102 @@
+<!-- generated from internjobs-cms @ d1658aa5ba0ce397788cd79c34b425c459eaa0da on 2026-10-08 -->
 # Coding Conventions
 
-**Analysis Date:** 2026-05-24
+**Analysis Date:** 2026-10-08
+**Baseline:** merged main `d1658aa5ba0ce397788cd79c34b425c459eaa0da` (tracked files only; untracked `apps/canary-monitor/` is not mapped)
 
 ## Architectural Context Loaded
 
-- No `.planning/NORTH-STAR.md` found in repo root.
-- No `CLAUDE.md` or `AGENTS.md` at repo root.
-- No locked sources that constrain coding convention choices were identified.
+- No `.planning/NORTH-STAR.md`, `AGENTS.md` or `CLAUDE.md` exists in the repo root.
+- Locked source: global `~/.claude/CLAUDE.md` — "Plan → rrr-plan-checker → execute → rrr-verifier" and "TDD-driven, always" (failing test and RED evidence first). Applies to how code is written, not to its style.
+- Locked source: project memory — "Auth: two Clerk apps, not one" (Students = LinkedIn-only, Employees = phone-OTP-only; do not merge). "Clerk JWT claims are minimal" (only `sub` is guaranteed; never require email/phone). "LLM via AI Gateway not direct REST" (Parrot LLM calls go through CF AI Gateway; the student app stays on direct REST; do not migrate as a side effect). "App naming" (say "Workspace" in narrative, never "parrot" as a product name, though `apps/parrot/` is the directory).
+- Locked source: project memory — "Workspace deploy = full replace" (deploy `internjobs-parrot` only from main).
 
----
+## Repo Layout Facts That Drive Conventions
+
+- Root `package.json` is an npm workspace for `apps/*` and `packages/*` but EXCLUDES `apps/agentic-inbox`, `apps/parrot`, `apps/startup`. Those three have their own `package.json` and lockfile, are installed with their own `npm ci`, and are built and tested in separate CI jobs (`.github/workflows/ci.yml`).
+- Three language modes coexist. Match the mode of the app you are editing:
+  - `apps/app` (student app), `apps/email-worker`, `scripts/*`, `apps/marketing/scripts/*`: plain ESM JavaScript (`.mjs`, or `.js` with `"type": "module"`), no build step, no TypeScript.
+  - `apps/parrot` (Workspace), `apps/startup`, `apps/employers`, `apps/marketing/src`, `packages/shared`: TypeScript, `strict: true`.
+  - `apps/parrot/workers` and `apps/startup/workers`: Cloudflare Workers running Hono.
+- `packages/shared/src/index.ts` is the only shared package (`@internjobs/shared`, exports `./src/index.ts` directly with no build).
 
 ## Naming Patterns
 
 **Files:**
-- Node.js/Fly app modules: `kebab-case.mjs` (e.g., `auth.mjs`, `http.mjs`, `store.mjs`, `student-inbound.mjs`)
-- Cloudflare Worker modules (TypeScript): `kebab-case.ts` (e.g., `mailbox.ts`, `inbound-email.ts`, `agent-tools.ts`)
-- React Router route files: `kebab-case.tsx` (e.g., `admin.invite.tsx`, `ops.safety.tsx`, `email-list.tsx`)
-- React components: `PascalCase.tsx` (e.g., `EmailPanel.tsx`, `Sidebar.tsx`)
-- Test files: co-located with source, suffix `.test.mjs` (e.g., `auth.test.mjs`, `r2.test.mjs`, `reply-to.test.mjs`)
-- Script/smoke files: `kebab-case.mjs` in `scripts/` directories (e.g., `smoke-ops.mjs`, `verify-app.mjs`)
+- TypeScript worker modules: kebab-case, e.g. `apps/parrot/workers/lib/inbound-email.ts`, `apps/parrot/workers/routes/reply-forward.ts`, `apps/parrot/workers/lib/mattermost-pat` tests as `mattermost-pat.test.ts`.
+- React components: PascalCase `.tsx`, e.g. `apps/parrot/app/components/AgentPanel.tsx`, `ChatPane.tsx`, `apps/marketing/src/components/*`.
+- React Router routes in `apps/parrot/app/routes/`: dot-segmented lowercase, e.g. `admin.invite.tsx`, `dashboard.tsx`, registered in `apps/parrot/app/routes.ts`.
+- Plain ESM JS: lowercase single-word or kebab-case `.mjs`, e.g. `apps/app/src/auth.mjs`, `apps/app/src/spectrum-listener.mjs`.
+- Phase-scoped one-off scripts are prefixed with the phase number: `scripts/26-kgraph-smoke.mjs`, `scripts/33-clerk-restrictions-config.mjs`.
+- Tests are co-named with the subject (`screen.mjs` / `screen.test.mjs`) or live under a mirrored `tests/` tree (see TESTING.md).
+- Verification and runbook documents: `<phase>-<plan>-<topic>.md`, e.g. `apps/parrot/test/25-01-mattermost-sso-runbook.md`.
 
-**Functions:**
-- camelCase for all exported functions: `requireOperatorAuth`, `buildConversationReplyTo`, `getR2Client`, `screenMessage`
-- Factory functions prefix with `create`: `createStore`, `createSpectrumSmsProvider`, `createMacBridgeSmsProvider`
-- Boolean-returning functions prefix with `has`/`is`: `hasLinkedInProfileUrl`, `isMastraReady`, `isOperator`
-- Private/module-internal functions use same camelCase but are not exported; test-seam resets prefix with `_reset` (e.g., `_resetClerkClientForTest`, `__resetR2ClientForTest`)
+**Functions / variables:** camelCase (`getClerkClient`, `screenMessage`, `chatCompletion`, `verifyDraft`). Module-private singletons use a leading underscore (`_clerkClient` in `apps/app/src/auth.mjs`). Constants are UPPER_SNAKE (`MAX_RESERVE_ATTEMPTS`, `RESOLVE_TIMEOUT_MS`, `PARROT_AGENT_TOOLS`).
 
-**Variables:**
-- camelCase for all locals and module-level vars
-- Module-level singletons use `_` prefix: `_clerkClient`, `_graphReadyCacheValue`, `_graphReadyCacheAt`
-- Constants using `_` prefix for module-private cache timestamps: `_graphReadyCacheAt`, `_screenMs`
-- Env objects passed as `env` parameter, process.env accessed in config factory only
+**Types:** PascalCase (`Env` in `apps/parrot/workers/types.ts`). Use `import type` for type-only imports (`verbatimModuleSyntax: true` in `apps/parrot/tsconfig.json`).
 
-**Types (TypeScript):**
-- Interfaces for data shapes: `EmailMetadata`, `EmailFull`, `AttachmentInfo`, `ScreenResult`, `Employee`, `Env`
-- `type` aliases for union types and context shapes: `ParrotContext`, `AppContext`, `MailboxContext`
-- Zod schemas named with `Schema` suffix: `SendEmailRequestSchema`, `RecipientFieldSchema`, `CreateMailboxBody` (some without suffix — inconsistent)
-
-**Constants:**
-- `UPPER_SNAKE_CASE` for module-level timing constants: `GRAPH_READY_TTL_MS`, `TIMEOUT_MS`, `FIND_CLOSED_TODOS_CYPHER`
+**Requirement and decision IDs:** features and tests are tagged with plan IDs in comments and test names (`CHAT-HARD-02`, `SAFETY-VERIFY-01..03`, `STARTUP-AGENT-EMAIL-01`, `VERIFY-03a`). Reuse the owning plan's ID when adding code or tests.
 
 ## Code Style
 
 **Formatting:**
-- No root-level Prettier or ESLint config detected.
-- TypeScript apps (`apps/parrot`, `apps/agentic-inbox`) use `tsconfig.json` with strict mode via Cloudflare's `@cloudflare/workers-types`.
-- Node app (`apps/app`) uses plain `.mjs` (no TypeScript, no formatter config).
-- Indentation: 2 spaces throughout (both `.mjs` and `.ts` files).
-- String quotes: double-quotes in `.mjs` files; mix of double and template literals in `.ts`.
+- No Prettier, Biome, ESLint or `.editorconfig` is tracked anywhere (verified via `git ls-files`). Style is by convention only.
+- `apps/parrot` and `apps/startup` TypeScript: TAB indentation, double quotes, semicolons, trailing commas in multi-line literals.
+- `apps/app` `.mjs` and `scripts/*.mjs`: 2-space indentation, double quotes, semicolons.
+- `apps/startup` and `apps/parrot` tests use tabs; `scripts/*.test.mjs` use 2 spaces. Follow the surrounding file.
 
-**Linting:**
-- No root `.eslintrc` or `biome.json` detected.
-- TypeScript compilation (`tsc -b`) serves as the primary type-checker in `apps/parrot` and `apps/agentic-inbox` via `npm run typecheck`.
-- Node app uses `node --check src/index.js` in `apps/email-worker`.
+**Type checking is the only automated static gate:**
+- `apps/parrot`: `npm run typecheck` = `npm run cf-typegen && react-router typegen && tsc -b` (CI-enforced).
+- `apps/startup`: `npm run typecheck` = `tsc --noEmit` (CI-enforced).
+- `apps/email-worker`: `npm run check` = `node --check src/index.js` (CI-enforced).
+- `apps/marketing`, `apps/employers`: type-checked during `npm run build`.
+- `apps/app`: no typecheck; `checkJs` is not used; `npm run verify` runs `apps/app/scripts/verify-app.mjs`.
 
 ## Import Organization
 
-**Order (`.mjs` Node modules):**
-1. Node built-ins using `node:` prefix: `import { createServer } from "node:http"`, `import { createHmac } from "node:crypto"`, `import test from "node:test"`, `import assert from "node:assert/strict"`
-2. Third-party npm packages
-3. Local relative imports using `.mjs` extension
+**Order (TypeScript workers, as in `apps/parrot/workers/routes/agent.ts`):**
+1. Third-party packages (`hono`, `@clerk/backend`).
+2. Relative `../lib/*` helpers, using multi-line named imports, one name per line when more than two.
+3. `import type { Env } from "../types"` for types.
 
-**Order (TypeScript Worker modules):**
-1. Third-party packages (`hono`, `zod`, `jose`, etc.)
-2. Local relative imports using no extension or `.js` extension (resolved by TypeScript)
+**Frontend (`apps/parrot/app/`):** React and `react-router` first, then `~/components/...`, `~/lib/...` via the `~` alias (defined in `apps/parrot/tsconfig.cloudflare.json` `paths`).
 
-**Path Aliases:**
-- None detected. All imports are relative paths.
-- Monorepo shared package `@internjobs/shared` at `packages/shared/src/index.ts` — used via npm workspaces.
-
-**Module Extension:**
-- Always include `.mjs` extension in Node app imports: `import { signValue } from "./http.mjs"`
-- TypeScript files omit extension in imports (standard TS practice)
+**Plain ESM:** Node built-ins with `node:` prefix (`node:test`, `node:assert/strict`, `node:fs`), then packages, then relative imports WITH the `.mjs` extension (`./http.mjs`). TypeScript worker imports omit extensions.
 
 ## Error Handling
 
-**Patterns (Node app):**
-- Functions that must never throw document this explicitly in a block comment and return a sentinel (e.g., `null`, `false`, `{ flagged: false, action: 'passed_lakera_unavailable', ... }`):
-  ```js
-  // All failures are caught and logged; this function never throws.
-  ```
-- Top-level async failures use `.catch()` chained on fire-and-forget calls:
-  ```js
-  ensureGraphSchema().catch((err) => {
-    console.warn(JSON.stringify({ level: "warn", message: "graph_schema_bootstrap_failed", error: err?.message ?? String(err) }));
-  });
-  ```
-- Workflow functions wrap outbound calls in explicit try/catch with structured log emission on failure, then return partial success rather than throwing.
-- Guard clauses throw `Error` synchronously for programming errors (missing required arguments): `if (!pool) throw new Error("runStudentInboundWorkflow: pool is required")`
-
-**Patterns (Hono Worker routes):**
-- Return `c.json({ error: "snake_case_error_code" }, STATUS_CODE)` for all API errors
-- Common error codes use snake_case strings: `"unauthenticated"`, `"forbidden_operator_only"`, `"employee_disabled"`, `"missing_required_claims"`
-
-**Pattern (test seam resets):**
-- Singleton modules export a `__resetXxxForTest()` function prefixed with double underscore, used only in test files to clear module-level state between test cases.
+- Workers fail soft on non-critical side effects: catch, log with `console.warn("<name> failed (non-fatal)", err)`, continue (`apps/parrot/workers/lib/mailbox.ts` `touchLastSeen`).
+- Hard failures use `console.error` with a bracketed or descriptive prefix, e.g. `console.error("[parrot] unhandled error:", err)` in `apps/parrot/workers/index.ts` (global Hono error handler).
+- Auth-gated routes use `requireEmployeeMailbox` (`apps/parrot/workers/lib/mailbox.ts`), which returns 401 when `c.var.employee` is missing. Operator-only routes additionally return 403.
+- Safety screening FAILS OPEN: if the Lakera call has no key, errors or times out, return `action: "passed_lakera_unavailable"` and `flagged: false` (`apps/app/src/safety/screen.mjs`, `apps/parrot/workers/lib/safety.ts`).
+- Cross-service handoffs use explicit timeouts, with the constants checked cross-package by `scripts/check-email-timeout-invariant.mjs`. Do not change `RESOLVE_TIMEOUT_MS`, `INSERT_TIMEOUT_MS`, `EMPLOYERS_HANDOFF_TIMEOUT_MS` or `OVERHEAD_BUDGET_MS` without re-running that script.
+- Auth: Clerk only requires `sub`. Never reject a session for missing email/phone claims.
 
 ## Logging
 
-**Format:** Structured JSON emitted to `console.log` / `console.warn` / `console.error`. Never plain string messages.
-
-**Schema:**
-```js
-console.log(JSON.stringify({
-  level: "info",   // "debug" | "info" | "warn" | "error"
-  event: "snake_case_event_name",
-  // + arbitrary context fields
-}));
-```
-
-**When to log:**
-- `console.warn` + `JSON.stringify` for non-fatal degraded states (e.g., graph schema bootstrap failed, Lakera 5xx)
-- `console.error` + `JSON.stringify` for caught errors in workflow paths
-- `console.log` + `JSON.stringify` for operational events (send success, latency measurements, safety screen results)
-- Never `console.log` a plain string in production paths
-
-**Event naming:** `snake_case` string: `"graph_schema_bootstrap_failed"`, `"lakera_latency_ms"`, `"safety_events_write_failed"`
+**Framework:** plain `console.log/warn/error` (no logger library). Use stable snake_case event keys with a structured object where possible, e.g. `console.warn("chat_bootstrap_failed", { ... })` in `apps/parrot/workers/index.ts`. Never log secrets, tokens or message bodies.
 
 ## Comments
 
-**When to Comment:**
-- File-level block comment is mandatory: version tag + phase ref + what the module does.
-  ```js
-  // apps/app/src/workflows/reply-to.mjs
-  //
-  // v1.2 EMAIL-03 — per-conversation email aliases.
-  ```
-- Section dividers use Unicode box characters: `// ─── Section Name ────────────────────────────────────────────────────────────`
-- Inline comments document "why" and edge-case contracts (PITFALLS references, auth loop explanations).
-- Commented-out code kept with an explanation comment when the removal is part of an intentional architectural pivot:
-  ```js
-  // import { routeAndSend } from "./outbound.mjs";
-  // routeAndSend was previously imported here for /ops/drafts/:id/approve path;
-  // after the 2026-05-17 autonomy pivot the approve/edit/reject routes are gone.
-  ```
+- Files open with a header comment: path on line 1 (`// workers/tests/routes/chat-token.test.ts` or `// apps/startup/workers/routes/email.test.ts`), then a plan or requirement ID and a multi-line rationale.
+- Comments explain WHY, including incident history and invariants (see the `ci.yml` job comments and `apps/app/src/auth.mjs` Clerk handshake note). Keep that style; add the plan or phase ID when behaviour is changed.
+- Tests carry a "Scope note" when they can only prove part of an invariant (`apps/startup/workers/routes/email.test.ts`).
+- JSDoc is used sparingly (`/** Minimal Env stub ... */` in `apps/parrot/workers/tests/helpers.ts`).
+- White-label rule in Workspace agent prompts and responses: refer to "the agent" or "Parrot Agent"; never mention agentic-inbox or Maya (`apps/parrot/workers/routes/agent.ts`).
 
-**JSDoc/TSDoc:**
-- JSDoc `/** */` style used for key exported TypeScript functions in Worker libs (e.g., `requireEmployeeMailbox`, `screenMessage`)
-- Node `.mjs` modules use inline `//` comments above exports, not JSDoc
+## Function and Module Design
 
-## Function Design
+- Hono routes: one router per file in `apps/parrot/workers/routes/`, mounted from `apps/parrot/workers/index.ts` (the inner `app`). Clerk auth and the dev bypass live in the outer wrapper `apps/parrot/workers/app.ts`.
+- Business logic goes in `workers/lib/*.ts` as pure or injectable functions (take `fetch`/env as arguments), so tests can stub them. Routes stay thin.
+- Named exports only; no default exports in workers libs (`apps/parrot/workers/app.ts` default export is the Worker entry). No barrel files except `packages/shared/src/index.ts`.
+- Database schema: `apps/parrot/workers/db/schema.ts`; student DB migrations via `apps/app/scripts/migrate.mjs` and `apps/app/db/`.
 
-**Size:** Server route handler functions tend to be large (server.mjs is 2006 lines, workflows/student-inbound.mjs is 1716 lines). Behavior is extracted into named sub-functions within the same file rather than further split across files.
+## Process Conventions (affect every commit)
 
-**Parameters:**
-- Config is always a single `config` object parameter (from `getConfig()`)
-- Env bindings in Workers passed as the `env` Cloudflare parameter
-- Factory pattern: `createXxx(config)` returns a store/client/provider object with method functions
-
-**Return Values:**
-- Functions that can fail return `null` (not throw) when the failure is expected (e.g., `getR2Client({})` → `null`, `buildConversationReplyTo("")` → `null`)
-- Functions that are fail-safe return a structured result object: `{ flagged, action, reason, score, raw }`
-- Async functions always `await`; no `.then()` chains except on fire-and-forget `.catch()` handlers
-
-## Module Design
-
-**Exports:**
-- Named exports only — no default exports in `.mjs` Node modules
-- Default exports used in React Router route files (`.tsx`) and config files (`routes.ts`)
-- Shared type definitions exported from `types.ts` in Worker directories
-
-**Barrel Files:**
-- `packages/shared/src/index.ts` serves as the barrel for the shared package
-- No barrel `index.ts` files within individual app directories — imports go directly to the source file
-
-**Singleton Pattern:**
-- Module-level `let _singleton = null` with a `get_Xxx(env)` factory that lazily initializes and caches:
-  ```js
-  let _clerkClient = null;
-  function getClerkClient(config) {
-    if (_clerkClient) return _clerkClient;
-    _clerkClient = createClerkClient({ ... });
-    return _clerkClient;
-  }
-  ```
-- Always paired with a `__resetXxxForTest()` export when the singleton is tested
+- Phase work lands on branches and is submitted with `scripts/submit-phase.mjs`, which writes per-phase `submissions/<phase>.json`; PRs are gated by `scripts/check-submission.mjs`. Never hand-edit submission markers.
+- Commit messages: `type(phase-plan): subject`, e.g. `feat(38-02): ...`, `docs(38-01): ...`.
+- Code maps in `.planning/codebase/` are checked by `scripts/verify-code-maps.mjs`.
 
 ---
 
-*Convention analysis: 2026-05-24*
+*Convention analysis: 2026-10-08*
