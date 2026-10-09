@@ -1,0 +1,6 @@
+DECISION FAIL:
+  - status is pending
+  - decided_by must be Raj
+  - decided_at missing
+  - option must be upgrade-team|alternative|accept-unprotected
+  - CONTEXT.md has no D19 entry

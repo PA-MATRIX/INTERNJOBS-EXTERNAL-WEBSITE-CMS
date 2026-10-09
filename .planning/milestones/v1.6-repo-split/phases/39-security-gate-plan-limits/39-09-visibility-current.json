@@ -1,0 +1,18 @@
+{
+    "generated_at": "2026-10-09T05:17:53Z",
+    "note": "read-only gh repo view output; no tokens",
+    "repos": {
+        "PA-MATRIX/internjobs-marketing-website": {
+            "nameWithOwner": "PA-MATRIX/internjobs-marketing-website",
+            "visibility": "PUBLIC"
+        },
+        "PA-Ai-Team/Parrot": {
+            "nameWithOwner": "PA-Ai-Team/Parrot",
+            "visibility": "PRIVATE"
+        },
+        "growthpods/Internjobs": {
+            "nameWithOwner": "growthpods/Internjobs",
+            "visibility": "PRIVATE"
+        }
+    }
+}
