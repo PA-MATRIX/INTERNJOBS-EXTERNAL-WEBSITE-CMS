@@ -86,7 +86,18 @@ Plans:
   1. `PA-Ai-Team/Parrot` tree and history are scanned and findings recorded (any real secret rotated)
   2. Secret scanning and push protection are on wherever the PA-MATRIX plan allows, with limits recorded
   3. It is known whether branch protection survives going private on the current plan, and Raj has decided (upgrade vs alternative) before any visibility change
-**Plans**: TBD
+**Plans**: 10 plans
+Plans:
+- [ ] 39-01-PLAN.md — SEC-01 scan verifier (record schema, leak check, rotation gate, ref coverage, guard, gh-write log) tests-first
+- [ ] 39-02-PLAN.md — SEC-02 limits/enable-record verifier tests-first
+- [ ] 39-03-PLAN.md — SEC-03 research/probe/decision/visibility verifier tests-first
+- [ ] 39-04-PLAN.md — Parrot scan (gitleaks, redacted, all refs + worktrees), sanitized record; scanner install approval
+- [ ] 39-05-PLAN.md — read-only GitHub state + limits matrix for three owners; Raj scope confirmation
+- [ ] 39-06-PLAN.md — SEC-03 docs research (verified vs assumed, prices, options)
+- [ ] 39-07-PLAN.md — SEC-03 throwaway-repo probe (live, approval-gated; skip allowed)
+- [ ] 39-08-PLAN.md — SEC-02 live enable secret scanning/push protection with readbacks (approval-gated)
+- [ ] 39-09-PLAN.md — SEC-03 decision by Raj (D18) + no-visibility-change proof
+- [ ] 39-10-PLAN.md — closure aggregator, records, phase verifier, flip approval (D19)
 
 ### Phase 40: Build and prove the two repos locally (no live GitHub)
 **Goal**: Build and prove the two repos locally (no live GitHub)
