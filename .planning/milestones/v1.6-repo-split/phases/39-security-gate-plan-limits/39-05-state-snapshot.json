@@ -1,0 +1,691 @@
+{
+  "captured_at": "2026-10-09T04:44:07.455Z",
+  "owners": {
+    "PA-MATRIX": {
+      "kind": "org",
+      "plan": "free",
+      "public_repos": [
+        "PA-MATRIX/internjobs-marketing-website",
+        "PA-MATRIX/OpenMythos"
+      ],
+      "public_repos_enumerated": true,
+      "repo_count": 11
+    },
+    "PA-Ai-Team": {
+      "kind": "org",
+      "plan": "free",
+      "public_repos": [],
+      "public_repos_enumerated": true,
+      "repo_count": 26
+    },
+    "growthpods": {
+      "kind": "user",
+      "plan": null,
+      "public_repos": [
+        "growthpods/freehire",
+        "growthpods/ms",
+        "growthpods/goose-skills",
+        "growthpods/gooseworks-skills",
+        "growthpods/ai-marketing-skills",
+        "growthpods/goose-aeo",
+        "growthpods/muscle-mem",
+        "growthpods/OpenHands",
+        "growthpods/system-prompts-and-models-of-ai-tools"
+      ],
+      "public_repos_enumerated": true,
+      "repo_count": 32
+    }
+  },
+  "repos": [
+    {
+      "nameWithOwner": "PA-Ai-Team/Parrot",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/DEMO-acme-website",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/DEMO-dev-sios-acme-inc",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/DEMO-keystone-assurance-website",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/DEMO-sunrise-dental-website",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/Enrichment",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/MAH-Sample-VA",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/OpenMythos",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "disabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "disabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/internjobs-marketing-website",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "disabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "disabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 200,
+        "message": ""
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/sis-marketing-website",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/superintelligence",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "PA-MATRIX/ussuperapp",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/Internjobs",
+      "visibility": "PRIVATE",
+      "security_and_analysis": null,
+      "protection": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "rulesets": {
+        "status": 403,
+        "message": "Upgrade to GitHub Pro or make this repository public to enable this feature."
+      },
+      "alerts_api": {
+        "status": 404,
+        "message": "Secret scanning is disabled on this repository."
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/OpenHands",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/ai-marketing-skills",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/freehire",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/goose-aeo",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/goose-skills",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/gooseworks-skills",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/ms",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/muscle-mem",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    },
+    {
+      "nameWithOwner": "growthpods/system-prompts-and-models-of-ai-tools",
+      "visibility": "PUBLIC",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "protection": {
+        "status": 404,
+        "message": "Branch not protected"
+      },
+      "rulesets": {
+        "status": 200,
+        "message": ""
+      },
+      "alerts_api": {
+        "status": 200,
+        "message": ""
+      },
+      "admin": true
+    }
+  ],
+  "parrot_prs": {
+    "query": "repos/PA-Ai-Team/Parrot/pulls?state=all&per_page=100",
+    "status": 200,
+    "items": [
+      {
+        "number": 12,
+        "state": "open",
+        "head": "fix/sms-send-and-contact-dedupe-main",
+        "title": "Fix v1 SMS send and phone-matched contact dedupe"
+      },
+      {
+        "number": 11,
+        "state": "open",
+        "head": "feat/hunter-contact-drawer",
+        "title": "Reuse campaign contact panels in host-app drawers"
+      },
+      {
+        "number": 10,
+        "state": "closed",
+        "head": "fix/cdr-sync-pacing-and-window",
+        "title": "fix(cdr-sync): make the sync actually complete — pacing, window, failure isolation"
+      },
+      {
+        "number": 9,
+        "state": "closed",
+        "head": "fix/messaging-delivery-receipts",
+        "title": "fix(messaging): record delivery receipts so failed sends stop reading as sent"
+      },
+      {
+        "number": 8,
+        "state": "closed",
+        "head": "fix/cdr-sync-all-record-types",
+        "title": "fix(cdr-sync): sync all five cost-bearing voice record types"
+      },
+      {
+        "number": 7,
+        "state": "closed",
+        "head": "fix/disposition-missing-call-log",
+        "title": "fix(dialer): create call_logs at dial time so early hangups can be dispositioned"
+      },
+      {
+        "number": 6,
+        "state": "closed",
+        "head": "feat/per-employee-local-presence",
+        "title": "feat(local-presence): per-employee enable/disable"
+      },
+      {
+        "number": 5,
+        "state": "closed",
+        "head": "feat/sms-compose",
+        "title": "feat(sms): compose to any number from the SMS inbox (+ New)"
+      },
+      {
+        "number": 4,
+        "state": "closed",
+        "head": "fix/telnyx-call-leaks-and-cost-defaults",
+        "title": "fix: Telnyx call leak fixes + Cost by SDR"
+      },
+      {
+        "number": 3,
+        "state": "closed",
+        "head": "feat/clerk-auth-migration",
+        "title": "feat: AMD pickup classification + Company bucket + branch backlog"
+      },
+      {
+        "number": 2,
+        "state": "closed",
+        "head": "feat/clerk-auth-migration",
+        "title": "Migrate auth to Clerk + decouple platform operator from org role"
+      },
+      {
+        "number": 1,
+        "state": "closed",
+        "head": "flyio-new-files",
+        "title": "Fly.io Launch config files"
+      }
+    ]
+  }
+}
