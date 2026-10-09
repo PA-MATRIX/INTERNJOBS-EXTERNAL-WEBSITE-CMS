@@ -1,0 +1,180 @@
+TAP version 13
+# Subtest: control: known-good record passes
+ok 1 - control: known-good record passes
+  ---
+  duration_ms: 44.481208
+  ...
+# Subtest: T-gate: missing / gaps_found / passed
+ok 2 - T-gate: missing / gaps_found / passed
+  ---
+  duration_ms: 168.708583
+  ...
+# Subtest: T-leak-ghp
+ok 3 - T-leak-ghp
+  ---
+  duration_ms: 43.894667
+  ...
+# Subtest: T-leak-akia
+ok 4 - T-leak-akia
+  ---
+  duration_ms: 46.959958
+  ...
+# Subtest: T-leak-pem
+ok 5 - T-leak-pem
+  ---
+  duration_ms: 43.130541
+  ...
+# Subtest: T-leak-clean
+ok 6 - T-leak-clean
+  ---
+  duration_ms: 43.755
+  ...
+# Subtest: T-leak never echoes the value
+ok 7 - T-leak never echoes the value
+  ---
+  duration_ms: 43.683
+  ...
+# Subtest: T-schema-tool-name-empty
+ok 8 - T-schema-tool-name-empty
+  ---
+  duration_ms: 42.732209
+  ...
+# Subtest: T-schema-tool-version-empty
+ok 9 - T-schema-tool-version-empty
+  ---
+  duration_ms: 48.650375
+  ...
+# Subtest: T-schema-tool-singular-pos
+ok 10 - T-schema-tool-singular-pos
+  ---
+  duration_ms: 51.761875
+  ...
+# Subtest: T-schema-tool-singular-neg
+ok 11 - T-schema-tool-singular-neg
+  ---
+  duration_ms: 44.440292
+  ...
+# Subtest: T-schema-no-tool
+ok 12 - T-schema-no-tool
+  ---
+  duration_ms: 45.120125
+  ...
+# Subtest: T-schema-redacted-false
+ok 13 - T-schema-redacted-false
+  ---
+  duration_ms: 42.859416
+  ...
+# Subtest: T-schema-finding-count-mismatch
+ok 14 - T-schema-finding-count-mismatch
+  ---
+  duration_ms: 51.999708
+  ...
+# Subtest: T-schema-bad-classification
+ok 15 - T-schema-bad-classification
+  ---
+  duration_ms: 49.637708
+  ...
+# Subtest: T-schema-classification-ok-real
+ok 16 - T-schema-classification-ok-real
+  ---
+  duration_ms: 43.878625
+  ...
+# Subtest: T-schema-classification-ok-false-positive
+ok 17 - T-schema-classification-ok-false-positive
+  ---
+  duration_ms: 42.998459
+  ...
+# Subtest: T-schema-classification-ok-test-fixture
+ok 18 - T-schema-classification-ok-test-fixture
+  ---
+  duration_ms: 42.782958
+  ...
+# Subtest: T-schema-classification-ok-public-by-design
+ok 19 - T-schema-classification-ok-public-by-design
+  ---
+  duration_ms: 45.105292
+  ...
+# Subtest: T-schema-missing-file
+ok 20 - T-schema-missing-file
+  ---
+  duration_ms: 44.760333
+  ...
+# Subtest: T-schema-missing-rule
+ok 21 - T-schema-missing-rule
+  ---
+  duration_ms: 41.983666
+  ...
+# Subtest: T-schema-missing-commit
+ok 22 - T-schema-missing-commit
+  ---
+  duration_ms: 42.2865
+  ...
+# Subtest: T-schema-missing-fingerprint
+ok 23 - T-schema-missing-fingerprint
+  ---
+  duration_ms: 42.882084
+  ...
+# Subtest: T-rotation-neg
+ok 24 - T-rotation-neg
+  ---
+  duration_ms: 169.868291
+  ...
+# Subtest: T-rotation-pos
+ok 25 - T-rotation-pos
+  ---
+  duration_ms: 45.443333
+  ...
+# Subtest: T-digest
+ok 26 - T-digest
+  ---
+  duration_ms: 89.252875
+  ...
+# Subtest: T-cov-pos
+ok 27 - T-cov-pos
+  ---
+  duration_ms: 302.247667
+  ...
+# Subtest: T-cov-drop-ref
+ok 28 - T-cov-drop-ref
+  ---
+  duration_ms: 282.974292
+  ...
+# Subtest: T-cov-tip-moved
+ok 29 - T-cov-tip-moved
+  ---
+  duration_ms: 309.149708
+  ...
+# Subtest: T-cov-require-ref
+ok 30 - T-cov-require-ref
+  ---
+  duration_ms: 298.222667
+  ...
+# Subtest: T-cov-note
+ok 31 - T-cov-note
+  ---
+  duration_ms: 400.846208
+  ...
+# Subtest: T-cov-two-mirrors-pos
+ok 32 - T-cov-two-mirrors-pos
+  ---
+  duration_ms: 592.529875
+  ...
+# Subtest: T-cov-wrong-source-neg
+ok 33 - T-cov-wrong-source-neg
+  ---
+  duration_ms: 505.899584
+  ...
+# Subtest: T-cov-requires-source
+ok 34 - T-cov-requires-source
+  ---
+  duration_ms: 434.760542
+  ...
+1..34
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4663.761709

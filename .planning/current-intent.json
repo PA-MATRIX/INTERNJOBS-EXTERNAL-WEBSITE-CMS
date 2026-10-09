@@ -1,29 +1,25 @@
 {
   "milestone_id": "v1.6 Repo Split + Code Mapping",
-  "phase_id": "38 Code map + coupling inventory",
-  "plan_id": "38-04",
-  "intent": "Phase 38 complete (MAP-01..06 Complete, D14 approval, records only); next: Phase 39 security gate + GitHub plan limits (/rrr:plan-phase 39)",
+  "phase_id": "39 Security gate + GitHub plan limits",
+  "plan_id": "39 (plans 01-10, wave-parallel)",
+  "intent": "Phase 39 wave 1: build SEC-01 verifier (39-01), plus 39-02/39-03 verifiers in parallel; TDD-first",
   "allowed_paths": [
     ".planning/",
     "scripts/"
   ],
   "constraints": [
-    "Legacy and Parrot read-only (GIT_OPTIONAL_LOCKS=0); Parrot ff already done (D12)",
+    "Parrot and legacy read-only (GIT_OPTIONAL_LOCKS=0)",
     "No .env* reads",
-    "No commits of runtime files, no pushes/GitHub writes",
+    "No GitHub writes except approval-gated live tasks; no pushes",
     "TDD-first (RED before GREEN)",
-    "Entry gate 38-03 verified: passed",
-    "Phase 38 flipped to Complete after 38-VERIFICATION passed and Raj approved (D14); records only, no push/PR/GitHub writes"
+    "Entry gate: 38-VERIFICATION status passed"
   ],
   "start_time": "2026-10-09T01:23:33.950089+00:00",
-  "saved_at": "2026-10-09T04:30:00.000000Z",
-  "updated_at": "2026-10-09T04:30:00.000000Z",
-  "active_plan": "38-04 complete; next Phase 39 (not yet planned)",
+  "saved_at": "2026-10-09T05:00:00.000000Z",
+  "updated_at": "2026-10-09T05:00:00.000000Z",
+  "active_plan": "39-01..39-03 verifiers (wave 1)",
   "next": [
-    "/rrr:plan-phase 39",
-    "Open: apps/canary-monitor/ home before Phase 40/41",
-    "Open: 11 Excluded repos and legacy Render liveness unconfirmed",
-    "Open: docs/phase-38-code-map PR held per D10 (main frozen) pending Raj decision"
+    "39-01..03 verified, then wave 2 (39-04, 39-05, 39-07, 39-08)"
   ],
-  "handoff": ".planning/ROADMAP.md (Phase 39)"
+  "handoff": ".planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/"
 }
