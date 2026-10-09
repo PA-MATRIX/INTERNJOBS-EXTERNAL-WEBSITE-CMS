@@ -1,14 +1,16 @@
 ---
-status: pending
-decided_by:
-decided_at:
-option:
-orgs:
+status: decided
+decided_by: Raj
+decided_at: 2026-10-09T05:32:12Z
+option: accept-unprotected
+orgs: [PA-MATRIX]
 ---
 
 # SEC-03 decision: how does the private platform repo get a protected `main`?
 
-PENDING. Raj has not answered (D19). Nothing is bought, flipped or changed by this phase.
+DECIDED (D19, 2026-10-09T05:32:12Z): **accept-unprotected**. Raj accepts a private platform repo under PA-MATRIX with no branch protection, no rulesets and no secret scanning.
+
+**Disclosure: this means NO enforcement on the platform `main`.** Protection there is a process rule only (as in D10); any seat with write access can push straight to `main`. Nothing is bought, flipped or changed by Phase 39.
 
 ## Facts (sources by file name)
 
@@ -36,6 +38,14 @@ CI-only enforcement cannot block a direct push to `main`; any seat with write ac
 - Website repo (PA-MATRIX/internjobs-marketing-website): stays public; keeps protection and the integration ruleset (measured 200).
 - Visibility unchanged so far: 39-09-visibility-current.json vs the Phase 38 snapshot.
 
-## Options (to be filled when Raj answers)
+## Decision and consequences
 
-- upgrade-team, alternative, accept-unprotected. Phase 40/41 follow-ups: TBD after the answer.
+- Option chosen: accept-unprotected for the platform repo (PA-MATRIX). No upgrade, no alternative mechanism in this milestone.
+- Evidence it rests on: measured 403s on private Free repos (39-05); probe PARTIAL per D17a, so "protection survives going private" is UNPROVEN AND UNLIKELY; prices with dates above (39-06, fetched 2026-10-08; 39-05, 2026-10-09).
+- Website repo: stays public and protected (PR + 4 required checks, integration/** ruleset), secret scanning + push protection per D18.
+- Phase 40: build the platform repo locally; push nothing to GitHub.
+- Phase 41: create the platform repo private, tighten collaborator write access, record the unprotected state in the closure; no purchase.
+
+## Revisit trigger (PROPOSED, awaiting Raj's confirmation)
+
+Proposed by Claude, not yet confirmed by Raj: revisit upgrade-team before adding any non-admin collaborator with write access, or at Phase 42 closure, whichever comes first. Raj may change it.
