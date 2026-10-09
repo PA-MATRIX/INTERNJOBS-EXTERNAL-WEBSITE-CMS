@@ -13,3 +13,29 @@ ok 11 - T-limits-leak
 # tests 11
 # pass 11
 # fail 0
+
+# 39-02 GREEN - Task 2 (full file)
+ok 1 - T-state-pos
+ok 2 - T-state-owner-missing
+ok 3 - T-enumerated
+ok 4 - T-prs-query
+ok 5 - T-403-message
+ok 6 - T-403-missing
+ok 7 - T-free-private-200
+ok 8 - T-matrix-pos
+ok 9 - T-matrix-plan-mismatch
+ok 10 - T-matrix-owner-row-missing
+ok 11 - T-limits-leak
+ok 12 - T-enable-pos
+ok 13 - T-enable-before-approval
+ok 14 - T-enable-not-disabled-before
+ok 15 - T-enable-after-not-enabled
+ok 16 - T-enable-alerts-404
+ok 17 - T-enable-private-free-claim
+ok 18 - T-enable-pp-doc-missing
+ok 19 - T-enable-approval-missing
+ok 20 - T-enable-scope
+ok 21 - T-enable-leak
+# tests 21
+# pass 21
+# fail 0

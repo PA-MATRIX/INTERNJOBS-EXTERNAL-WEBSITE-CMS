@@ -45,3 +45,21 @@ not ok 11 - T-limits-leak
   actual: 2
 # pass 0
 # fail 11
+
+# 39-02 RED - Task 2 (--enable-record stubbed, exits 2)
+not ok 12 - T-enable-pos
+not ok 13 - T-enable-before-approval
+not ok 14 - T-enable-not-disabled-before
+not ok 15 - T-enable-after-not-enabled
+not ok 16 - T-enable-alerts-404
+not ok 17 - T-enable-private-free-claim
+not ok 18 - T-enable-pp-doc-missing
+not ok 19 - T-enable-approval-missing
+not ok 20 - T-enable-scope
+not ok 21 - T-enable-leak
+# tests 21
+# pass 11
+# fail 10
+  10   actual: 2
+   1   expected: 0
+   9   expected: 1

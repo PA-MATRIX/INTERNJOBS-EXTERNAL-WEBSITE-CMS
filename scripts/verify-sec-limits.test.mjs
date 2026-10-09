@@ -97,3 +97,65 @@ test("T-limits-leak", () => {
   assert.equal(r.status, 1);
   assert.ok(!(r.stdout + r.stderr).includes(tok));
 });
+
+// ---- Task 2: --enable-record ----
+const PUB = "PA-MATRIX/internjobs-marketing-website";
+const goodEnable = () => ({
+  first_write_at: "2026-10-08T12:00:00Z", approval_ref: "D15",
+  repos: [
+    {
+      repo: PUB, visibility: "PUBLIC", plan: "free", outcome: "enabled",
+      before: { secret_scanning: "disabled", push_protection: "disabled" },
+      after: { secret_scanning: "enabled", push_protection: "enabled" },
+      alerts_api_after: { status: 200, count: 0 },
+      push_protection_doc: { url: "https://docs.github.com/x", verified_on: "2026-10-08" },
+    },
+    {
+      repo: "PA-Ai-Team/Parrot", visibility: "PRIVATE", plan: "free", outcome: "not-enabled", reason: "plan",
+      before: { secret_scanning: "disabled", push_protection: "disabled" },
+      after: { secret_scanning: "disabled", push_protection: "disabled" },
+      alerts_api_after: { status: 404, count: 0 },
+    },
+  ],
+});
+const goodApproval = () => ({ approved_by: "raj", approved_at: "2026-10-08T11:00:00Z", d_number: "D15", scope: [PUB, "PA-Ai-Team/Parrot"] });
+const enable = (rec, appr = goodApproval()) =>
+  run("--enable-record", file(rec), ...(appr ? ["--approval", file(appr)] : []));
+
+test("T-enable-pos", () => assert.equal(enable(goodEnable()).status, 0));
+test("T-enable-before-approval", () => {
+  const r = goodEnable(); r.first_write_at = "2026-10-08T10:00:00Z";
+  assert.equal(enable(r).status, 1);
+});
+test("T-enable-not-disabled-before", () => {
+  const r = goodEnable(); r.repos[0].before.secret_scanning = "enabled";
+  assert.equal(enable(r).status, 1);
+  r.repos[0].outcome = "unchanged";
+  assert.equal(enable(r).status, 0);
+});
+test("T-enable-after-not-enabled", () => {
+  const r = goodEnable(); r.repos[0].after.secret_scanning = "disabled";
+  assert.equal(enable(r).status, 1);
+});
+test("T-enable-alerts-404", () => {
+  const r = goodEnable(); r.repos[0].alerts_api_after.status = 404;
+  assert.equal(enable(r).status, 1);
+});
+test("T-enable-private-free-claim", () => {
+  const r = goodEnable(); r.repos[1].outcome = "enabled"; r.repos[1].visibility = "PRIVATE";
+  r.repos[1].after.secret_scanning = "enabled"; r.repos[1].alerts_api_after.status = 200;
+  assert.equal(enable(r).status, 1);
+});
+test("T-enable-pp-doc-missing", () => {
+  const r = goodEnable(); delete r.repos[0].push_protection_doc;
+  assert.equal(enable(r).status, 1);
+});
+test("T-enable-approval-missing", () => assert.equal(enable(goodEnable(), null).status, 1));
+test("T-enable-scope", () => {
+  const r = goodEnable(); r.repos.push({ ...clone(r.repos[0]), repo: "PA-MATRIX/other" });
+  assert.equal(enable(r).status, 1);
+});
+test("T-enable-leak", () => {
+  const r = goodEnable(); r.repos[0].reason = "gh" + "p_" + "B".repeat(30);
+  assert.equal(enable(r).status, 1);
+});

@@ -64,10 +64,13 @@ export function checkEnableRecord(rec, approval) {
   for (const r of rec?.repos ?? []) {
     const name = r.repo;
     if (!scope.includes(name)) p.push(`repo ${name}: not in approval scope`);
-    if (r.outcome !== "enabled") continue;
+    if (r.outcome !== "enabled" && r.outcome !== "unchanged") continue;
     const b = r.before ?? {}, af = r.after ?? {};
-    if (b.secret_scanning !== "disabled" && r.outcome_unchanged !== true) {
+    if (r.outcome === "enabled" && b.secret_scanning !== "disabled") {
       p.push(`repo ${name}: before.secret_scanning is not disabled and not marked unchanged`);
+    }
+    if (r.outcome === "unchanged" && b.secret_scanning !== "enabled") {
+      p.push(`repo ${name}: marked unchanged but before.secret_scanning is not enabled`);
     }
     if (af.secret_scanning !== "enabled") p.push(`repo ${name}: after.secret_scanning is not enabled`);
     if (r.alerts_api_after?.status !== 200) p.push(`repo ${name}: alerts_api_after.status is not 200`);
