@@ -1,0 +1,164 @@
+TAP version 13
+# Subtest: T-capture-get-only
+not ok 1 - T-capture-get-only
+  ---
+  duration_ms: 0.759625
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:36:1'
+  failureType: 'testCodeFailure'
+  error: '{"method":"POST"}'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'stub'
+  stack: |-
+    ghGet (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:3:39)
+    file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:39:38
+    waitForActual (node:assert:519:21)
+    Function.rejects (node:assert:654:31)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:39:18)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.start (node:internal/test_runner/test:833:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:39:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: T-capture-log
+not ok 2 - T-capture-log
+  ---
+  duration_ms: 0.072833
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:44:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ghGet (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:3:39)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:47:9)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: T-capture-403
+not ok 3 - T-capture-403
+  ---
+  duration_ms: 0.059958
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:52:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    captureState (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:4:46)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:54:22)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-capture-404-alerts
+not ok 4 - T-capture-404-alerts
+  ---
+  duration_ms: 0.572208
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:62:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    captureState (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:4:46)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:64:22)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-capture-owner-kinds
+not ok 5 - T-capture-owner-kinds
+  ---
+  duration_ms: 0.201958
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:70:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    captureState (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:4:46)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:72:22)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-capture-public-enumeration
+not ok 6 - T-capture-public-enumeration
+  ---
+  duration_ms: 0.168333
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:83:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    captureState (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:4:46)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:85:22)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-capture-prs-quoted
+not ok 7 - T-capture-prs-quoted
+  ---
+  duration_ms: 0.133583
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:94:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    captureState (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:4:46)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:97:22)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-capture-no-credentials
+not ok 8 - T-capture-no-credentials
+  ---
+  duration_ms: 0.108625
+  location: '/Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:103:1'
+  failureType: 'testCodeFailure'
+  error: 'stub'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    captureState (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.mjs:4:46)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/sec-capture-state.test.mjs:105:22)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 0
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 57.142375
