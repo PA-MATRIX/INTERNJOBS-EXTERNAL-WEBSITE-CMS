@@ -1,0 +1,44 @@
+# live GREEN, 2026-10-09T03:47:59Z
+$ verify-code-maps --inventory .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md --repo /Users/rajren/internjobs-cms
+INVENTORY OK
+exit 0
+$ verify-code-maps --inventory .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md --repo /Users/rajren/Documents/Parrot --ref origin/main --repo-name parrot
+INVENTORY OK
+exit 0
+$ verify-code-maps --inventory .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md --repo /Users/rajren/MayaOS/internjobs-ai --ref HEAD --repo-name legacy
+INVENTORY OK
+exit 0
+$ verify-code-maps --repo-map .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/REPO-MAP.md --gh-json .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/gh-snapshot.json
+REPO-MAP OK
+exit 0
+--- removal control: scripts/** row deleted from copy
+$ verify-code-maps --inventory /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/inv-minus-scripts.md --repo /Users/rajren/internjobs-cms
+INVENTORY FAIL:
+  - uncovered hit: scripts/26-kgraph-ab.mjs
+  - uncovered hit: scripts/33-clerk-restrictions-config.mjs
+  - uncovered hit: scripts/verify-code-maps.mjs
+  - uncovered hit: scripts/verify-code-maps.test.mjs
+  - uncovered hit: scripts/verify-v15-promotion.mjs
+  - named minimum not covered: scripts/**
+exit 1
+$ verify-code-maps --inventory /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/inv-minus-startup.md --repo /Users/rajren/internjobs-cms
+INVENTORY FAIL:
+  - uncovered hit: apps/startup/workers/routes/admin.ts
+  - uncovered hit: apps/startup/workers/routes/email.ts
+  - uncovered hit: apps/startup/workers/types.ts
+  - uncovered hit: apps/startup/wrangler.jsonc
+exit 1
+--- cross-repo control: Parrot row removed from copy (informational rows; zero required hits so expected exit 0)
+$ verify-code-maps --inventory /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/inv-minus-parrot.md --repo /Users/rajren/Documents/Parrot --ref origin/main --repo-name parrot
+INVENTORY OK
+exit 0
+--- cross-repo control: legacy render.yaml row removed from copy
+$ verify-code-maps --inventory /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/inv-minus-legacy.md --repo /Users/rajren/MayaOS/internjobs-ai --ref HEAD --repo-name legacy
+INVENTORY FAIL:
+  - uncovered hit: render.yaml
+exit 1
+--- guard
+$ verify-code-maps --guard --baseline .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/baseline.json
+GUARD OK: legacy and Parrot match baseline
+exit 0
+--- secret scan of both docs via verifier scanSecrets (inventory/repo-map modes already run it)

@@ -1,0 +1,398 @@
+{
+  "generated_at": "2026-10-09T03:45:58.994Z",
+  "note": "read-only gh repo view / gh repo list output; no tokens",
+  "repos": {
+    "PA-MATRIX/internjobs-marketing-website": {
+      "defaultBranchRef": {
+        "name": "main"
+      },
+      "description": "",
+      "isArchived": false,
+      "nameWithOwner": "PA-MATRIX/internjobs-marketing-website",
+      "owner": {
+        "id": "O_kgDOD1sPfA",
+        "login": "PA-MATRIX"
+      },
+      "visibility": "PUBLIC"
+    },
+    "PA-Ai-Team/Parrot": {
+      "defaultBranchRef": {
+        "name": "main"
+      },
+      "description": "",
+      "isArchived": false,
+      "nameWithOwner": "PA-Ai-Team/Parrot",
+      "owner": {
+        "id": "O_kgDODLVYBQ",
+        "login": "PA-Ai-Team"
+      },
+      "visibility": "PRIVATE"
+    },
+    "growthpods/Internjobs": {
+      "defaultBranchRef": {
+        "name": "main"
+      },
+      "description": "",
+      "isArchived": false,
+      "nameWithOwner": "growthpods/Internjobs",
+      "owner": {
+        "id": "U_kgDOCve3hg",
+        "login": "growthpods"
+      },
+      "visibility": "PRIVATE"
+    }
+  },
+  "lists": {
+    "PA-MATRIX": [
+      {
+        "isArchived": false,
+        "name": "internjobs-marketing-website",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "superintelligence",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "DEMO-dev-sios-acme-inc",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Enrichment",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "sis-marketing-website",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "DEMO-keystone-assurance-website",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "DEMO-sunrise-dental-website",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "DEMO-acme-website",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "OpenMythos",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "MAH-Sample-VA",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "ussuperapp",
+        "visibility": "PRIVATE"
+      }
+    ],
+    "PA-Ai-Team": [
+      {
+        "isArchived": false,
+        "name": "Projecta-marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Parrot",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "geo-aeo-tracker",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "magnet-commerce",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "projecta-rankings-outbound",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "projecta-rrr",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Mala-website-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "simpleidcheck-marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "meetexperts-website-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "aeo-free-aduit",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "innovantech-marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "growthpods-marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "eagleai",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "OWL",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "mspark-marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "MarketingOS",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "MeetExperts",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "intel",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Marketing-Audit",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "telecom-awards-marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "OWL-Marketing-cms",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "MATRIX",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "DailyReport",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "MALA.dev",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "AssetIQ",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "myagentapp",
+        "visibility": "PRIVATE"
+      }
+    ],
+    "growthpods": [
+      {
+        "isArchived": false,
+        "name": "projecta-crm",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Huntercrm",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "test-repo-1738124162863",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Magnet",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "glitchbuilder",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "freehire",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "projecta-deal-room",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "projecta-campaign-os-livekit",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "ms",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "Internjobs",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "goose-skills",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "gooseworks-skills",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "ai-marketing-skills",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "goose-aeo",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "aitutor",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "notebynote",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "family",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "Ai-Summit",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "muscle-mem",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "sb1-829jmu",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "OpenHands",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "zeroemail",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "cx-platform",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "evento",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "system-prompts-and-models-of-ai-tools",
+        "visibility": "PUBLIC"
+      },
+      {
+        "isArchived": false,
+        "name": "manus123",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "hrai",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "ai-recruiter",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "sb1-hp7ndl1m",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "my-letta-chatbot",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "sb1-exxtmmz9",
+        "visibility": "PRIVATE"
+      },
+      {
+        "isArchived": false,
+        "name": "sb1-ojs1qz",
+        "visibility": "PRIVATE"
+      }
+    ]
+  }
+}
