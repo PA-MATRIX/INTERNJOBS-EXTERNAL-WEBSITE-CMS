@@ -408,3 +408,54 @@ test("T-ghlog empty/missing/malformed log fails", () => {
   writeFileSync(f, `notatime\tgh api repos/x\n`);
   assert.equal(run(["--gh-log", f]).code, 1);
 });
+
+// ---- Hardening amendment: shell control operators are never a single read ----
+test("T-ghlog-chain-semicolon-neg", () => {
+  bad("gh repo view x/y; gh repo delete x/y --yes");
+  bad("gh repo view x/y ;gh repo view x/z");
+});
+test("T-ghlog-chain-and-neg", () => {
+  bad("gh pr list && gh pr merge 1");
+  bad("gh pr list || gh pr merge 1");
+  bad("gh pr list & gh pr merge 1");
+});
+test("T-ghlog-chain-pipe-neg", () => {
+  bad("gh api repos/x/y | sh");
+  bad("gh pr list |& tee out");
+});
+test("T-ghlog-substitution-neg", () => {
+  bad("gh repo view $(gh repo delete x/y --yes)");
+  bad("gh repo view `gh repo delete x/y --yes`");
+  bad('gh repo view "$(gh repo delete x/y --yes)"');
+  bad('gh repo view "`id`"');
+});
+test("T-ghlog-redirect-neg", () => {
+  bad("gh api repos/x/y > out.json");
+  bad("gh api repos/x/y < in.json");
+  bad("gh api repos/x/y 2>&1");
+});
+test("T-ghlog-newline-neg", () => {
+  // a second physical line without a timestamp tab is malformed, never a pass
+  const d = tmp("sec-gh-");
+  const log = path.join(d, "gh.tsv");
+  writeFileSync(log, `${T1}\tgh repo view x/y\ngh repo delete x/y --yes\n`);
+  assert.equal(run(["--gh-log", log]).code, 1);
+});
+test("T-ghlog-chain-approved-neg", () => {
+  const line = "gh repo view x/y; gh repo delete x/y --yes";
+  assert.equal(ghlog([[T1, line]], [{ cmd: line, approved_at: T0 }]), 1);
+  const l2 = "gh pr list && gh pr merge 1";
+  assert.equal(ghlog([[T1, l2]], [{ cmd: l2, approved_at: T0 }]), 1);
+});
+test("T-ghlog-jq-pipe-in-quotes-pos", () => {
+  ok("gh api repos/x/y --jq '.a | .b'");
+  ok('gh api repos/x/y --jq ".a | .b"');
+  ok("gh api repos/x/y --jq '.a; .b && .c > 1'");
+  ok('gh api "repos/x/y?a=1&b=2"');
+  ok("gh pr list", "gh repo view x/y");
+});
+test("T-ghlog-quote-escape-neg", () => {
+  bad("gh repo view 'x'; gh repo delete x");
+  bad('gh repo view "x" | sh');
+  bad("gh repo view x\\\\; gh repo delete x");
+});

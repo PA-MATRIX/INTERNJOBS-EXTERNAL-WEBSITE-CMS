@@ -1,0 +1,31 @@
+not ok 63 - T-ghlog-chain-semicolon-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 64 - T-ghlog-chain-and-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 65 - T-ghlog-chain-pipe-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 66 - T-ghlog-substitution-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 68 - T-ghlog-newline-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 69 - T-ghlog-chain-approved-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 71 - T-ghlog-quote-escape-neg
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+# tests 71
+# pass 64
+# fail 7

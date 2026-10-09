@@ -34,6 +34,16 @@ RED (39-01-RED.txt): Task 1, 34/34 failing with ERR_ASSERTION against a stub exi
 
 None - plan executed as written. Notes: `parseArgs` wraps the imported one to collect repeated `--require-ref`. The HUD file (`project-hud-path.js`) holds only subagent_budget, no position fields, so it was left untouched. STATE.md (gitignored) position updated locally. Plan-lint exits 0.
 
+## Hardening amendment
+
+Orchestrator-approved deviation after the 39-01-VERIFICATION.md advisory: token-based `--gh-log` classification let chained lines (`gh repo view x/y; gh repo delete x/y --yes`, `gh pr list && gh pr merge 1`) exit 0.
+
+- Fix: `hasShellControl()` quote-aware scan in `classifyCommand`. Unquoted `; & | < >`, CR/LF, and backtick or `$(` anywhere outside single quotes (including inside double quotes), plus unterminated quotes, classify as `never`. Operators inside quotes (`--jq '.a | .b'`) stay allowed. `never` is not approvable, so a chained line listed in the approved file is still rejected (approved lines are exact single commands only).
+- Tests added (9): T-ghlog-chain-semicolon-neg, -chain-and-neg, -chain-pipe-neg, -substitution-neg, -redirect-neg, -newline-neg, -chain-approved-neg, -jq-pipe-in-quotes-pos, -quote-escape-neg.
+- RED (39-01-RED-hardening.txt): 71 tests, 64 pass, 7 fail with ERR_ASSERTION (expected 1, actual 0). The redirect negative and the jq positive already passed pre-fix, because the old tokenizer treated the extra tokens as approvable and quoted pipes as plain text; they are kept as controls.
+- GREEN (39-01-GREEN-hardening.txt): 71/71 (62 original + 9 new).
+- PLAN files untouched; recorded here only.
+
 ## Rulings
 
 None - no plan conflicts arose.

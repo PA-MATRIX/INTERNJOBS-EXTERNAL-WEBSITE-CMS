@@ -189,8 +189,25 @@ const GH_READ = {
 const API_VALUE_FLAGS = new Set(["--jq", "-q", "-H", "--header"]);
 const API_BOOL_FLAGS = new Set(["--paginate", "-i", "--include", "--slurp", "--silent"]);
 
+/** True if the line has an unquoted control operator/redirect, or a substitution anywhere
+ *  outside single quotes. Quote-aware: `--jq '.a | .b'` is fine, `x; y` is not. */
+export function hasShellControl(cmd) {
+  let q = null;
+  for (let i = 0; i < cmd.length; i++) {
+    const c = cmd[i];
+    if (q === "'") { if (c === "'") q = null; continue; }
+    if (c === "\\") { i++; continue; }
+    if (c === "`" || (c === "$" && cmd[i + 1] === "(")) return true;
+    if (q === '"') { if (c === '"') q = null; continue; }
+    if (c === "'" || c === '"') { q = c; continue; }
+    if (";&|<>\n\r".includes(c)) return true;
+  }
+  return q !== null; // unterminated quote: refuse
+}
+
 /** "allowed" | "approvable" | "never" */
 export function classifyCommand(cmd) {
+  if (hasShellControl(cmd)) return "never"; // chained/substituted: never one reviewable command
   const t = shellSplit(cmd);
   if (!t.length) return "approvable";
   if (t[0] === "gh") return classifyGh(t.slice(1));
