@@ -79,3 +79,155 @@ ok 14 - T-vis-missing
 # skipped 0
 # todo 0
 # duration_ms 792.6965
+
+## Task 2 GREEN (full file)
+TAP version 13
+# Subtest: T-research-pos
+ok 1 - T-research-pos
+  ---
+  duration_ms: 104.94025
+  ...
+# Subtest: T-research-claim-missing
+ok 2 - T-research-claim-missing
+  ---
+  duration_ms: 74.799792
+  ...
+# Subtest: T-research-no-url
+ok 3 - T-research-no-url
+  ---
+  duration_ms: 68.813458
+  ...
+# Subtest: T-research-no-date
+ok 4 - T-research-no-date
+  ---
+  duration_ms: 49.345542
+  ...
+# Subtest: T-research-stale-date
+ok 5 - T-research-stale-date
+  ---
+  duration_ms: 53.515541
+  ...
+# Subtest: T-research-date-boundary-pos
+ok 6 - T-research-date-boundary-pos
+  ---
+  duration_ms: 100.554
+  ...
+# Subtest: T-research-assumed
+ok 7 - T-research-assumed
+  ---
+  duration_ms: 57.178416
+  ...
+# Subtest: T-research-price-no-amount
+ok 8 - T-research-price-no-amount
+  ---
+  duration_ms: 52.983916
+  ...
+# Subtest: T-research-option-missing
+ok 9 - T-research-option-missing
+  ---
+  duration_ms: 140.692334
+  ...
+# Subtest: T-research-no-disclosure
+ok 10 - T-research-no-disclosure
+  ---
+  duration_ms: 67.566083
+  ...
+# Subtest: T-sec03-leak
+ok 11 - T-sec03-leak
+  ---
+  duration_ms: 56.059708
+  ...
+# Subtest: T-vis-pos
+ok 12 - T-vis-pos
+  ---
+  duration_ms: 53.221417
+  ...
+# Subtest: T-vis-flipped
+ok 13 - T-vis-flipped
+  ---
+  duration_ms: 54.436417
+  ...
+# Subtest: T-vis-missing
+ok 14 - T-vis-missing
+  ---
+  duration_ms: 48.656375
+  ...
+# Subtest: T-probe-pos
+ok 15 - T-probe-pos
+  ---
+  duration_ms: 96.697292
+  ...
+# Subtest: T-probe-early
+ok 16 - T-probe-early
+  ---
+  duration_ms: 43.686334
+  ...
+# Subtest: T-probe-other-repo
+ok 17 - T-probe-other-repo
+  ---
+  duration_ms: 46.099333
+  ...
+# Subtest: T-probe-missing-step
+ok 18 - T-probe-missing-step
+  ---
+  duration_ms: 44.612583
+  ...
+# Subtest: T-probe-order
+ok 19 - T-probe-order
+  ---
+  duration_ms: 47.27525
+  ...
+# Subtest: T-probe-left-behind
+ok 20 - T-probe-left-behind
+  ---
+  duration_ms: 46.662
+  ...
+# Subtest: T-probe-unexpected
+ok 21 - T-probe-unexpected
+  ---
+  duration_ms: 100.110834
+  ...
+# Subtest: T-probe-skip-pos
+ok 22 - T-probe-skip-pos
+  ---
+  duration_ms: 53.065459
+  ...
+# Subtest: T-probe-skip-no-approval
+ok 23 - T-probe-skip-no-approval
+  ---
+  duration_ms: 93.989125
+  ...
+# Subtest: T-decision-pos
+ok 24 - T-decision-pos
+  ---
+  duration_ms: 102.790125
+  ...
+# Subtest: T-decision-pending
+ok 25 - T-decision-pending
+  ---
+  duration_ms: 50.203625
+  ...
+# Subtest: T-decision-no-option
+ok 26 - T-decision-no-option
+  ---
+  duration_ms: 89.488333
+  ...
+# Subtest: T-decision-no-d19
+ok 27 - T-decision-no-d19
+  ---
+  duration_ms: 48.178417
+  ...
+# Subtest: T-decision-alt-no-disclosure
+ok 28 - T-decision-alt-no-disclosure
+  ---
+  duration_ms: 88.429834
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1995.367375

@@ -115,3 +115,67 @@ test("T-vis-missing", () => {
   assert.equal(r.code, 1);
   assert.match(r.out, /growthpods\/Internjobs/);
 });
+
+// ---------- probe fixtures ----------
+const PROBE = "PA-MATRIX/zz-sec03-probe-20261008";
+const APPROVED = "2026-10-08T10:00:00Z";
+const stepDefs = [
+  ["gh repo create PA-MATRIX/zz-sec03-probe-20261008 --public", 201],
+  ["gh api -X PUT repos/PA-MATRIX/zz-sec03-probe-20261008/branches/main/protection", 200],
+  ["gh api repos/PA-MATRIX/zz-sec03-probe-20261008/branches/main/protection", 200],
+  ["gh repo edit PA-MATRIX/zz-sec03-probe-20261008 --visibility private", 200],
+  ["gh api repos/PA-MATRIX/zz-sec03-probe-20261008/branches/main/protection", 403],
+  ["git push origin main", 1],
+  ["gh repo delete PA-MATRIX/zz-sec03-probe-20261008 --yes", 204],
+  ["gh api repos/PA-MATRIX/zz-sec03-probe-20261008", 404],
+];
+function goodProbe(mut = (r) => r) {
+  const steps = stepDefs.map(([cmd, status], i) => ({
+    ts: `2026-10-08T10:0${i + 1}:00Z`, cmd, repo: PROBE, status,
+  }));
+  return mut({ approval_ref: "39-06-APPROVAL.md", approved_at: APPROVED, repo: PROBE, steps });
+}
+const probe = (mut) => run("--probe-record", put("probe.json", goodProbe(mut)));
+
+test("T-probe-pos", () => assert.equal(probe().code, 0, probe().out));
+test("T-probe-early", () => {
+  const r = probe((x) => { x.steps[2].ts = "2026-10-08T09:00:00Z"; return x; });
+  assert.equal(r.code, 1);
+});
+test("T-probe-other-repo", () => {
+  const r = probe((x) => { x.steps[1].repo = "PA-MATRIX/internjobs-marketing-website"; return x; });
+  assert.equal(r.code, 1);
+});
+test("T-probe-missing-step", () => assert.equal(probe((x) => { x.steps.splice(5, 1); return x; }).code, 1));
+test("T-probe-order", () => {
+  const r = probe((x) => { [x.steps[3], x.steps[4]] = [x.steps[4], x.steps[3]]; return x; });
+  assert.equal(r.code, 1);
+});
+test("T-probe-left-behind", () => assert.equal(probe((x) => { x.steps[7].status = 200; return x; }).code, 1));
+test("T-probe-unexpected", () => assert.equal(probe((x) => { x.steps[1].unexpected = true; return x; }).code, 1));
+test("T-probe-skip-pos", () => {
+  const rec = { approval_ref: "39-06-APPROVAL.md", skipped: true, reason: "no probe needed", steps: [] };
+  assert.equal(run("--probe-record", put("skip.json", rec)).code, 0);
+});
+test("T-probe-skip-no-approval", () => {
+  assert.equal(run("--probe-record", put("skip.json", { skipped: true, reason: "x", steps: [] })).code, 1);
+  assert.equal(run("--probe-record", put("skip.json", { approval_ref: "a", skipped: true, steps: [] })).code, 1);
+});
+
+// ---------- decision fixtures ----------
+const decisionMd = ({ status = "decided", by = "decided_by: Raj", at = "decided_at: 2026-10-08", option = "option: upgrade-team", body = "" } = {}) =>
+  ["---", `status: ${status}`, by, at, option, "orgs: PA-MATRIX", "---", "# SEC-03 decision", body].filter((l) => l !== null).join("\n");
+const CTX_OK = "# CONTEXT\n\n## D19\nSEC-03 decided; see SEC-03-DECISION.md\n";
+const decide = (md, ctx = CTX_OK) => run("--decision", put("dec.md", md), "--context", put("ctx.md", ctx));
+
+test("T-decision-pos", () => assert.equal(decide(decisionMd()).code, 0, decide(decisionMd()).out));
+test("T-decision-pending", () => assert.equal(decide(decisionMd({ status: "pending" })).code, 1));
+test("T-decision-no-option", () => {
+  assert.equal(decide(decisionMd({ option: "option: maybe" })).code, 1);
+  assert.equal(decide(decisionMd({ option: null })).code, 1);
+});
+test("T-decision-no-d19", () => assert.equal(decide(decisionMd(), "# CONTEXT\n\n## D18\nnothing\n").code, 1));
+test("T-decision-alt-no-disclosure", () => {
+  assert.equal(decide(decisionMd({ option: "option: alternative" })).code, 1);
+  assert.equal(decide(decisionMd({ option: "option: alternative", body: DISCLOSE })).code, 0);
+});

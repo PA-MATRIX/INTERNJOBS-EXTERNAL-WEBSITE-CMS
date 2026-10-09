@@ -57,8 +57,76 @@ export function checkVisibility({ current, baseline }) {
   return problems;
 }
 
-export function checkProbe() { return ["not implemented"]; }
-export function checkDecision() { return ["not implemented"]; }
+const PROBE_REPO = /\/zz-sec03-probe-[\w-]+$/;
+const EXPECTED = ["create", "put", "get1", "private", "get2", "push", "delete", "final"];
+function kindOf(cmd) {
+  if (/repo create/.test(cmd)) return "create";
+  if (/-X\s*PUT\b.*protection|PUT\b.*protection/.test(cmd)) return "put";
+  if (/protection/.test(cmd)) return "get";
+  if (/visibility[ =]private/.test(cmd)) return "private";
+  if (/git push/.test(cmd)) return "push";
+  if (/repo delete/.test(cmd)) return "delete";
+  if (/\bapi\b/.test(cmd)) return "final";
+  return "other";
+}
+
+export function checkProbe({ rec }) {
+  const problems = [];
+  if (!rec.approval_ref) problems.push("no approval_ref");
+  if (rec.skipped) {
+    if (!rec.reason) problems.push("skipped record has no reason");
+    return problems;
+  }
+  const approved = Date.parse(rec.approved_at);
+  if (Number.isNaN(approved)) problems.push("no valid approved_at");
+  if (!rec.repo || !PROBE_REPO.test(rec.repo)) problems.push("record repo is not a zz-sec03-probe- repo");
+  const steps = Array.isArray(rec.steps) ? rec.steps : [];
+  steps.forEach((s, i) => {
+    if (!(Date.parse(s.ts) >= approved)) problems.push(`step ${i + 1}: timestamp precedes approved_at (or invalid)`);
+    if (s.repo !== rec.repo) problems.push(`step ${i + 1}: targets repo ${s.repo}, not the probe repo`);
+  });
+  if (steps.some((s) => s.unexpected) && rec.stopped !== true) {
+    problems.push("unexpected result recorded without stopped:true");
+  }
+  if (rec.stopped !== true) {
+    const kinds = steps.map((s) => kindOf(s.cmd || ""));
+    let want = 0;
+    for (const k of kinds) {
+      const e = EXPECTED[want];
+      if (e && (k === e || (k === "get" && (e === "get1" || e === "get2")))) want++;
+    }
+    if (want < EXPECTED.length) {
+      const has = (e) => kinds.some((k) => k === e || (k === "get" && e.startsWith("get")));
+      const getCount = kinds.filter((k) => k === "get").length;
+      const missing = EXPECTED.filter((e) => (e.startsWith("get") ? getCount < 2 : !has(e)));
+      problems.push(missing.length ? `sequence incomplete, missing: ${missing.join(",")}` : "sequence out of order");
+    }
+  }
+  const last = steps[steps.length - 1];
+  if (!last || last.status !== 404) problems.push("final readback status is not 404 (probe repo left behind)");
+  return problems;
+}
+
+export function checkDecision({ text, context }) {
+  const problems = [];
+  const fm = /^---\n([\s\S]*?)\n---/.exec(text);
+  const f = {};
+  if (fm) for (const l of fm[1].split("\n")) { const m = /^(\w+):\s*(.*)$/.exec(l); if (m) f[m[1]] = m[2].trim(); }
+  else problems.push("no front matter");
+  if (f.status === undefined || f.status === "pending") problems.push("status is pending");
+  if (!/\bRaj\b/.test(f.decided_by || "")) problems.push("decided_by must be Raj");
+  if (!/^\d{4}-\d{2}-\d{2}/.test(f.decided_at || "")) problems.push("decided_at missing");
+  if (!["upgrade-team", "alternative", "accept-unprotected"].includes(f.option)) {
+    problems.push("option must be upgrade-team|alternative|accept-unprotected");
+  }
+  const d19 = /^#+\s*D19\b[^\n]*\n([\s\S]*?)(?=^#+\s*D\d+\b|(?![\s\S]))/m.exec(context);
+  if (!d19) problems.push("CONTEXT.md has no D19 entry");
+  else if (!/SEC-03-DECISION\.md/.test(d19[0])) problems.push("D19 does not name SEC-03-DECISION.md");
+  if (f.option === "alternative" && !DISCLOSURE.test(text)) {
+    problems.push("alternative lacks statement that CI-only enforcement cannot block a direct push to main");
+  }
+  return problems;
+}
 
 function usage(msg) {
   console.error(`usage error: ${msg}`);
