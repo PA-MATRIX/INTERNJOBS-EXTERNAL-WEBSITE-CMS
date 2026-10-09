@@ -1,0 +1,25 @@
+RESEARCH FAIL:
+  - C1: no https source URL
+  - C1: no fetched-on date
+  - C1: ASSUMED without resolved_by plan id
+  - C2: no https source URL
+  - C2: no fetched-on date
+  - C2: ASSUMED without resolved_by plan id
+  - C3: no https source URL
+  - C3: no fetched-on date
+  - C3: ASSUMED without resolved_by plan id
+  - C4: no https source URL
+  - C4: no fetched-on date
+  - C4: ASSUMED without resolved_by plan id
+  - C4: price row has no $ amount
+  - C5: no https source URL
+  - C5: no fetched-on date
+  - C5: ASSUMED without resolved_by plan id
+  - C5: price row has no $ amount
+  - C6: no https source URL
+  - C6: no fetched-on date
+  - C6: ASSUMED without resolved_by plan id
+  - C7: no https source URL
+  - C7: no fetched-on date
+  - C7: ASSUMED without resolved_by plan id
+  - alternative lacks statement that CI-only enforcement cannot block a direct push to main
