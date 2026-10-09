@@ -103,3 +103,8 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 
 - Question: run a throwaway-repo probe to measure whether branch protection survives going private? Options: org-probe (PA-MATRIX) | personal-probe (growthpods) | skip. Answer (Raj): **org-probe**. Approved by: Raj. approved_at: 2026-10-09T04:50:15Z.
 - Account/owner: PA-MATRIX. Disclosure: creates and deletes one repo (zz-sec03-probe-20261008) in the org (no billing or seat effect); the 7 exact write commands are listed in 39-07-approved-writes.json; delete_repo scope is used once; the final GET must return 404; any unexpected status stops the plan with no retry and a loud report. Nothing outside the probe repo is touched.
+
+## D15a: Phase 39-04 local-object mirror dropped; GitHub mirror only (2026-10-09T05:06:45Z)
+
+- Context: under D15 the approved local-object clone (`git clone --mirror --no-hardlinks file:///Users/rajren/Documents/Parrot`) failed with `fatal: bad object 0000...` because the local clone has a broken ref `refs/heads/main 2` (null sha); `git fsck` also shows one dangling commit 1d577ffb. The GitHub mirror cloned fine (28 non-pull refs + 14 refs/pull/*; main 74880e45, both fix tips ece5eb84 / 11b2277a present on GitHub).
+- Decision (Raj, option B): scan the GitHub mirror only (plus the two worktrees' uncommitted edits), drop the local-object source, record the broken ref and the dangling commit as observations. No new install or clone command is approved by this entry. This amends plan 39-04, so rrr-plan-checker runs again before the scan resumes. D15's approved command list is unchanged (the failed local clone line stays logged as attempted).
