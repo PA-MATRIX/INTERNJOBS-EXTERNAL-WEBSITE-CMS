@@ -1,0 +1,155 @@
+TAP version 13
+# Subtest: T-gate: entry gate reads VERIFICATION status
+ok 1 - T-gate: entry gate reads VERIFICATION status
+  ---
+  duration_ms: 248.721208
+  ...
+# Subtest: T-guard-legacy positive: unchanged -> 0
+ok 2 - T-guard-legacy positive: unchanged -> 0
+  ---
+  duration_ms: 1057.428375
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package.json -> 1
+ok 3 - T-guard-legacy-hash: one byte in package.json -> 1
+  ---
+  duration_ms: 1042.663375
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package-lock.json -> 1
+ok 4 - T-guard-legacy-hash: one byte in package-lock.json -> 1
+  ---
+  duration_ms: 1182.747416
+  ...
+# Subtest: T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+ok 5 - T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+  ---
+  duration_ms: 1282.025333
+  ...
+# Subtest: T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+ok 6 - T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+  ---
+  duration_ms: 1625.549833
+  ...
+# Subtest: T-guard-legacy-head: new commit -> 1
+ok 7 - T-guard-legacy-head: new commit -> 1
+  ---
+  duration_ms: 1334.430667
+  ...
+# Subtest: T-guard-legacy-status: extra untracked path -> 1
+ok 8 - T-guard-legacy-status: extra untracked path -> 1
+  ---
+  duration_ms: 1086.262084
+  ...
+# Subtest: T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+ok 9 - T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+  ---
+  duration_ms: 1408.421041
+  ...
+# Subtest: T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+ok 10 - T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+  ---
+  duration_ms: 1090.94
+  ...
+# Subtest: T-guard-legacy-index: plain git status rewrites index -> 1
+ok 11 - T-guard-legacy-index: plain git status rewrites index -> 1
+  ---
+  duration_ms: 1277.372458
+  ...
+# Subtest: T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+ok 12 - T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+  ---
+  duration_ms: 1004.565833
+  ...
+# Subtest: T-snapshot-cms: pre-existing cms paths by name, never contents
+ok 13 - T-snapshot-cms: pre-existing cms paths by name, never contents
+  ---
+  duration_ms: 762.957834
+  ...
+# Subtest: T-no-secrets-read: .env canary never reaches output; source never touches .env
+ok 14 - T-no-secrets-read: .env canary never reaches output; source never touches .env
+  ---
+  duration_ms: 1327.304042
+  ...
+# Subtest: T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+ok 15 - T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+  ---
+  duration_ms: 4868.869666
+  ...
+# Subtest: T-guard-originmain-pos: moved to after_sha with record -> 0
+ok 16 - T-guard-originmain-pos: moved to after_sha with record -> 0
+  ---
+  duration_ms: 1164.698542
+  ...
+# Subtest: T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+ok 17 - T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+  ---
+  duration_ms: 1268.974
+  ...
+# Subtest: T-guard-originmain-neg-norecord: moved, no record -> 1
+ok 18 - T-guard-originmain-neg-norecord: moved, no record -> 1
+  ---
+  duration_ms: 1024.791083
+  ...
+# Subtest: T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+ok 19 - T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+  ---
+  duration_ms: 749.746583
+  ...
+# Subtest: T-preflight-dirty: modified tracked file -> 1
+ok 20 - T-preflight-dirty: modified tracked file -> 1
+  ---
+  duration_ms: 663.985375
+  ...
+# Subtest: T-preflight-branch: non-main checkout -> 1
+ok 21 - T-preflight-branch: non-main checkout -> 1
+  ---
+  duration_ms: 655.966167
+  ...
+# Subtest: T-preflight-diverged: local main has unique commit -> 1
+ok 22 - T-preflight-diverged: local main has unique commit -> 1
+  ---
+  duration_ms: 850.367625
+  ...
+# Subtest: T-ff-check: ff'd clone with record -> 0
+ok 23 - T-ff-check: ff'd clone with record -> 0
+  ---
+  duration_ms: 2134.442958
+  ...
+# Subtest: T-ff-check: pre-ff -> 1
+ok 24 - T-ff-check: pre-ff -> 1
+  ---
+  duration_ms: 2056.022125
+  ...
+# Subtest: T-ff-check: expect-after differs -> 1
+ok 25 - T-ff-check: expect-after differs -> 1
+  ---
+  duration_ms: 1542.461083
+  ...
+# Subtest: T-ff-check: moved worktree -> 1
+ok 26 - T-ff-check: moved worktree -> 1
+  ---
+  duration_ms: 1477.8615
+  ...
+# Subtest: T-ff-check: dirty tree -> 1
+ok 27 - T-ff-check: dirty tree -> 1
+  ---
+  duration_ms: 988.159875
+  ...
+# Subtest: T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+ok 28 - T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+  ---
+  duration_ms: 1269.522709
+  ...
+# Subtest: T-ff-record: before_sha not an ancestor of HEAD -> 1
+ok 29 - T-ff-record: before_sha not an ancestor of HEAD -> 1
+  ---
+  duration_ms: 970.616083
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37517.78375

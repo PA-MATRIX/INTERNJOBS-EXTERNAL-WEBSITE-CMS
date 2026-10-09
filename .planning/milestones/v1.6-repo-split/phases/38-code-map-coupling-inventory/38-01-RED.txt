@@ -1,0 +1,764 @@
+TAP version 13
+# Subtest: T-gate: entry gate reads VERIFICATION status
+not ok 1 - T-gate: entry gate reads VERIFICATION status
+  ---
+  duration_ms: 44.78625
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:122:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    missing -> 1
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:126:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.start (node:internal/test_runner/test:833:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: T-guard-legacy positive: unchanged -> 0
+not ok 2 - T-guard-legacy positive: unchanged -> 0
+  ---
+  duration_ms: 561.1565
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:138:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:140:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package.json -> 1
+not ok 3 - T-guard-legacy-hash: one byte in package.json -> 1
+  ---
+  duration_ms: 579.753417
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:145:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:147:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package-lock.json -> 1
+not ok 4 - T-guard-legacy-hash: one byte in package-lock.json -> 1
+  ---
+  duration_ms: 568.632542
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:145:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:147:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+not ok 5 - T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+  ---
+  duration_ms: 529.742166
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:145:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:147:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+not ok 6 - T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+  ---
+  duration_ms: 519.62175
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:145:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:147:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-head: new commit -> 1
+not ok 7 - T-guard-legacy-head: new commit -> 1
+  ---
+  duration_ms: 503.679084
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:152:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:154:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-status: extra untracked path -> 1
+not ok 8 - T-guard-legacy-status: extra untracked path -> 1
+  ---
+  duration_ms: 537.932167
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:158:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:160:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+not ok 9 - T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+  ---
+  duration_ms: 616.849667
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:164:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:166:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+not ok 10 - T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+  ---
+  duration_ms: 535.068584
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:170:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:172:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-legacy-index: plain git status rewrites index -> 1
+not ok 11 - T-guard-legacy-index: plain git status rewrites index -> 1
+  ---
+  duration_ms: 596.213916
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:176:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:178:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+not ok 12 - T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+  ---
+  duration_ms: 574.748666
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:183:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:190:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-snapshot-cms: pre-existing cms paths by name, never contents
+not ok 13 - T-snapshot-cms: pre-existing cms paths by name, never contents
+  ---
+  duration_ms: 571.592541
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:201:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:203:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-no-secrets-read: .env canary never reaches output; source never touches .env
+not ok 14 - T-no-secrets-read: .env canary never reaches output; source never touches .env
+  ---
+  duration_ms: 539.795375
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:211:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:213:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+not ok 15 - T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+  ---
+  duration_ms: 579.063292
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:220:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:222:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-originmain-pos: moved to after_sha with record -> 0
+not ok 16 - T-guard-originmain-pos: moved to after_sha with record -> 0
+  ---
+  duration_ms: 443.706417
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:233:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:235:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+not ok 17 - T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+  ---
+  duration_ms: 435.645334
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:241:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:243:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-originmain-neg-norecord: moved, no record -> 1
+not ok 18 - T-guard-originmain-neg-norecord: moved, no record -> 1
+  ---
+  duration_ms: 415.565291
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:248:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:250:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+not ok 19 - T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+  ---
+  duration_ms: 435.439542
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:257:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:259:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-preflight-dirty: modified tracked file -> 1
+not ok 20 - T-preflight-dirty: modified tracked file -> 1
+  ---
+  duration_ms: 430.28975
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:263:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:266:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-preflight-branch: non-main checkout -> 1
+not ok 21 - T-preflight-branch: non-main checkout -> 1
+  ---
+  duration_ms: 550.114375
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:268:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:271:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-preflight-diverged: local main has unique commit -> 1
+not ok 22 - T-preflight-diverged: local main has unique commit -> 1
+  ---
+  duration_ms: 519.946167
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:273:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:276:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-check: ff'd clone with record -> 0
+not ok 23 - T-ff-check: ff'd clone with record -> 0
+  ---
+  duration_ms: 579.985125
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:287:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:288:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-check: pre-ff -> 1
+not ok 24 - T-ff-check: pre-ff -> 1
+  ---
+  duration_ms: 516.832958
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:294:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:295:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-check: expect-after differs -> 1
+not ok 25 - T-ff-check: expect-after differs -> 1
+  ---
+  duration_ms: 507.3055
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:299:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:300:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-check: moved worktree -> 1
+not ok 26 - T-ff-check: moved worktree -> 1
+  ---
+  duration_ms: 523.97225
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:305:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:306:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-check: dirty tree -> 1
+not ok 27 - T-ff-check: dirty tree -> 1
+  ---
+  duration_ms: 643.732083
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:312:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:313:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+not ok 28 - T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+  ---
+  duration_ms: 765.592
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:319:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:320:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ff-record: before_sha not an ancestor of HEAD -> 1
+not ok 29 - T-ff-record: before_sha not an ancestor of HEAD -> 1
+  ---
+  duration_ms: 584.754541
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:328:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ffEnv (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:284:10)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:329:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 0
+# fail 29
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15284.903083
