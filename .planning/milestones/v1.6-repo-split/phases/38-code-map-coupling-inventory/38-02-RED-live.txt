@@ -1,0 +1,25 @@
+MAPS FAIL:
+  - cms/STACK.md: first-line stamp missing or malformed
+  - cms/INTEGRATIONS.md: first-line stamp missing or malformed
+  - cms/ARCHITECTURE.md: first-line stamp missing or malformed
+  - cms/STRUCTURE.md: first-line stamp missing or malformed
+  - cms/CONVENTIONS.md: first-line stamp missing or malformed
+  - cms/TESTING.md: first-line stamp missing or malformed
+  - cms/TESTING.md: secret-shaped string (KEY= assignment)
+  - cms/CONCERNS.md: first-line stamp missing or malformed
+  - parrot/STACK.md: missing
+  - parrot/INTEGRATIONS.md: missing
+  - parrot/ARCHITECTURE.md: missing
+  - parrot/STRUCTURE.md: missing
+  - parrot/CONVENTIONS.md: missing
+  - parrot/TESTING.md: missing
+  - parrot/CONCERNS.md: missing
+  - legacy/STACK.md: missing
+  - legacy/INTEGRATIONS.md: missing
+  - legacy/ARCHITECTURE.md: missing
+  - legacy/STRUCTURE.md: missing
+maps exit=
+RELATIONSHIP FAIL:
+  - relationship doc missing: .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/PARROT-RELATIONSHIP.md
+rel exit=1
+(maps exit code: 1 -- the shell's PIPESTATUS read was empty under zsh; FAIL banner above is the verdict)

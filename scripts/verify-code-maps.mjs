@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // Phase 38 read-only verifier (v1.6 repo split).
-// Modes: --gate-prev, --snapshot, --guard, --parrot-preflight, --parrot-ff-check.
+// Modes: --gate-prev, --snapshot, --guard, --parrot-preflight, --parrot-ff-check, --maps, --relationship.
 // Every git call against legacy/Parrot runs with GIT_OPTIONAL_LOCKS=0 and uses read-only
 // plumbing (ls-files, rev-parse, for-each-ref, merge-base, worktree list). Plain `git status`
 // is never used because it refreshes (writes) the index.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync, realpathSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -259,6 +260,199 @@ function gatePrev(n, phasesDir) {
   return { ok: false, why: `no ${n}-VERIFICATION.md under ${phasesDir}` };
 }
 
+
+// ---------------- Plan 38-02: --maps ----------------
+export const MAP_DOCS = ["STACK", "INTEGRATIONS", "ARCHITECTURE", "STRUCTURE", "CONVENTIONS", "TESTING", "CONCERNS"];
+const STAMP_RE = /^<!-- generated from (\S+) @ ([0-9a-f]{7,40}) on (\d{4}-\d{2}-\d{2}) -->$/;
+// Each pattern is a name only; matched values are never echoed.
+const SECRET_PATTERNS = [
+  ["sk- key", /\bsk-[A-Za-z0-9_-]{16,}/],
+  ["AWS access key", /\bAKIA[0-9A-Z]{16}\b/],
+  ["GitHub token", /\bghp_[A-Za-z0-9]{20,}/],
+  ["Slack token", /\bxox[bp]-[A-Za-z0-9-]{10,}/],
+  ["PEM header", /-----BEGIN/],
+  ["JWT", /\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/],
+  ["KEY= assignment", /\b[A-Za-z0-9_]*KEY\s*=\s*["']?[A-Za-z0-9+\/_.-]{12,}/],
+  ["dotenv assignment", /\.env[\w.-]*\s*=\s*["']?[^\s"'`]{4,}/],
+];
+
+export function scanSecrets(text) {
+  return SECRET_PATTERNS.filter(([, re]) => re.test(text)).map(([n]) => n);
+}
+
+function realish(p) {
+  try {
+    return realpathSync(p);
+  } catch {
+    return path.resolve(p);
+  }
+}
+const isInside = (child, parent) => {
+  const c = realish(child), p = realish(parent);
+  return c === p || c.startsWith(p + path.sep);
+};
+
+function sourceTrees(repo) {
+  const trees = [repo];
+  const wl = tryGit(repo, ["worktree", "list", "--porcelain"]);
+  if (wl) for (const l of wl.split("\n")) if (l.startsWith("worktree ")) trees.push(l.slice(9));
+  return trees;
+}
+
+export function checkMaps({ manifest, dirs, parrotRepo, legacyRepo }) {
+  const problems = [];
+  let man;
+  try {
+    man = JSON.parse(readFileSync(manifest, "utf8"));
+  } catch (e) {
+    return [`manifest unreadable: ${manifest}`];
+  }
+  const src = { parrot: parrotRepo, legacy: legacyRepo };
+  for (const k of ["cms", "parrot", "legacy"]) {
+    const dir = dirs[k];
+    const exp = man[k];
+    if (!exp || !exp.repo || !exp.sha) {
+      problems.push(`${k}: manifest entry incomplete`);
+      continue;
+    }
+    if (k === "cms" && !exp.merge_date) problems.push("cms: manifest merge_date missing");
+    for (const [name, repo] of Object.entries(src)) {
+      if (k !== name) {
+        // any map dir must stay out of both source repos
+      }
+    }
+    for (const [name, repo] of Object.entries(src)) {
+      if (repo && existsSync(repo) && sourceTrees(repo).some((t) => isInside(dir, t))) {
+        problems.push(`${k}: map dir ${dir} is inside the ${name} working tree`);
+      }
+    }
+    for (const d of MAP_DOCS) {
+      const f = path.join(dir, `${d}.md`);
+      const label = `${k}/${d}.md`;
+      if (!existsSync(f) || !statSync(f).isFile()) {
+        problems.push(`${label}: missing`);
+        continue;
+      }
+      const text = readFileSync(f, "utf8");
+      if (!text.trim()) {
+        problems.push(`${label}: empty`);
+        continue;
+      }
+      const m = text.split("\n", 1)[0].match(STAMP_RE);
+      if (!m) problems.push(`${label}: first-line stamp missing or malformed`);
+      else {
+        const [, repo, sha, date] = m;
+        if (repo !== exp.repo) problems.push(`${label}: stamp repo ${repo} != ${exp.repo}`);
+        if (!(sha.startsWith(exp.sha) || exp.sha.startsWith(sha))) problems.push(`${label}: stamp sha ${sha} != manifest ${exp.sha}`);
+        if (k === "cms" && exp.merge_date && date < exp.merge_date) problems.push(`${label}: stamp date ${date} precedes merge date ${exp.merge_date}`);
+      }
+      for (const n of scanSecrets(text)) problems.push(`${label}: secret-shaped string (${n})`);
+    }
+  }
+  return problems;
+}
+
+// ---------------- Plan 38-02: --relationship ----------------
+const REL_VOCAB = /^(independent|vendored-copy|fork|mirror|other:\S.*)$/;
+
+function makeTree(root) {
+  const isGit = tryGit(root, ["rev-parse", "--git-dir"]) !== null;
+  const ref = isGit && tryGit(root, ["rev-parse", "--verify", "-q", "refs/remotes/origin/main"]) ? "refs/remotes/origin/main" : null;
+  return {
+    read(rel) {
+      if (/(^|\/)\.env/.test(rel)) return null;
+      if (ref) return tryGitRaw(root, ["show", `${ref}:${rel}`]);
+      const f = path.join(root, rel);
+      return existsSync(f) && statSync(f).isFile() ? readFileSync(f, "utf8") : null;
+    },
+    exists(rel) {
+      if (/(^|\/)\.env/.test(rel)) return false;
+      if (ref) return tryGit(root, ["cat-file", "-e", `${ref}:${rel}`]) !== null || gitOk(root, ["cat-file", "-e", `${ref}:${rel}`]);
+      return existsSync(path.join(root, rel));
+    },
+  };
+}
+function gitOk(repo, args) {
+  try {
+    git(repo, args);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function tryGitRaw(repo, args) {
+  try {
+    return git(repo, args);
+  } catch {
+    return null;
+  }
+}
+
+function workerName(tree, base) {
+  const p = (f) => (base ? `${base}/${f}` : f);
+  const toml = tree.read(p("wrangler.toml"));
+  if (toml) {
+    const m = toml.match(/^name\s*=\s*"([^"]+)"/m);
+    if (m) return m[1];
+  }
+  for (const f of ["wrangler.jsonc", "wrangler.json"]) {
+    const j = tree.read(p(f));
+    if (j) {
+      const m = j.match(/"name"\s*:\s*"([^"]+)"/);
+      if (m) return m[1];
+    }
+  }
+  return null;
+}
+function packageName(tree, base) {
+  const j = tree.read(base ? `${base}/package.json` : "package.json");
+  if (!j) return null;
+  try {
+    return JSON.parse(j).name ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function checkRelationship({ doc, cms, parrot }) {
+  const problems = [];
+  if (!existsSync(doc)) return [`relationship doc missing: ${doc}`];
+  const rows = {};
+  for (const line of readFileSync(doc, "utf8").split("\n")) {
+    const cells = line.split("|").map((c) => c.trim());
+    if (cells.length < 5 || cells[0] !== "" ) continue;
+    const key = cells[1].replace(/`/g, "");
+    if (["worker_name", "package_name", "shared_items", "must_not_change", "relationship"].includes(key)) {
+      rows[key] = [cells[2].replace(/`/g, ""), cells[3].replace(/`/g, "")];
+    }
+  }
+  for (const k of ["worker_name", "package_name", "shared_items", "must_not_change", "relationship"]) {
+    if (!rows[k]) problems.push(`facts table row missing: ${k}`);
+    else if (!rows[k][0] || !rows[k][1]) problems.push(`facts table row empty: ${k}`);
+  }
+  const cmsTree = makeTree(cms), parTree = makeTree(parrot);
+  const claimed = (v) => (v === "none" ? null : v);
+  if (rows.worker_name) {
+    const a = workerName(cmsTree, "apps/parrot"), b = workerName(parTree, "");
+    if (claimed(rows.worker_name[0]) !== a) problems.push(`worker_name: apps/parrot claims ${rows.worker_name[0]}, file says ${a ?? "none"}`);
+    if (claimed(rows.worker_name[1]) !== b) problems.push(`worker_name: Parrot claims ${rows.worker_name[1]}, file says ${b ?? "none"}`);
+  }
+  if (rows.package_name) {
+    const a = packageName(cmsTree, "apps/parrot"), b = packageName(parTree, "");
+    if (claimed(rows.package_name[0]) !== a) problems.push(`package_name: apps/parrot claims ${rows.package_name[0]}, file says ${a ?? "none"}`);
+    if (claimed(rows.package_name[1]) !== b) problems.push(`package_name: Parrot claims ${rows.package_name[1]}, file says ${b ?? "none"}`);
+  }
+  if (rows.shared_items) {
+    const items = (v) => (v === "none" ? [] : v.split(",").map((x) => x.trim()).filter(Boolean));
+    for (const i of items(rows.shared_items[0])) if (!cmsTree.exists(`apps/parrot/${i}`)) problems.push(`shared_items: ${i} not found under apps/parrot`);
+    for (const i of items(rows.shared_items[1])) if (!parTree.exists(i)) problems.push(`shared_items: ${i} not found in Parrot`);
+  }
+  if (rows.relationship) {
+    for (const v of rows.relationship) if (!REL_VOCAB.test(v)) problems.push(`relationship: value not in vocabulary: ${v}`);
+  }
+  return problems;
+}
+
 function main(argv) {
   const a = parseArgs(argv);
   const defRecord = (b) => path.join(path.dirname(b), "parrot-ff-record.json");
@@ -312,6 +506,41 @@ function main(argv) {
         return 1;
       }
       console.log("FF-CHECK OK");
+      return 0;
+    }
+    if (a.maps) {
+      if (typeof a.manifest !== "string") return usage("--manifest required");
+      const cmsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+      const pd = path.join(cmsRoot, DEFAULT_PHASES_DIR, "38-code-map-coupling-inventory", "maps");
+      const dirs = {
+        cms: a["cms-dir"] || path.join(cmsRoot, ".planning", "codebase"),
+        parrot: a["parrot-dir"] || path.join(pd, "parrot"),
+        legacy: a["legacy-dir"] || path.join(pd, "legacy"),
+      };
+      const problems = checkMaps({
+        manifest: a.manifest, dirs,
+        parrotRepo: a["parrot-repo"] || path.join(os.homedir(), "Documents", "Parrot"),
+        legacyRepo: a["legacy-repo"] || path.join(os.homedir(), "MayaOS", "internjobs-ai"),
+      });
+      if (problems.length) {
+        console.log("MAPS FAIL:\n" + problems.map((p) => `  - ${p}`).join("\n"));
+        return 1;
+      }
+      console.log("MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos");
+      return 0;
+    }
+    if (a.relationship) {
+      if (typeof a.relationship !== "string") return usage("--relationship <doc> required");
+      const problems = checkRelationship({
+        doc: a.relationship,
+        cms: a.cms || path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."),
+        parrot: a.parrot || path.join(os.homedir(), "Documents", "Parrot"),
+      });
+      if (problems.length) {
+        console.log("RELATIONSHIP FAIL:\n" + problems.map((p) => `  - ${p}`).join("\n"));
+        return 1;
+      }
+      console.log("RELATIONSHIP OK");
       return 0;
     }
     return usage("no mode given");

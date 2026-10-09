@@ -1,0 +1,415 @@
+TAP version 13
+# Subtest: T-gate: entry gate reads VERIFICATION status
+ok 1 - T-gate: entry gate reads VERIFICATION status
+  ---
+  duration_ms: 234.870083
+  ...
+# Subtest: T-guard-legacy positive: unchanged -> 0
+ok 2 - T-guard-legacy positive: unchanged -> 0
+  ---
+  duration_ms: 930.086583
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package.json -> 1
+ok 3 - T-guard-legacy-hash: one byte in package.json -> 1
+  ---
+  duration_ms: 815.100875
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package-lock.json -> 1
+ok 4 - T-guard-legacy-hash: one byte in package-lock.json -> 1
+  ---
+  duration_ms: 730.215916
+  ...
+# Subtest: T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+ok 5 - T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+  ---
+  duration_ms: 754.9045
+  ...
+# Subtest: T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+ok 6 - T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+  ---
+  duration_ms: 803.460917
+  ...
+# Subtest: T-guard-legacy-head: new commit -> 1
+ok 7 - T-guard-legacy-head: new commit -> 1
+  ---
+  duration_ms: 813.043125
+  ...
+# Subtest: T-guard-legacy-status: extra untracked path -> 1
+ok 8 - T-guard-legacy-status: extra untracked path -> 1
+  ---
+  duration_ms: 738.478792
+  ...
+# Subtest: T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+ok 9 - T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+  ---
+  duration_ms: 754.164375
+  ...
+# Subtest: T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+ok 10 - T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+  ---
+  duration_ms: 703.975375
+  ...
+# Subtest: T-guard-legacy-index: plain git status rewrites index -> 1
+ok 11 - T-guard-legacy-index: plain git status rewrites index -> 1
+  ---
+  duration_ms: 944.94075
+  ...
+# Subtest: T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+ok 12 - T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+  ---
+  duration_ms: 791.559125
+  ...
+# Subtest: T-snapshot-cms: pre-existing cms paths by name, never contents
+ok 13 - T-snapshot-cms: pre-existing cms paths by name, never contents
+  ---
+  duration_ms: 791.30475
+  ...
+# Subtest: T-no-secrets-read: .env canary never reaches output; source never touches .env
+ok 14 - T-no-secrets-read: .env canary never reaches output; source never touches .env
+  ---
+  duration_ms: 741.607417
+  ...
+# Subtest: T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+ok 15 - T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+  ---
+  duration_ms: 1669.669667
+  ...
+# Subtest: T-guard-originmain-pos: moved to after_sha with record -> 0
+ok 16 - T-guard-originmain-pos: moved to after_sha with record -> 0
+  ---
+  duration_ms: 711.693833
+  ...
+# Subtest: T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+ok 17 - T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+  ---
+  duration_ms: 751.91225
+  ...
+# Subtest: T-guard-originmain-neg-norecord: moved, no record -> 1
+ok 18 - T-guard-originmain-neg-norecord: moved, no record -> 1
+  ---
+  duration_ms: 693.8835
+  ...
+# Subtest: T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+ok 19 - T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+  ---
+  duration_ms: 667.710791
+  ...
+# Subtest: T-preflight-dirty: modified tracked file -> 1
+ok 20 - T-preflight-dirty: modified tracked file -> 1
+  ---
+  duration_ms: 473.528125
+  ...
+# Subtest: T-preflight-branch: non-main checkout -> 1
+ok 21 - T-preflight-branch: non-main checkout -> 1
+  ---
+  duration_ms: 527.370333
+  ...
+# Subtest: T-preflight-diverged: local main has unique commit -> 1
+ok 22 - T-preflight-diverged: local main has unique commit -> 1
+  ---
+  duration_ms: 551.423333
+  ...
+# Subtest: T-ff-check: ff'd clone with record -> 0
+ok 23 - T-ff-check: ff'd clone with record -> 0
+  ---
+  duration_ms: 1018.071875
+  ...
+# Subtest: T-ff-check: pre-ff -> 1
+ok 24 - T-ff-check: pre-ff -> 1
+  ---
+  duration_ms: 810.10825
+  ...
+# Subtest: T-ff-check: expect-after differs -> 1
+ok 25 - T-ff-check: expect-after differs -> 1
+  ---
+  duration_ms: 829.904625
+  ...
+# Subtest: T-ff-check: moved worktree -> 1
+ok 26 - T-ff-check: moved worktree -> 1
+  ---
+  duration_ms: 817.466166
+  ...
+# Subtest: T-ff-check: dirty tree -> 1
+ok 27 - T-ff-check: dirty tree -> 1
+  ---
+  duration_ms: 760.915041
+  ...
+# Subtest: T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+ok 28 - T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+  ---
+  duration_ms: 983.056125
+  ...
+# Subtest: T-ff-record: before_sha not an ancestor of HEAD -> 1
+ok 29 - T-ff-record: before_sha not an ancestor of HEAD -> 1
+  ---
+  duration_ms: 788.300833
+  ...
+# Subtest: T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed
+ok 30 - T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed
+  ---
+  duration_ms: 127.527833
+  ...
+# Subtest: T-maps-positive: complete stamped clean maps -> 0
+ok 31 - T-maps-positive: complete stamped clean maps -> 0
+  ---
+  duration_ms: 46.470042
+  ...
+# Subtest: T-maps-missing: cms/STACK.md deleted -> 1 naming it
+ok 32 - T-maps-missing: cms/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.023291
+  ...
+# Subtest: T-maps-missing: cms/INTEGRATIONS.md deleted -> 1 naming it
+ok 33 - T-maps-missing: cms/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.522375
+  ...
+# Subtest: T-maps-missing: cms/ARCHITECTURE.md deleted -> 1 naming it
+ok 34 - T-maps-missing: cms/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 43.7375
+  ...
+# Subtest: T-maps-missing: cms/STRUCTURE.md deleted -> 1 naming it
+ok 35 - T-maps-missing: cms/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.47775
+  ...
+# Subtest: T-maps-missing: cms/CONVENTIONS.md deleted -> 1 naming it
+ok 36 - T-maps-missing: cms/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.492125
+  ...
+# Subtest: T-maps-missing: cms/TESTING.md deleted -> 1 naming it
+ok 37 - T-maps-missing: cms/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.743375
+  ...
+# Subtest: T-maps-missing: cms/CONCERNS.md deleted -> 1 naming it
+ok 38 - T-maps-missing: cms/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.436208
+  ...
+# Subtest: T-maps-missing: cms empty doc -> 1
+ok 39 - T-maps-missing: cms empty doc -> 1
+  ---
+  duration_ms: 48.360584
+  ...
+# Subtest: T-maps-missing: parrot/STACK.md deleted -> 1 naming it
+ok 40 - T-maps-missing: parrot/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.067959
+  ...
+# Subtest: T-maps-missing: parrot/INTEGRATIONS.md deleted -> 1 naming it
+ok 41 - T-maps-missing: parrot/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.3315
+  ...
+# Subtest: T-maps-missing: parrot/ARCHITECTURE.md deleted -> 1 naming it
+ok 42 - T-maps-missing: parrot/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.809041
+  ...
+# Subtest: T-maps-missing: parrot/STRUCTURE.md deleted -> 1 naming it
+ok 43 - T-maps-missing: parrot/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.943583
+  ...
+# Subtest: T-maps-missing: parrot/CONVENTIONS.md deleted -> 1 naming it
+ok 44 - T-maps-missing: parrot/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.373792
+  ...
+# Subtest: T-maps-missing: parrot/TESTING.md deleted -> 1 naming it
+ok 45 - T-maps-missing: parrot/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.277042
+  ...
+# Subtest: T-maps-missing: parrot/CONCERNS.md deleted -> 1 naming it
+ok 46 - T-maps-missing: parrot/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.925458
+  ...
+# Subtest: T-maps-missing: parrot empty doc -> 1
+ok 47 - T-maps-missing: parrot empty doc -> 1
+  ---
+  duration_ms: 43.145875
+  ...
+# Subtest: T-maps-missing: legacy/STACK.md deleted -> 1 naming it
+ok 48 - T-maps-missing: legacy/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 52.04225
+  ...
+# Subtest: T-maps-missing: legacy/INTEGRATIONS.md deleted -> 1 naming it
+ok 49 - T-maps-missing: legacy/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.883334
+  ...
+# Subtest: T-maps-missing: legacy/ARCHITECTURE.md deleted -> 1 naming it
+ok 50 - T-maps-missing: legacy/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 48.632167
+  ...
+# Subtest: T-maps-missing: legacy/STRUCTURE.md deleted -> 1 naming it
+ok 51 - T-maps-missing: legacy/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.391792
+  ...
+# Subtest: T-maps-missing: legacy/CONVENTIONS.md deleted -> 1 naming it
+ok 52 - T-maps-missing: legacy/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 52.386125
+  ...
+# Subtest: T-maps-missing: legacy/TESTING.md deleted -> 1 naming it
+ok 53 - T-maps-missing: legacy/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 48.1815
+  ...
+# Subtest: T-maps-missing: legacy/CONCERNS.md deleted -> 1 naming it
+ok 54 - T-maps-missing: legacy/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.982583
+  ...
+# Subtest: T-maps-missing: legacy empty doc -> 1
+ok 55 - T-maps-missing: legacy empty doc -> 1
+  ---
+  duration_ms: 48.399666
+  ...
+# Subtest: T-maps-stamp-missing: no stamp line -> 1 naming the doc
+ok 56 - T-maps-stamp-missing: no stamp line -> 1 naming the doc
+  ---
+  duration_ms: 44.86475
+  ...
+# Subtest: T-maps-stamp-wrong-repo: stamp names another repo -> 1
+ok 57 - T-maps-stamp-wrong-repo: stamp names another repo -> 1
+  ---
+  duration_ms: 44.878458
+  ...
+# Subtest: T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1
+ok 58 - T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1
+  ---
+  duration_ms: 48.237417
+  ...
+# Subtest: T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted
+ok 59 - T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted
+  ---
+  duration_ms: 49.966458
+  ...
+# Subtest: T-maps-stamp-stale-date: cms stamp date before merge_date -> 1
+ok 60 - T-maps-stamp-stale-date: cms stamp date before merge_date -> 1
+  ---
+  duration_ms: 49.998541
+  ...
+# Subtest: T-maps-stamp-not-first-line: stamp on line 2 -> 1
+ok 61 - T-maps-stamp-not-first-line: stamp on line 2 -> 1
+  ---
+  duration_ms: 47.423875
+  ...
+# Subtest: T-maps-secret: sk- pattern -> 1
+ok 62 - T-maps-secret: sk- pattern -> 1
+  ---
+  duration_ms: 45.625
+  ...
+# Subtest: T-maps-secret: AKIA pattern -> 1
+ok 63 - T-maps-secret: AKIA pattern -> 1
+  ---
+  duration_ms: 45.576375
+  ...
+# Subtest: T-maps-secret: ghp_ pattern -> 1
+ok 64 - T-maps-secret: ghp_ pattern -> 1
+  ---
+  duration_ms: 45.090334
+  ...
+# Subtest: T-maps-secret: xoxb- pattern -> 1
+ok 65 - T-maps-secret: xoxb- pattern -> 1
+  ---
+  duration_ms: 65.044084
+  ...
+# Subtest: T-maps-secret: PEM pattern -> 1
+ok 66 - T-maps-secret: PEM pattern -> 1
+  ---
+  duration_ms: 67.11575
+  ...
+# Subtest: T-maps-secret: JWT pattern -> 1
+ok 67 - T-maps-secret: JWT pattern -> 1
+  ---
+  duration_ms: 48.378292
+  ...
+# Subtest: T-maps-secret: KEY= pattern -> 1
+ok 68 - T-maps-secret: KEY= pattern -> 1
+  ---
+  duration_ms: 45.847416
+  ...
+# Subtest: T-maps-secret: .env= pattern -> 1
+ok 69 - T-maps-secret: .env= pattern -> 1
+  ---
+  duration_ms: 47.788875
+  ...
+# Subtest: T-maps-secret: env var named without a value -> 0 (false-positive control)
+ok 70 - T-maps-secret: env var named without a value -> 0 (false-positive control)
+  ---
+  duration_ms: 56.953375
+  ...
+# Subtest: T-maps-location: map dir inside a Parrot or legacy work tree -> 1
+ok 71 - T-maps-location: map dir inside a Parrot or legacy work tree -> 1
+  ---
+  duration_ms: 204.73125
+  ...
+# Subtest: T-rel-fixture positive: claims match files -> 0
+ok 72 - T-rel-fixture positive: claims match files -> 0
+  ---
+  duration_ms: 65.393292
+  ...
+# Subtest: T-rel-fixture NEG: wrong worker name -> 1
+ok 73 - T-rel-fixture NEG: wrong worker name -> 1
+  ---
+  duration_ms: 72.779375
+  ...
+# Subtest: T-rel-fixture NEG: wrong Parrot package name -> 1
+ok 74 - T-rel-fixture NEG: wrong Parrot package name -> 1
+  ---
+  duration_ms: 73.675333
+  ...
+# Subtest: T-rel-fixture NEG: shared item missing in the Parrot tree -> 1
+ok 75 - T-rel-fixture NEG: shared item missing in the Parrot tree -> 1
+  ---
+  duration_ms: 64.6795
+  ...
+# Subtest: T-rel-fixture NEG: shared item missing in the cms tree -> 1
+ok 76 - T-rel-fixture NEG: shared item missing in the cms tree -> 1
+  ---
+  duration_ms: 71.585583
+  ...
+# Subtest: T-rel-fixture NEG: must_not_change row omitted -> 1
+ok 77 - T-rel-fixture NEG: must_not_change row omitted -> 1
+  ---
+  duration_ms: 71.996917
+  ...
+# Subtest: T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1
+ok 78 - T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1
+  ---
+  duration_ms: 205.58075
+  ...
+# Subtest: T-rel-fixture NEG: doc missing -> 1
+ok 79 - T-rel-fixture NEG: doc missing -> 1
+  ---
+  duration_ms: 42.262625
+  ...
+# Subtest: T-rel-fixture: Parrot content is read at origin/main, not the working tree
+ok 80 - T-rel-fixture: Parrot content is read at origin/main, not the working tree
+  ---
+  duration_ms: 363.457125
+  ...
+# Subtest: T-rel-fixture: never reads .env*
+ok 81 - T-rel-fixture: never reads .env*
+  ---
+  duration_ms: 72.937917
+  ...
+1..81
+# tests 81
+# suites 0
+# pass 81
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26042.177709

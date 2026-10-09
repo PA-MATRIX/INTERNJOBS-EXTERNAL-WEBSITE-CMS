@@ -331,3 +331,242 @@ test("T-ff-record: before_sha not an ancestor of HEAD -> 1", () => {
   gitW(e.p.clone, "pull", "-q", "--ff-only", "origin", "main");
   assert.equal(cli(ffArgs(e, after)).status, 1);
 });
+
+// ================= Plan 38-02: --maps / --relationship =================
+const DOCS = ["STACK", "INTEGRATIONS", "ARCHITECTURE", "STRUCTURE", "CONVENTIONS", "TESTING", "CONCERNS"];
+const SHA_C = "d1658aa5ba0ce397788cd79c34b425c459eaa0da";
+const SHA_P = "74880e45226e4920cfdf1dec6b36bea5fd8a190b";
+const SHA_L = "99bcced93f997c8f09147c0cb18e132f8f3da751";
+const REPOS = { cms: "internjobs-cms", parrot: "PA-Ai-Team/Parrot", legacy: "growthpods/Internjobs" };
+const SHAS = { cms: SHA_C, parrot: SHA_P, legacy: SHA_L };
+const stamp = (k, over = {}) =>
+  `<!-- generated from ${over.repo ?? REPOS[k]} @ ${over.sha ?? SHAS[k]} on ${over.date ?? "2026-10-09"} -->\n`;
+
+function makeMaps() {
+  const root = tmp("maps-");
+  const m = { root, manifest: path.join(root, "MANIFEST.json") };
+  for (const k of ["cms", "parrot", "legacy"]) {
+    m[k] = path.join(root, k);
+    for (const d of DOCS) put(m[k], `${d}.md`, `${stamp(k)}# ${d}\n\nClean prose. Mentions STRIPE_SECRET_KEY by name only.\n`);
+  }
+  writeFileSync(m.manifest, JSON.stringify({
+    cms: { repo: REPOS.cms, sha: SHA_C, merge_date: "2026-10-08" },
+    parrot: { repo: REPOS.parrot, sha: SHA_P },
+    legacy: { repo: REPOS.legacy, sha: SHA_L },
+  }));
+  return m;
+}
+const maps = (m, extra = []) =>
+  cli(["--maps", "--manifest", m.manifest, "--cms-dir", m.cms, "--parrot-dir", m.parrot, "--legacy-dir", m.legacy,
+    "--parrot-repo", path.join(m.root, "no-parrot"), "--legacy-repo", path.join(m.root, "no-legacy"), ...extra]);
+
+test("T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed", () => {
+  const pd = tmp("phases-");
+  mkdirSync(path.join(pd, "38-code-map-coupling-inventory"));
+  assert.equal(cli(["--gate-prev", "38-01", "--phases-dir", pd]).status, 1);
+  const f = path.join(pd, "38-code-map-coupling-inventory", "38-01-VERIFICATION.md");
+  writeFileSync(f, "---\nstatus: gaps_found\n---\n");
+  assert.equal(cli(["--gate-prev", "38-01", "--phases-dir", pd]).status, 1);
+  writeFileSync(f, "---\nstatus: passed\n---\n");
+  assert.equal(cli(["--gate-prev", "38-01", "--phases-dir", pd]).status, 0);
+});
+
+test("T-maps-positive: complete stamped clean maps -> 0", () => {
+  const m = makeMaps();
+  const r = maps(m);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+for (const k of ["cms", "parrot", "legacy"]) {
+  for (const d of DOCS) {
+    test(`T-maps-missing: ${k}/${d}.md deleted -> 1 naming it`, () => {
+      const m = makeMaps();
+      rmSync(path.join(m[k], `${d}.md`));
+      const r = maps(m);
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stdout, new RegExp(`${d}\\.md`));
+    });
+  }
+  test(`T-maps-missing: ${k} empty doc -> 1`, () => {
+    const m = makeMaps();
+    writeFileSync(path.join(m[k], "STACK.md"), "");
+    assert.equal(maps(m).status, 1);
+  });
+}
+
+test("T-maps-stamp-missing: no stamp line -> 1 naming the doc", () => {
+  const m = makeMaps();
+  writeFileSync(path.join(m.parrot, "TESTING.md"), "# TESTING\nno stamp\n");
+  const r = maps(m);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /TESTING\.md/);
+});
+test("T-maps-stamp-wrong-repo: stamp names another repo -> 1", () => {
+  const m = makeMaps();
+  writeFileSync(path.join(m.legacy, "STACK.md"), `${stamp("legacy", { repo: "internjobs-cms" })}# x\n`);
+  const r = maps(m);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /STACK\.md/);
+});
+test("T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1", () => {
+  const m = makeMaps();
+  writeFileSync(path.join(m.cms, "CONCERNS.md"), `${stamp("cms", { sha: "1ef2960b49d48d1f46c4151a0a115cce7e268e0d" })}# x\n`);
+  const r = maps(m);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /CONCERNS\.md/);
+});
+test("T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted", () => {
+  const m = makeMaps();
+  writeFileSync(path.join(m.cms, "CONCERNS.md"), `${stamp("cms", { sha: SHA_C.slice(0, 7) })}# x\n`);
+  assert.equal(maps(m).status, 0);
+});
+test("T-maps-stamp-stale-date: cms stamp date before merge_date -> 1", () => {
+  const m = makeMaps();
+  writeFileSync(path.join(m.cms, "ARCHITECTURE.md"), `${stamp("cms", { date: "2026-05-24" })}# x\n`);
+  const r = maps(m);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /ARCHITECTURE\.md/);
+});
+test("T-maps-stamp-not-first-line: stamp on line 2 -> 1", () => {
+  const m = makeMaps();
+  writeFileSync(path.join(m.cms, "STACK.md"), `# STACK\n${stamp("cms")}`);
+  assert.equal(maps(m).status, 1);
+});
+
+const SECRETS = {
+  "sk-": "const k = 'sk-live-abcdefghijklmnop1234';",
+  AKIA: "aws AKIAABCDEFGHIJKLMNOP here",
+  ghp_: "token ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+  "xoxb-": "slack xoxb-1234567890-abcdefghij",
+  PEM: "-----BEGIN PRIVATE KEY-----",
+  JWT: "jwt eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijklmnop",
+  "KEY=": "SOME_KEY=abcdefghijklmnop12",
+  ".env=": "see .env.local=abcdef1234 for details",
+};
+for (const [name, body] of Object.entries(SECRETS)) {
+  test(`T-maps-secret: ${name} pattern -> 1`, () => {
+    const m = makeMaps();
+    appendFileSync(path.join(m.legacy, "INTEGRATIONS.md"), `\n${body}\n`);
+    const r = maps(m);
+    assert.equal(r.status, 1, r.stdout);
+    assert.match(r.stdout, /INTEGRATIONS\.md/);
+    assert.ok(!r.stdout.includes("abcdefghijklmnop12"), "secret value must not be echoed");
+  });
+}
+test("T-maps-secret: env var named without a value -> 0 (false-positive control)", () => {
+  const m = makeMaps();
+  appendFileSync(path.join(m.cms, "INTEGRATIONS.md"), "\n`STRIPE_SECRET_KEY` and `CLERK_SECRET_KEY=` (set via Infisical), `.env.example` lists names.\n");
+  const r = maps(m);
+  assert.equal(r.status, 0, r.stdout);
+});
+
+test("T-maps-location: map dir inside a Parrot or legacy work tree -> 1", () => {
+  for (const which of ["parrot-repo", "legacy-repo"]) {
+    const m = makeMaps();
+    const fake = tmp("srcrepo-");
+    gitW(fake, "init", "-q", "-b", "main");
+    const inside = path.join(fake, "maps");
+    mkdirSync(inside);
+    for (const d of DOCS) writeFileSync(path.join(inside, `${d}.md`), `${stamp(which === "parrot-repo" ? "parrot" : "legacy")}# x\n`);
+    const args = ["--maps", "--manifest", m.manifest, "--cms-dir", m.cms,
+      "--parrot-dir", which === "parrot-repo" ? inside : m.parrot,
+      "--legacy-dir", which === "legacy-repo" ? inside : m.legacy,
+      "--parrot-repo", which === "parrot-repo" ? fake : path.join(m.root, "no-parrot"),
+      "--legacy-repo", which === "legacy-repo" ? fake : path.join(m.root, "no-legacy")];
+    const r = cli(args);
+    assert.equal(r.status, 1, `${which}: ${r.stdout}`);
+    assert.match(r.stdout, /inside/);
+  }
+});
+
+// ---------- relationship ----------
+function makeRel({ cmsName = "ws-fixture", parrotPkg = "parrot-server", git: useGit = false } = {}) {
+  const root = tmp("rel-");
+  const cms = path.join(root, "cms");
+  const parrot = path.join(root, "Parrot");
+  put(cms, "apps/parrot/wrangler.toml", `name = "${cmsName}"\nmain = "workers/app.ts"\n`);
+  put(cms, "apps/parrot/package.json", JSON.stringify({ name: "parrot" }));
+  put(cms, "apps/parrot/shared/phone.ts", "export {};\n");
+  put(parrot, "package.json", JSON.stringify({ name: parrotPkg }));
+  put(parrot, "server/phone.ts", "export {};\n");
+  if (useGit) {
+    gitW(parrot, "init", "-q", "-b", "main");
+    gitW(parrot, "add", "-A");
+    gitW(parrot, "commit", "-qm", "c");
+    gitW(parrot, "update-ref", "refs/remotes/origin/main", "HEAD");
+    put(parrot, "server/phone.ts", "export const changedInWorktreeOnly = 1;\n");
+  }
+  const doc = (rows = {}) => {
+    const base = {
+      worker_name: ["ws-fixture", "none"],
+      package_name: ["parrot", "parrot-server"],
+      shared_items: ["shared/phone.ts", "server/phone.ts"],
+      must_not_change: ["worker name ws-fixture", "Fly app name"],
+      relationship: ["independent", "independent"],
+      ...rows,
+    };
+    const body = Object.entries(base)
+      .filter(([, v]) => v !== null)
+      .map(([k, v]) => `| ${k} | ${v[0]} | ${v[1]} |`).join("\n");
+    const f = path.join(root, "REL.md");
+    writeFileSync(f, `# Relationship\n\nProse.\n\n| fact | apps/parrot | PA-Ai-Team/Parrot |\n|---|---|---|\n${body}\n`);
+    return f;
+  };
+  return { root, cms, parrot, doc };
+}
+const rel = (x, f) => cli(["--relationship", f, "--cms", x.cms, "--parrot", x.parrot]);
+
+test("T-rel-fixture positive: claims match files -> 0", () => {
+  const x = makeRel();
+  const r = rel(x, x.doc());
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+test("T-rel-fixture NEG: wrong worker name -> 1", () => {
+  const x = makeRel();
+  const r = rel(x, x.doc({ worker_name: ["something-else", "none"] }));
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /worker_name/);
+});
+test("T-rel-fixture NEG: wrong Parrot package name -> 1", () => {
+  const x = makeRel();
+  assert.equal(rel(x, x.doc({ package_name: ["parrot", "nope"] })).status, 1);
+});
+test("T-rel-fixture NEG: shared item missing in the Parrot tree -> 1", () => {
+  const x = makeRel();
+  const r = rel(x, x.doc({ shared_items: ["shared/phone.ts", "server/gone.ts"] }));
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /gone\.ts/);
+});
+test("T-rel-fixture NEG: shared item missing in the cms tree -> 1", () => {
+  const x = makeRel();
+  assert.equal(rel(x, x.doc({ shared_items: ["shared/gone.ts", "server/phone.ts"] })).status, 1);
+});
+test("T-rel-fixture NEG: must_not_change row omitted -> 1", () => {
+  const x = makeRel();
+  const r = rel(x, x.doc({ must_not_change: null }));
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /must_not_change/);
+});
+test("T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1", () => {
+  const x = makeRel();
+  assert.equal(rel(x, x.doc({ relationship: null })).status, 1);
+  assert.equal(rel(x, x.doc({ relationship: ["cousins", "independent"] })).status, 1);
+  assert.equal(rel(x, x.doc({ relationship: ["other:diverged copy", "independent"] })).status, 0);
+});
+test("T-rel-fixture NEG: doc missing -> 1", () => {
+  const x = makeRel();
+  assert.equal(rel(x, path.join(x.root, "absent.md")).status, 1);
+});
+test("T-rel-fixture: Parrot content is read at origin/main, not the working tree", () => {
+  const x = makeRel({ git: true });
+  // the committed tree has server/phone.ts; the worktree edit must not matter; a file only in worktree is not shared
+  assert.equal(rel(x, x.doc()).status, 0);
+  put(x.parrot, "server/only-in-worktree.ts", "x\n");
+  assert.equal(rel(x, x.doc({ shared_items: ["shared/phone.ts", "server/only-in-worktree.ts"] })).status, 1);
+});
+test("T-rel-fixture: never reads .env*", () => {
+  const x = makeRel();
+  put(x.cms, "apps/parrot/.env", `NAME=${CANARY}\n`);
+  const r = rel(x, x.doc());
+  assert.ok(!(r.stdout + r.stderr).includes(CANARY));
+});

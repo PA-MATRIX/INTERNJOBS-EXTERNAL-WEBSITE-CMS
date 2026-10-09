@@ -1,0 +1,5 @@
+{
+  "cms": { "repo": "internjobs-cms", "sha": "d1658aa5ba0ce397788cd79c34b425c459eaa0da", "merge_date": "2026-10-08" },
+  "parrot": { "repo": "PA-Ai-Team/Parrot", "sha": "74880e45226e4920cfdf1dec6b36bea5fd8a190b" },
+  "legacy": { "repo": "growthpods/Internjobs", "sha": "99bcced93f997c8f09147c0cb18e132f8f3da751" }
+}
