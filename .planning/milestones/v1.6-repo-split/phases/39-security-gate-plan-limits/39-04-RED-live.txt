@@ -1,0 +1,5 @@
+# live RED 2026-10-09T04:42:36Z
+FAIL: record not found
+scan-record exit 1
+$ command -v gitleaks
+command -v exit 1

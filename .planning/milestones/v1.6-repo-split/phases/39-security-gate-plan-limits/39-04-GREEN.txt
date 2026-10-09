@@ -1,0 +1,51 @@
+TAP version 13
+# Subtest: T-sanitize-drop: no value-bearing keys or strings survive
+ok 1 - T-sanitize-drop: no value-bearing keys or strings survive
+  ---
+  duration_ms: 2.265875
+  ...
+# Subtest: T-sanitize-redact-required: unredacted Secret throws
+ok 2 - T-sanitize-redact-required: unredacted Secret throws
+  ---
+  duration_ms: 0.662584
+  ...
+# Subtest: T-sanitize-redact-required: tool.redact must be 100
+ok 3 - T-sanitize-redact-required: tool.redact must be 100
+  ---
+  duration_ms: 0.872125
+  ...
+# Subtest: T-sanitize-author-dropped: Author/Email never copied
+ok 4 - T-sanitize-author-dropped: Author/Email never copied
+  ---
+  duration_ms: 0.117334
+  ...
+# Subtest: default classification is unclassified and the record gate rejects it
+ok 5 - default classification is unclassified and the record gate rejects it
+  ---
+  duration_ms: 52.215417
+  ...
+# Subtest: T-sanitize-passes-record: classified output passes --scan-record
+ok 6 - T-sanitize-passes-record: classified output passes --scan-record
+  ---
+  duration_ms: 55.018125
+  ...
+# Subtest: real finding without rotation fails the gate; with rotation passes
+ok 7 - real finding without rotation fails the gate; with rotation passes
+  ---
+  duration_ms: 93.701625
+  ...
+# Subtest: CLI exits non-zero on unredacted report
+ok 8 - CLI exits non-zero on unredacted report
+  ---
+  duration_ms: 50.338958
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 322.389
+exit 0
