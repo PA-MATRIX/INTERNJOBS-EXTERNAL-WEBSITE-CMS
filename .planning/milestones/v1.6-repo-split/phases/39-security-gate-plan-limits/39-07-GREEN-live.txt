@@ -1,9 +1,9 @@
-# 39-07 live run STOPPED (not GREEN) 2026-10-09T04:51:25Z
+# 39-07 GREEN-live (final) 2026-10-09T04:52Z; supersedes the STOPPED capture above in git history
 ## probe-record gate
-PROBE FAIL:
-  - final readback status is not 404 (probe repo left behind)
-exit=1
+PROBE OK
+exit=0
 ## gh-log vs approved
 GH-LOG OK
 exit=0
-## final GET: repo still exists (private:true) -> 200; clone failed 403 'Repository is disabled'
+## final GET (read-only): repo gone
+HTTP 404 Not Found

@@ -51,8 +51,35 @@
       "exit": 128,
       "result": "Cloning into '/private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/zz-sec03-probe-20261008-clone/clone'...\nremote: Repository 'PA-MATRIX/zz-sec03-probe-20261008' is disabled.\nremote: Please ask the owner to check their account.\nfatal: unable to access 'https://github.com/PA-MATRIX/zz-sec03-probe-20261008.git/': The requested URL returned error: 403",
       "unexpected": true
+    },
+    {
+      "ts": "2026-10-09T04:51:59Z",
+      "cmd": "gh repo delete PA-MATRIX/zz-sec03-probe-20261008 --yes",
+      "repo": "https://github.com/PA-MATRIX/zz-sec03-probe-20261008",
+      "status": 200,
+      "exit": 0,
+      "result": "ok (run by orchestrator under the D17-approved line 7)"
+    },
+    {
+      "ts": "2026-10-09T04:52:22Z",
+      "cmd": "gh api repos/PA-MATRIX/zz-sec03-probe-20261008",
+      "repo": "https://github.com/PA-MATRIX/zz-sec03-probe-20261008",
+      "status": 404,
+      "exit": 1,
+      "result": "{\"message\":\"Not Found\"} (HTTP 404) - repo gone"
     }
   ],
   "stopped": true,
-  "after_flip": 403
+  "after_flip": 403,
+  "before_flip": 200,
+  "after_flip_message": "Upgrade to GitHub Pro or make this repository public to enable this feature.",
+  "push_to_main": "not measured",
+  "push_to_main_reason": "git clone failed HTTP 403 \"Repository 'PA-MATRIX/zz-sec03-probe-20261008' is disabled\" (GitHub-side message, cause unknown); repo GET afterwards showed private:true, disabled:false, admin permission.",
+  "org_plan": {
+    "plan": "free",
+    "private_repos": 10,
+    "note": "count includes the probe"
+  },
+  "limitations": "Not directly measured: whether protection survives going private (push_to_main unmeasured). Only measured: the protection API is refused (403 upgrade message) on a private repo on this plan, consistent with the docs (C1). Enforcement is therefore unproven and unlikely.",
+  "outcome": "partial"
 }

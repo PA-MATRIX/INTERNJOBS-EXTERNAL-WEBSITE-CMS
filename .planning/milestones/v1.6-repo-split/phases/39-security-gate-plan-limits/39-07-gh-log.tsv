@@ -8,3 +8,4 @@
 2026-10-09T04:51:09Z	gh repo edit PA-MATRIX/zz-sec03-probe-20261008 --visibility private --accept-visibility-change-consequences
 2026-10-09T04:51:10Z	gh api repos/PA-MATRIX/zz-sec03-probe-20261008/branches/main/protection
 2026-10-09T04:51:10Z	git clone https://github.com/PA-MATRIX/zz-sec03-probe-20261008.git /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/zz-sec03-probe-20261008-clone/clone
+2026-10-09T04:51:59Z	gh repo delete PA-MATRIX/zz-sec03-probe-20261008 --yes
