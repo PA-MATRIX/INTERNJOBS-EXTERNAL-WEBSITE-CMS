@@ -11,7 +11,7 @@ key-files:
   modified: [scripts/verify-code-maps.mjs, scripts/verify-code-maps.test.mjs, .planning/REQUIREMENTS.md, .planning/ROADMAP.md, .planning/current-intent.json, .planning/milestones/v1.6-repo-split/CONTEXT.md]
 decisions: []
 duration: ~15min
-completed: 2026-10-09
+completed: 2026-10-08
 ---
 
 # Phase 38 Plan 04: Closure Summary
@@ -46,6 +46,30 @@ None - no plan conflicts arose.
 
 None.
 
+## Task 3: flip to Complete (after approval)
+
+- Gate: `38-VERIFICATION.md` is `status: passed` (10/10, commit ff9ca98). Raj approved the flip on 2026-10-08 ("Approve flip"); recorded as D14 in `CONTEXT.md` and `STATE.md` before any flip.
+- RED (live, pre-flip): `38-04-RED-final-live.txt`: `--closure --final --baseline` exit 1 (MAP-01..06 not `[x]`/Complete, ROADMAP Phase 38 not ticked, STATE status not complete).
+- Flip: MAP-01..06 `[x]` with traceability `Complete`; ROADMAP Phase 38 ticked; STATE status `complete`, progress 33% (2 of 6 phases), next Phase 39; `current-intent.json` updated (intent, next, updated_at).
+- GREEN (live, post-flip): `38-04-GREEN-final-live.txt`: `--closure --final --baseline` exit 0 (all phase gates, records and scope green).
+- Guard: `38-04-GUARD-final-live.txt`: `--guard --baseline` exit 0; legacy and Parrot match baseline.
+- Unit tests: `38-04-TESTS-final.txt`: 136 pass, 0 fail. `lint-plan-truths.js --require-spec` exit 0.
+
+## Open items (not blockers for Phase 38 closure)
+
+- `apps/canary-monitor/` (untracked in cms) needs a home decided before Phase 40/41; it is in `cms_preexisting`, not part of this phase.
+- The 11 Excluded repos in REPO-MAP.md are justified only by zero references in the cms tree; Raj has not confirmed them.
+- Liveness of the legacy Render services (`render.yaml`) is unconfirmed.
+- The docs/phase-38-code-map PR is held per D10 (main frozen to non-v1.6 changes) pending a separate decision with Raj. No push, PR or GitHub write was made in this plan.
+
+## Rulings
+
+None - no plan conflicts arose.
+
+## Authentication Gates
+
+None.
+
 ## Next
 
-Task 3 and the checkpoint are NOT run. Next: phase-level rrr-verifier writes `38-VERIFICATION.md`; then Raj approves the flip; then Task 3 (`--closure --final`).
+Phase 39 (`/rrr:plan-phase 39`): Security gate + GitHub plan limits.

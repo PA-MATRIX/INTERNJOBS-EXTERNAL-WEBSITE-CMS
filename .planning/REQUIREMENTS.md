@@ -359,12 +359,12 @@ Defined 2026-10-08. Spec for plans: `.planning/milestones/v1.6-repo-split/CONTEX
 
 ### Code mapping
 
-- [ ] **MAP-01**: `.planning/codebase/` for `internjobs-cms` is regenerated from `main` after MERGE-03 (7 documents, all dated after the merge). (executed, pending verification)
-- [ ] **MAP-02**: The local `~/Documents/Parrot` clone is fast-forwarded to `origin/main` (currently 664 commits behind), its two extra worktrees are dispositioned, and `.planning/codebase/` is regenerated from it. (executed, pending verification)
-- [ ] **MAP-03**: `growthpods/Internjobs` (legacy) is mapped to a scratch location without modifying that repo or its 4 uncommitted files. (executed, pending verification)
-- [ ] **MAP-04**: A coupling inventory lists every place the current layout is enforced or referenced (`ci.yml`, root `package.json` scripts, `wrangler.toml`, `package-lock.json`, README, `apps/employers` tailwind/styles, `apps/app/src/views.mjs`, `StartupAccessSection.tsx`, `packages/shared`) with a disposition for each (keep / move / rewrite / delete). (executed, pending verification)
-- [ ] **MAP-05**: The relationship between `apps/parrot` (monorepo Workspace) and `PA-Ai-Team/Parrot` is documented (what each is, what they share, what must not change). (executed, pending verification)
-- [ ] **MAP-06**: A single `REPO-MAP.md` lists every Intern Jobs GitHub repo with owner, visibility, purpose, local folder, deploy target and owning team. (executed, pending verification)
+- [x] **MAP-01**: `.planning/codebase/` for `internjobs-cms` is regenerated from `main` after MERGE-03 (7 documents, all dated after the merge).
+- [x] **MAP-02**: The local `~/Documents/Parrot` clone is fast-forwarded to `origin/main` (currently 664 commits behind), its two extra worktrees are dispositioned, and `.planning/codebase/` is regenerated from it.
+- [x] **MAP-03**: `growthpods/Internjobs` (legacy) is mapped to a scratch location without modifying that repo or its 4 uncommitted files.
+- [x] **MAP-04**: A coupling inventory lists every place the current layout is enforced or referenced (`ci.yml`, root `package.json` scripts, `wrangler.toml`, `package-lock.json`, README, `apps/employers` tailwind/styles, `apps/app/src/views.mjs`, `StartupAccessSection.tsx`, `packages/shared`) with a disposition for each (keep / move / rewrite / delete).
+- [x] **MAP-05**: The relationship between `apps/parrot` (monorepo Workspace) and `PA-Ai-Team/Parrot` is documented (what each is, what they share, what must not change).
+- [x] **MAP-06**: A single `REPO-MAP.md` lists every Intern Jobs GitHub repo with owner, visibility, purpose, local folder, deploy target and owning team.
 
 ### Security (before anything is made or kept public)
 
@@ -541,12 +541,12 @@ Each Active v1.4 requirement maps to exactly one phase. Populated by `/rrr:creat
 | MERGE-02 | Phase 37 | Complete |
 | MERGE-03 | Phase 37 | Complete |
 | MERGE-04 | Phase 37 | Complete |
-| MAP-01 | Phase 38 | Pending verification |
-| MAP-02 | Phase 38 | Pending verification |
-| MAP-03 | Phase 38 | Pending verification |
-| MAP-04 | Phase 38 | Pending verification |
-| MAP-05 | Phase 38 | Pending verification |
-| MAP-06 | Phase 38 | Pending verification |
+| MAP-01 | Phase 38 | Complete |
+| MAP-02 | Phase 38 | Complete |
+| MAP-03 | Phase 38 | Complete |
+| MAP-04 | Phase 38 | Complete |
+| MAP-05 | Phase 38 | Complete |
+| MAP-06 | Phase 38 | Complete |
 | SEC-01 | Phase 39 | Pending |
 | SEC-02 | Phase 39 | Pending |
 | SEC-03 | Phase 39 | Pending |

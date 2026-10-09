@@ -1,0 +1,29 @@
+MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+ok: gate maps green
+RELATIONSHIP OK
+ok: gate relationship green
+INVENTORY OK
+ok: gate inventoryCms green
+INVENTORY OK
+ok: gate inventoryParrot green
+INVENTORY OK
+ok: gate inventoryLegacy green
+REPO-MAP OK
+ok: gate repoMap green
+GUARD OK: legacy and Parrot match baseline
+ok: gate guard green
+ok: scope: working tree within allowlist
+FAIL: MAP-01 not [x]/Complete
+FAIL: MAP-02 not [x]/Complete
+FAIL: MAP-03 not [x]/Complete
+FAIL: MAP-04 not [x]/Complete
+FAIL: MAP-05 not [x]/Complete
+FAIL: MAP-06 not [x]/Complete
+FAIL: ROADMAP Phase 38 not ticked
+ok: ROADMAP Phase 38 Plans: 4 plans
+ok: STATE frontmatter: phase 38, plan 4 of 4
+FAIL: STATE status not complete
+ok: current-intent.json names v1.6 / phase 38
+ok: 38-VERIFICATION.md status passed
+CLOSURE FAIL
+exit=1

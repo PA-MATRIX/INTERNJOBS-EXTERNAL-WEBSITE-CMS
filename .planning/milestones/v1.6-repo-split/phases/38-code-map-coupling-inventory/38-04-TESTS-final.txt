@@ -1,0 +1,690 @@
+TAP version 13
+# Subtest: T-gate: entry gate reads VERIFICATION status
+ok 1 - T-gate: entry gate reads VERIFICATION status
+  ---
+  duration_ms: 206.178333
+  ...
+# Subtest: T-guard-legacy positive: unchanged -> 0
+ok 2 - T-guard-legacy positive: unchanged -> 0
+  ---
+  duration_ms: 842.744417
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package.json -> 1
+ok 3 - T-guard-legacy-hash: one byte in package.json -> 1
+  ---
+  duration_ms: 782.4565
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package-lock.json -> 1
+ok 4 - T-guard-legacy-hash: one byte in package-lock.json -> 1
+  ---
+  duration_ms: 740.390292
+  ...
+# Subtest: T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+ok 5 - T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+  ---
+  duration_ms: 698.931458
+  ...
+# Subtest: T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+ok 6 - T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+  ---
+  duration_ms: 708.735791
+  ...
+# Subtest: T-guard-legacy-head: new commit -> 1
+ok 7 - T-guard-legacy-head: new commit -> 1
+  ---
+  duration_ms: 735.9965
+  ...
+# Subtest: T-guard-legacy-status: extra untracked path -> 1
+ok 8 - T-guard-legacy-status: extra untracked path -> 1
+  ---
+  duration_ms: 735.847833
+  ...
+# Subtest: T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+ok 9 - T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+  ---
+  duration_ms: 718.157875
+  ...
+# Subtest: T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+ok 10 - T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+  ---
+  duration_ms: 1302.560208
+  ...
+# Subtest: T-guard-legacy-index: plain git status rewrites index -> 1
+ok 11 - T-guard-legacy-index: plain git status rewrites index -> 1
+  ---
+  duration_ms: 866.870584
+  ...
+# Subtest: T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+ok 12 - T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+  ---
+  duration_ms: 788.911417
+  ...
+# Subtest: T-snapshot-cms: pre-existing cms paths by name, never contents
+ok 13 - T-snapshot-cms: pre-existing cms paths by name, never contents
+  ---
+  duration_ms: 701.15475
+  ...
+# Subtest: T-no-secrets-read: .env canary never reaches output; source never touches .env
+ok 14 - T-no-secrets-read: .env canary never reaches output; source never touches .env
+  ---
+  duration_ms: 643.288666
+  ...
+# Subtest: T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+ok 15 - T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+  ---
+  duration_ms: 2786.681458
+  ...
+# Subtest: T-guard-originmain-pos: moved to after_sha with record -> 0
+ok 16 - T-guard-originmain-pos: moved to after_sha with record -> 0
+  ---
+  duration_ms: 981.757458
+  ...
+# Subtest: T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+ok 17 - T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+  ---
+  duration_ms: 794.235375
+  ...
+# Subtest: T-guard-originmain-neg-norecord: moved, no record -> 1
+ok 18 - T-guard-originmain-neg-norecord: moved, no record -> 1
+  ---
+  duration_ms: 827.194584
+  ...
+# Subtest: T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+ok 19 - T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+  ---
+  duration_ms: 854.7125
+  ...
+# Subtest: T-preflight-dirty: modified tracked file -> 1
+ok 20 - T-preflight-dirty: modified tracked file -> 1
+  ---
+  duration_ms: 487.145834
+  ...
+# Subtest: T-preflight-branch: non-main checkout -> 1
+ok 21 - T-preflight-branch: non-main checkout -> 1
+  ---
+  duration_ms: 622.241791
+  ...
+# Subtest: T-preflight-diverged: local main has unique commit -> 1
+ok 22 - T-preflight-diverged: local main has unique commit -> 1
+  ---
+  duration_ms: 580.955084
+  ...
+# Subtest: T-ff-check: ff'd clone with record -> 0
+ok 23 - T-ff-check: ff'd clone with record -> 0
+  ---
+  duration_ms: 1156.141708
+  ...
+# Subtest: T-ff-check: pre-ff -> 1
+ok 24 - T-ff-check: pre-ff -> 1
+  ---
+  duration_ms: 955.508834
+  ...
+# Subtest: T-ff-check: expect-after differs -> 1
+ok 25 - T-ff-check: expect-after differs -> 1
+  ---
+  duration_ms: 867.266417
+  ...
+# Subtest: T-ff-check: moved worktree -> 1
+ok 26 - T-ff-check: moved worktree -> 1
+  ---
+  duration_ms: 1064.638291
+  ...
+# Subtest: T-ff-check: dirty tree -> 1
+ok 27 - T-ff-check: dirty tree -> 1
+  ---
+  duration_ms: 930.675458
+  ...
+# Subtest: T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+ok 28 - T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+  ---
+  duration_ms: 1039.638125
+  ...
+# Subtest: T-ff-record: before_sha not an ancestor of HEAD -> 1
+ok 29 - T-ff-record: before_sha not an ancestor of HEAD -> 1
+  ---
+  duration_ms: 837.469542
+  ...
+# Subtest: T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed
+ok 30 - T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed
+  ---
+  duration_ms: 125.765417
+  ...
+# Subtest: T-maps-positive: complete stamped clean maps -> 0
+ok 31 - T-maps-positive: complete stamped clean maps -> 0
+  ---
+  duration_ms: 44.475833
+  ...
+# Subtest: T-maps-missing: cms/STACK.md deleted -> 1 naming it
+ok 32 - T-maps-missing: cms/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.869375
+  ...
+# Subtest: T-maps-missing: cms/INTEGRATIONS.md deleted -> 1 naming it
+ok 33 - T-maps-missing: cms/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.855875
+  ...
+# Subtest: T-maps-missing: cms/ARCHITECTURE.md deleted -> 1 naming it
+ok 34 - T-maps-missing: cms/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.648917
+  ...
+# Subtest: T-maps-missing: cms/STRUCTURE.md deleted -> 1 naming it
+ok 35 - T-maps-missing: cms/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.111916
+  ...
+# Subtest: T-maps-missing: cms/CONVENTIONS.md deleted -> 1 naming it
+ok 36 - T-maps-missing: cms/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.308875
+  ...
+# Subtest: T-maps-missing: cms/TESTING.md deleted -> 1 naming it
+ok 37 - T-maps-missing: cms/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 55.060834
+  ...
+# Subtest: T-maps-missing: cms/CONCERNS.md deleted -> 1 naming it
+ok 38 - T-maps-missing: cms/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.862709
+  ...
+# Subtest: T-maps-missing: cms empty doc -> 1
+ok 39 - T-maps-missing: cms empty doc -> 1
+  ---
+  duration_ms: 44.94425
+  ...
+# Subtest: T-maps-missing: parrot/STACK.md deleted -> 1 naming it
+ok 40 - T-maps-missing: parrot/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.238583
+  ...
+# Subtest: T-maps-missing: parrot/INTEGRATIONS.md deleted -> 1 naming it
+ok 41 - T-maps-missing: parrot/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.949834
+  ...
+# Subtest: T-maps-missing: parrot/ARCHITECTURE.md deleted -> 1 naming it
+ok 42 - T-maps-missing: parrot/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.623916
+  ...
+# Subtest: T-maps-missing: parrot/STRUCTURE.md deleted -> 1 naming it
+ok 43 - T-maps-missing: parrot/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.804125
+  ...
+# Subtest: T-maps-missing: parrot/CONVENTIONS.md deleted -> 1 naming it
+ok 44 - T-maps-missing: parrot/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 44.014125
+  ...
+# Subtest: T-maps-missing: parrot/TESTING.md deleted -> 1 naming it
+ok 45 - T-maps-missing: parrot/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.210375
+  ...
+# Subtest: T-maps-missing: parrot/CONCERNS.md deleted -> 1 naming it
+ok 46 - T-maps-missing: parrot/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 52.958417
+  ...
+# Subtest: T-maps-missing: parrot empty doc -> 1
+ok 47 - T-maps-missing: parrot empty doc -> 1
+  ---
+  duration_ms: 44.106
+  ...
+# Subtest: T-maps-missing: legacy/STACK.md deleted -> 1 naming it
+ok 48 - T-maps-missing: legacy/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.594333
+  ...
+# Subtest: T-maps-missing: legacy/INTEGRATIONS.md deleted -> 1 naming it
+ok 49 - T-maps-missing: legacy/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 50.202833
+  ...
+# Subtest: T-maps-missing: legacy/ARCHITECTURE.md deleted -> 1 naming it
+ok 50 - T-maps-missing: legacy/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 55.409042
+  ...
+# Subtest: T-maps-missing: legacy/STRUCTURE.md deleted -> 1 naming it
+ok 51 - T-maps-missing: legacy/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 74.304125
+  ...
+# Subtest: T-maps-missing: legacy/CONVENTIONS.md deleted -> 1 naming it
+ok 52 - T-maps-missing: legacy/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 52.753083
+  ...
+# Subtest: T-maps-missing: legacy/TESTING.md deleted -> 1 naming it
+ok 53 - T-maps-missing: legacy/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.712209
+  ...
+# Subtest: T-maps-missing: legacy/CONCERNS.md deleted -> 1 naming it
+ok 54 - T-maps-missing: legacy/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.744083
+  ...
+# Subtest: T-maps-missing: legacy empty doc -> 1
+ok 55 - T-maps-missing: legacy empty doc -> 1
+  ---
+  duration_ms: 44.342167
+  ...
+# Subtest: T-maps-stamp-missing: no stamp line -> 1 naming the doc
+ok 56 - T-maps-stamp-missing: no stamp line -> 1 naming the doc
+  ---
+  duration_ms: 45.287958
+  ...
+# Subtest: T-maps-stamp-wrong-repo: stamp names another repo -> 1
+ok 57 - T-maps-stamp-wrong-repo: stamp names another repo -> 1
+  ---
+  duration_ms: 43.753666
+  ...
+# Subtest: T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1
+ok 58 - T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1
+  ---
+  duration_ms: 44.694
+  ...
+# Subtest: T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted
+ok 59 - T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted
+  ---
+  duration_ms: 45.075291
+  ...
+# Subtest: T-maps-stamp-stale-date: cms stamp date before merge_date -> 1
+ok 60 - T-maps-stamp-stale-date: cms stamp date before merge_date -> 1
+  ---
+  duration_ms: 43.968458
+  ...
+# Subtest: T-maps-stamp-not-first-line: stamp on line 2 -> 1
+ok 61 - T-maps-stamp-not-first-line: stamp on line 2 -> 1
+  ---
+  duration_ms: 44.351584
+  ...
+# Subtest: T-maps-secret: sk- pattern -> 1
+ok 62 - T-maps-secret: sk- pattern -> 1
+  ---
+  duration_ms: 45.612542
+  ...
+# Subtest: T-maps-secret: AKIA pattern -> 1
+ok 63 - T-maps-secret: AKIA pattern -> 1
+  ---
+  duration_ms: 45.396417
+  ...
+# Subtest: T-maps-secret: ghp_ pattern -> 1
+ok 64 - T-maps-secret: ghp_ pattern -> 1
+  ---
+  duration_ms: 43.919083
+  ...
+# Subtest: T-maps-secret: xoxb- pattern -> 1
+ok 65 - T-maps-secret: xoxb- pattern -> 1
+  ---
+  duration_ms: 46.730375
+  ...
+# Subtest: T-maps-secret: PEM pattern -> 1
+ok 66 - T-maps-secret: PEM pattern -> 1
+  ---
+  duration_ms: 44.932
+  ...
+# Subtest: T-maps-secret: JWT pattern -> 1
+ok 67 - T-maps-secret: JWT pattern -> 1
+  ---
+  duration_ms: 44.78225
+  ...
+# Subtest: T-maps-secret: KEY= pattern -> 1
+ok 68 - T-maps-secret: KEY= pattern -> 1
+  ---
+  duration_ms: 45.325542
+  ...
+# Subtest: T-maps-secret: .env= pattern -> 1
+ok 69 - T-maps-secret: .env= pattern -> 1
+  ---
+  duration_ms: 44.24475
+  ...
+# Subtest: T-maps-secret: SECRET= pattern -> 1
+ok 70 - T-maps-secret: SECRET= pattern -> 1
+  ---
+  duration_ms: 44.779417
+  ...
+# Subtest: T-maps-secret: TOKEN= pattern -> 1
+ok 71 - T-maps-secret: TOKEN= pattern -> 1
+  ---
+  duration_ms: 44.357083
+  ...
+# Subtest: T-maps-secret: PASSWORD= pattern -> 1
+ok 72 - T-maps-secret: PASSWORD= pattern -> 1
+  ---
+  duration_ms: 45.262625
+  ...
+# Subtest: T-maps-secret: url creds pattern -> 1
+ok 73 - T-maps-secret: url creds pattern -> 1
+  ---
+  duration_ms: 44.605584
+  ...
+# Subtest: T-maps-secret: env var named without a value -> 0 (false-positive control)
+ok 74 - T-maps-secret: env var named without a value -> 0 (false-positive control)
+  ---
+  duration_ms: 45.052541
+  ...
+# Subtest: T-maps-location: map dir inside a Parrot or legacy work tree -> 1
+ok 75 - T-maps-location: map dir inside a Parrot or legacy work tree -> 1
+  ---
+  duration_ms: 198.307583
+  ...
+# Subtest: T-rel-fixture positive: claims match files -> 0
+ok 76 - T-rel-fixture positive: claims match files -> 0
+  ---
+  duration_ms: 65.646084
+  ...
+# Subtest: T-rel-fixture NEG: wrong worker name -> 1
+ok 77 - T-rel-fixture NEG: wrong worker name -> 1
+  ---
+  duration_ms: 63.08775
+  ...
+# Subtest: T-rel-fixture NEG: wrong Parrot package name -> 1
+ok 78 - T-rel-fixture NEG: wrong Parrot package name -> 1
+  ---
+  duration_ms: 62.898834
+  ...
+# Subtest: T-rel-fixture NEG: shared item missing in the Parrot tree -> 1
+ok 79 - T-rel-fixture NEG: shared item missing in the Parrot tree -> 1
+  ---
+  duration_ms: 63.671542
+  ...
+# Subtest: T-rel-fixture NEG: shared item missing in the cms tree -> 1
+ok 80 - T-rel-fixture NEG: shared item missing in the cms tree -> 1
+  ---
+  duration_ms: 65.004917
+  ...
+# Subtest: T-rel-fixture NEG: must_not_change row omitted -> 1
+ok 81 - T-rel-fixture NEG: must_not_change row omitted -> 1
+  ---
+  duration_ms: 63.540125
+  ...
+# Subtest: T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1
+ok 82 - T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1
+  ---
+  duration_ms: 193.440208
+  ...
+# Subtest: T-rel-fixture NEG: doc missing -> 1
+ok 83 - T-rel-fixture NEG: doc missing -> 1
+  ---
+  duration_ms: 42.195417
+  ...
+# Subtest: T-rel-fixture: Parrot content is read at origin/main, not the working tree
+ok 84 - T-rel-fixture: Parrot content is read at origin/main, not the working tree
+  ---
+  duration_ms: 326.082
+  ...
+# Subtest: T-rel-fixture: never reads .env*
+ok 85 - T-rel-fixture: never reads .env*
+  ---
+  duration_ms: 67.825709
+  ...
+# Subtest: T-maps-secret-negative: SECRET= short value -> 0
+ok 86 - T-maps-secret-negative: SECRET= short value -> 0
+  ---
+  duration_ms: 46.811958
+  ...
+# Subtest: T-maps-secret-negative: TOKEN= empty -> 0
+ok 87 - T-maps-secret-negative: TOKEN= empty -> 0
+  ---
+  duration_ms: 45.1685
+  ...
+# Subtest: T-maps-secret-negative: TOKEN= templated -> 0
+ok 88 - T-maps-secret-negative: TOKEN= templated -> 0
+  ---
+  duration_ms: 46.785333
+  ...
+# Subtest: T-maps-secret-negative: PASSWORD= name only -> 0
+ok 89 - T-maps-secret-negative: PASSWORD= name only -> 0
+  ---
+  duration_ms: 50.686208
+  ...
+# Subtest: T-maps-secret-negative: url without creds -> 0
+ok 90 - T-maps-secret-negative: url without creds -> 0
+  ---
+  duration_ms: 48.047875
+  ...
+# Subtest: T-inv-complete: every recomputed hit covered, named minimum present -> 0
+ok 91 - T-inv-complete: every recomputed hit covered, named minimum present -> 0
+  ---
+  duration_ms: 228.902833
+  ...
+# Subtest: T-inv-excluded: a file inside apps/marketing mentioning only apps/marketing needs no row, but one mentioning packages/shared does
+ok 92 - T-inv-excluded: a file inside apps/marketing mentioning only apps/marketing needs no row, but one mentioning packages/shared does
+  ---
+  duration_ms: 233.453166
+  ...
+# Subtest: T-inv-row-removed: deleting the .github/workflows/ci.yml row -> 1 naming an uncovered path
+ok 93 - T-inv-row-removed: deleting the .github/workflows/ci.yml row -> 1 naming an uncovered path
+  ---
+  duration_ms: 219.317
+  ...
+# Subtest: T-inv-row-removed: deleting the package.json row -> 1 naming an uncovered path
+ok 94 - T-inv-row-removed: deleting the package.json row -> 1 naming an uncovered path
+  ---
+  duration_ms: 201.779333
+  ...
+# Subtest: T-inv-row-removed: deleting the package-lock.json row -> 1 naming an uncovered path
+ok 95 - T-inv-row-removed: deleting the package-lock.json row -> 1 naming an uncovered path
+  ---
+  duration_ms: 201.595084
+  ...
+# Subtest: T-inv-row-removed: deleting the README.md row -> 1 naming an uncovered path
+ok 96 - T-inv-row-removed: deleting the README.md row -> 1 naming an uncovered path
+  ---
+  duration_ms: 202.844792
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/marketing/wrangler.toml row -> 1 naming an uncovered path
+ok 97 - T-inv-row-removed: deleting the apps/marketing/wrangler.toml row -> 1 naming an uncovered path
+  ---
+  duration_ms: 204.732625
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/employers/src/styles.css row -> 1 naming an uncovered path
+ok 98 - T-inv-row-removed: deleting the apps/employers/src/styles.css row -> 1 naming an uncovered path
+  ---
+  duration_ms: 209.91175
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/employers/tailwind.config.ts row -> 1 naming an uncovered path
+ok 99 - T-inv-row-removed: deleting the apps/employers/tailwind.config.ts row -> 1 naming an uncovered path
+  ---
+  duration_ms: 213.94275
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/app/src/views.mjs row -> 1 naming an uncovered path
+ok 100 - T-inv-row-removed: deleting the apps/app/src/views.mjs row -> 1 naming an uncovered path
+  ---
+  duration_ms: 208.89725
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/marketing/src/components/StartupAccessSection.tsx row -> 1 naming an uncovered path
+ok 101 - T-inv-row-removed: deleting the apps/marketing/src/components/StartupAccessSection.tsx row -> 1 naming an uncovered path
+  ---
+  duration_ms: 207.579
+  ...
+# Subtest: T-inv-row-removed: deleting the packages/shared/** row -> 1 naming an uncovered path
+ok 102 - T-inv-row-removed: deleting the packages/shared/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 214.756666
+  ...
+# Subtest: T-inv-row-removed: deleting the .planning/** row -> 1 naming an uncovered path
+ok 103 - T-inv-row-removed: deleting the .planning/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 214.410417
+  ...
+# Subtest: T-inv-row-removed: deleting the infra/** row -> 1 naming an uncovered path
+ok 104 - T-inv-row-removed: deleting the infra/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 217.087625
+  ...
+# Subtest: T-inv-row-removed: deleting the scripts/** row -> 1 naming an uncovered path
+ok 105 - T-inv-row-removed: deleting the scripts/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 223.057916
+  ...
+# Subtest: T-inv-named: each named-minimum row removed in turn -> 1 (independent of the hit set)
+ok 106 - T-inv-named: each named-minimum row removed in turn -> 1 (independent of the hit set)
+  ---
+  duration_ms: 2266.013625
+  ...
+# Subtest: T-inv-named: a covering glob satisfies a named file
+ok 107 - T-inv-named: a covering glob satisfies a named file
+  ---
+  duration_ms: 187.049917
+  ...
+# Subtest: T-inv-disposition: positive, plus four negatives (one per defect)
+ok 108 - T-inv-disposition: positive, plus four negatives (one per defect)
+  ---
+  duration_ms: 1733.771041
+  ...
+# Subtest: T-inv-listhits: --inventory --list-hits prints the recomputed hit set, nothing else
+ok 109 - T-inv-listhits: --inventory --list-hits prints the recomputed hit set, nothing else
+  ---
+  duration_ms: 213.379292
+  ...
+# Subtest: T-inv-crossrepo: committed tree at a ref only; untracked .env.local canary never read or printed; row removal -> 1
+ok 110 - T-inv-crossrepo: committed tree at a ref only; untracked .env.local canary never read or printed; row removal -> 1
+  ---
+  duration_ms: 685.804417
+  ...
+# Subtest: T-inv-secret: a secret-shaped string in the inventory -> 1 without echoing it
+ok 111 - T-inv-secret: a secret-shaped string in the inventory -> 1 without echoing it
+  ---
+  duration_ms: 185.966083
+  ...
+# Subtest: T-repomap positive: matching rows, planned section ignored -> 0
+ok 112 - T-repomap positive: matching rows, planned section ignored -> 0
+  ---
+  duration_ms: 148.704584
+  ...
+# Subtest: T-repomap-columns: blank owner -> 1
+ok 113 - T-repomap-columns: blank owner -> 1
+  ---
+  duration_ms: 151.623417
+  ...
+# Subtest: T-repomap-columns: blank vis -> 1
+ok 114 - T-repomap-columns: blank vis -> 1
+  ---
+  duration_ms: 159.708166
+  ...
+# Subtest: T-repomap-columns: blank purpose -> 1
+ok 115 - T-repomap-columns: blank purpose -> 1
+  ---
+  duration_ms: 139.621417
+  ...
+# Subtest: T-repomap-columns: blank folder -> 1
+ok 116 - T-repomap-columns: blank folder -> 1
+  ---
+  duration_ms: 138.124
+  ...
+# Subtest: T-repomap-columns: blank deploy -> 1
+ok 117 - T-repomap-columns: blank deploy -> 1
+  ---
+  duration_ms: 144.9175
+  ...
+# Subtest: T-repomap-columns: blank team -> 1
+ok 118 - T-repomap-columns: blank team -> 1
+  ---
+  duration_ms: 155.640958
+  ...
+# Subtest: T-repomap-columns: row for PA-MATRIX/internjobs-marketing-website missing -> 1
+ok 119 - T-repomap-columns: row for PA-MATRIX/internjobs-marketing-website missing -> 1
+  ---
+  duration_ms: 139.629625
+  ...
+# Subtest: T-repomap-columns: row for PA-Ai-Team/Parrot missing -> 1
+ok 120 - T-repomap-columns: row for PA-Ai-Team/Parrot missing -> 1
+  ---
+  duration_ms: 152.847542
+  ...
+# Subtest: T-repomap-columns: row for growthpods/Internjobs missing -> 1
+ok 121 - T-repomap-columns: row for growthpods/Internjobs missing -> 1
+  ---
+  duration_ms: 148.892042
+  ...
+# Subtest: T-repomap-visibility: doc says Public, gh says PRIVATE -> 1
+ok 122 - T-repomap-visibility: doc says Public, gh says PRIVATE -> 1
+  ---
+  duration_ms: 143.306584
+  ...
+# Subtest: T-repomap-owner: owner differs from gh -> 1
+ok 123 - T-repomap-owner: owner differs from gh -> 1
+  ---
+  duration_ms: 140.791917
+  ...
+# Subtest: T-repomap-remote: local folder's origin is another repo -> 1
+ok 124 - T-repomap-remote: local folder's origin is another repo -> 1
+  ---
+  duration_ms: 156.141416
+  ...
+# Subtest: T-repomap-folder: local folder missing -> 1
+ok 125 - T-repomap-folder: local folder missing -> 1
+  ---
+  duration_ms: 140.217334
+  ...
+# Subtest: T-repomap-enum: enumerated matching repo absent -> 1; Excluded with reason -> 0; reasonless -> 1; non-matching ignored
+ok 126 - T-repomap-enum: enumerated matching repo absent -> 1; Excluded with reason -> 0; reasonless -> 1; non-matching ignored
+  ---
+  duration_ms: 370.991959
+  ...
+# Subtest: T-repomap-team: unknown team -> 1; unmanaged with reason -> 0; unmanaged without reason -> 1
+ok 127 - T-repomap-team: unknown team -> 1; unmanaged with reason -> 0; unmanaged without reason -> 1
+  ---
+  duration_ms: 324.112958
+  ...
+# Subtest: T-repomap: missing doc or gh json -> 1
+ok 128 - T-repomap: missing doc or gh json -> 1
+  ---
+  duration_ms: 165.995375
+  ...
+# Subtest: T-closure-pre: pending-verification records -> 0; --final -> 1 (T-closure-final-neg)
+ok 129 - T-closure-pre: pending-verification records -> 0; --final -> 1 (T-closure-final-neg)
+  ---
+  duration_ms: 2.109
+  ...
+# Subtest: T-closure-line-*: each restored old line fails closure
+ok 130 - T-closure-line-*: each restored old line fails closure
+  ---
+  duration_ms: 5.900209
+  ...
+# Subtest: T-closure-flip-neg/-pos: flipped records without passed verification -> final 1; with passed -> 0
+ok 131 - T-closure-flip-neg/-pos: flipped records without passed verification -> final 1; with passed -> 0
+  ---
+  duration_ms: 2.571625
+  ...
+# Subtest: T-closure-intent: missing / invalid / lacking phase_id / wrong phase -> red
+ok 132 - T-closure-intent: missing / invalid / lacking phase_id / wrong phase -> red
+  ---
+  duration_ms: 2.877584
+  ...
+# Subtest: T-closure-aggregates: each sub-gate red in turn makes closure red
+ok 133 - T-closure-aggregates: each sub-gate red in turn makes closure red
+  ---
+  duration_ms: 1.351834
+  ...
+# Subtest: T-closure-scope: working-tree scope guard, six cases
+ok 134 - T-closure-scope: working-tree scope guard, six cases
+  ---
+  duration_ms: 451.254708
+  ...
+# Subtest: T-closure-scope via runClosure: scope problems make closure red
+ok 135 - T-closure-scope via runClosure: scope problems make closure red
+  ---
+  duration_ms: 132.853709
+  ...
+# Subtest: T-closure CLI: --closure without --baseline is a usage error (2)
+ok 136 - T-closure CLI: --closure without --baseline is a usage error (2)
+  ---
+  duration_ms: 46.456375
+  ...
+1..136
+# tests 136
+# suites 0
+# pass 136
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 41025.009791

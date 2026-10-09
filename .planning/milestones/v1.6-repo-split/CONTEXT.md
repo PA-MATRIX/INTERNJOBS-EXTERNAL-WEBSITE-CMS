@@ -79,3 +79,11 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 - MAP-05 verdict: no shared source in either direction; the relationship is a runtime seam (Workspace iframes parrot.projecta.ai with a signed embed token, Parrot verifies against workspace.internjobs.ai JWKS). Must not change: worker name `internjobs-parrot`, domain `workspace.internjobs.ai`, `/oidc/jwks`, Parrot `/embed` route, `internjobs` embed tenant, `parrot.projecta.ai`.
 - MAP-04 inventory (input for Phase 40): 54 rows over three repos, dispositions keep 14, move 25, rewrite 15, delete 0. Parrot has zero layout hits at origin/main. `packages/shared` has no consumer.
 - Open notes (not blockers): (1) 38-03 advisory: removing a specific non-glob named-minimum row silently demotes it to its glob's disposition; an exact-path row requirement was not added (not cheap to do test-first without reworking the glob model), recorded here instead. (2) The 11 Excluded repos in REPO-MAP.md are justified only by zero references in the cms tree; Raj has not confirmed them. (3) Liveness of the legacy Render services (`render.yaml`) was not checked. (4) `handoff-preflight.js` is broken; ignored.
+
+## D14: Phase 38 flip to Complete APPROVED (Raj, 2026-10-08, "Approve flip")
+
+- Question put to Raj: "Approve flipping Phase 38 / MAP-01..06 to Complete (records only, no push or GitHub action)?" Answer: "Approve flip".
+- Basis: `phases/38-code-map-coupling-inventory/38-VERIFICATION.md` is `status: passed` (10/10 must-haves, commit ff9ca98). Phase-level rrr-verifier ran before this approval.
+- Scope (covered): records only. MAP-01..06 `[x]` and traceability `Complete` in REQUIREMENTS.md; ROADMAP Phase 38 ticked; STATE.md phase 38 complete with progress 2 of 6 phases (33%), next Phase 39; `current-intent.json` updated.
+- NOT covered: any push, PR, merge, GitHub write, commit of runtime files, or any change to PA-Ai-Team/Parrot, growthpods/Internjobs or the legacy checkout. The docs/phase-38-code-map PR is held per D10 (main frozen to non-v1.6 changes) pending a separate decision with Raj.
+- Open items carried to Phase 39+: `apps/canary-monitor/` has no home decided (needed before Phase 40/41); the 11 Excluded repos in REPO-MAP.md are not yet confirmed by Raj; legacy Render service liveness (`render.yaml`) is unconfirmed.

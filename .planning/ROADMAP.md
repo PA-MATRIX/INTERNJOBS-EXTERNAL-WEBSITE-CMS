@@ -36,7 +36,7 @@ Focused scope: finish the last Workspace true-integration pane + take the startu
 **Milestone Goal:** one repo per concern, mapped to local folders: public website-only `internjobs-cms`, private `internjobs-platform`, `PA-Ai-Team/Parrot` unchanged, legacy archived. Context: `.planning/milestones/v1.6-repo-split/CONTEXT.md`. Every phase is TDD-first (failing test/readback recorded RED before the change), plan-checked before execution, verified after; live GitHub/prod steps run as executor tasks with Raj's approval recorded first.
 
 - [x] **Phase 37: Merge Nithin's v1.5 work into main** — complete 2026-10-08
-- [ ] **Phase 38: Map the three codebases + coupling inventory** (executed, pending verification)
+- [x] **Phase 38: Map the three codebases + coupling inventory** — complete 2026-10-08
 - [ ] **Phase 39: Security gate + GitHub plan limits**
 - [ ] **Phase 40: Build and prove the two repos locally (no live GitHub)**
 - [ ] **Phase 41: GitHub repos + production re-pointing (live, approval-gated)**
