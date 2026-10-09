@@ -1,0 +1,18 @@
+{
+  "status": "PROPOSED-unapproved",
+  "note": "Not approved. Executor must set approved_at/status only after Raj answers D18, and trim to the chosen option.",
+  "owner": "PA-MATRIX",
+  "scratch": "/private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad",
+  "approved": [
+    {
+      "cmd": "gh api -X PATCH repos/PA-MATRIX/internjobs-marketing-website --input /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/enable.json",
+      "option": "approve-scanning-and-push",
+      "status": "proposed"
+    }
+  ],
+  "alt_scanning_only": {
+    "cmd": "gh api -X PATCH repos/PA-MATRIX/internjobs-marketing-website --input /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/enable-scanning-only.json",
+    "option": "approve-scanning-only",
+    "status": "proposed"
+  }
+}

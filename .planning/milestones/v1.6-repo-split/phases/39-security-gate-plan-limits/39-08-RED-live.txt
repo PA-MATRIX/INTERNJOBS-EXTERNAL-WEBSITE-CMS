@@ -1,0 +1,7 @@
+# 39-08 live RED 2026-10-09T05:17:36Z
+## enable-record gate (record absent)
+error: ENOENT: no such file or directory, open '.planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-08-ENABLE-RECORD.json'
+exit=1
+{"admin":true,"nonprov":"disabled","pp":"disabled","ss":"disabled","vc":"disabled","vis":"public"}
+## alerts API
+{"message":"Secret scanning is disabled on this repository.","documentation_url":"https://docs.github.com/rest/secret-scanning/secret-scanning#list-secret-scanning-alerts-for-a-repository","status":"404"}gh: Secret scanning is disabled on this repository. (HTTP 404)
