@@ -62,3 +62,8 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 
 - Phase 34: deferred — confirmed by Raj on 2026-10-08: D8; no branch, PR or submission marker on integration/v1.5
 - Phase 35: deferred — confirmed by Raj on 2026-10-08: D8; no branch, PR or submission marker on integration/v1.5
+
+## Phase 38 Parrot fast-forward — HOLD (2026-10-08)
+
+- Raj declined (chose Hold) the `git fetch` + `git pull --ff-only` of `~/Documents/Parrot` (before `1ef2960b…`, proposed after `74880e45…`) at the 38-01 checkpoint. Nothing in Parrot was touched; no `parrot-ff-record.json` written. The D12 number stays reserved for an eventual approval.
+- Effect: Plan 38-01 Task 3 not run; 38-01 incomplete; waves 2–4 (depend on 38-01) are blocked. MAP-02 would map the stale Parrot tree unless Raj re-approves or chooses another route.
