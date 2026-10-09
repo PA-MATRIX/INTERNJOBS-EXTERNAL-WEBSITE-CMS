@@ -1,0 +1,34 @@
+# GREEN live 2026-10-09T05:32:46Z
+## --decision
+DECISION OK
+exit 0
+## --visibility-unchanged
+VISIBILITY OK
+exit 0
+## --gh-log
+GH-LOG OK
+exit 0
+## --research
+RESEARCH OK
+exit 0
+## --probe-record
+PROBE OK
+exit 0
+## truth linter
+
+[36m=== PLAN truth falsifiability lint (HARVEST-02 / HARVEST-06) ===[0m
+
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-01-PLAN.md — 8 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-02-PLAN.md — 5 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-03-PLAN.md — 5 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-04-PLAN.md — 6 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-05-PLAN.md — 5 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-06-PLAN.md — 4 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-07-PLAN.md — 4 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-08-PLAN.md — 5 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-09-PLAN.md — 5 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+[32mOK[0m   .planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/39-10-PLAN.md — 6 truths falsifiable, spec -> .planning/REQUIREMENTS.md # Security (before anything is made or kept public)
+
+[32mOK[0m 10 plans clean
+
+exit 0
