@@ -1,0 +1,11 @@
+{
+  "approved_by": "Raj",
+  "approved_at": "2026-10-09T04:50:15Z",
+  "d_number": "D15",
+  "option": "approve-gitleaks",
+  "scanners": [
+    "gitleaks"
+  ],
+  "trufflehog_verification": false,
+  "scratch": "/private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan"
+}

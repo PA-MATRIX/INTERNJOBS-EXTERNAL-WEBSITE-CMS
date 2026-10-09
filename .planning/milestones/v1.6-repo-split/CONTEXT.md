@@ -87,3 +87,19 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 - Scope (covered): records only. MAP-01..06 `[x]` and traceability `Complete` in REQUIREMENTS.md; ROADMAP Phase 38 ticked; STATE.md phase 38 complete with progress 2 of 6 phases (33%), next Phase 39; `current-intent.json` updated.
 - NOT covered: any push, PR, merge, GitHub write, commit of runtime files, or any change to PA-Ai-Team/Parrot, growthpods/Internjobs or the legacy checkout. The docs/phase-38-code-map PR is held per D10 (main frozen to non-v1.6 changes) pending a separate decision with Raj.
 - Open items carried to Phase 39+: `apps/canary-monitor/` has no home decided (needed before Phase 40/41); the 11 Excluded repos in REPO-MAP.md are not yet confirmed by Raj; legacy Render service liveness (`render.yaml`) is unconfirmed.
+
+## D15: Phase 39-04 scanner install and scratch mirrors APPROVED (2026-10-09T04:50:15Z)
+
+- Question: approve installing a secret scanner and scratch mirrors of PA-Ai-Team/Parrot for SEC-01. Answer (Raj): **approve-gitleaks** (brew install gitleaks 8.30.1; trufflehog not installed).
+- Scope: the install writes under /opt/homebrew only; two scratch mirrors (GitHub and local-object), tip-tree extracts and redacted reports live under the scratchpad `sec-scan/` dir and are deleted after use. Parrot (~/Documents/Parrot) and its worktrees stay read-only (GIT_OPTIONAL_LOCKS=0). No rotation is covered: a real finding stops the plan.
+- Disclosure: mirrors hold any secret values present in Parrot history until the scratch dir is deleted; scanners run with --redact=100; nothing is printed to the terminal or committed. Record: 39-04-APPROVAL.json, 39-04-approved-commands.json.
+
+## D16: Phase 39-05 secret-scanning / push-protection scope CONFIRMED (2026-10-09T04:50:15Z)
+
+- Question: which repos get secret scanning + push protection enabled (public repos only; free plan cannot do private). Answer (Raj): **website-only** = PA-MATRIX/internjobs-marketing-website.
+- Facts (39-05-LIMITS.md): PA-MATRIX, PA-Ai-Team free; PA-Ai-Team has no public repos; private repos return 403 for protection/rulesets and 404 for secret-scanning alerts on the free plan; the 9 growthpods public repos already have both on; PA-MATRIX/OpenMythos (outside the project) excluded. Enabling happens in 39-08 behind its own approval (D18). Record: 39-05-SCOPE.json.
+
+## D17: Phase 39-07 throwaway-repo probe APPROVED (2026-10-09T04:50:15Z)
+
+- Question: run a throwaway-repo probe to measure whether branch protection survives going private? Options: org-probe (PA-MATRIX) | personal-probe (growthpods) | skip. Answer (Raj): **org-probe**. Approved by: Raj. approved_at: 2026-10-09T04:50:15Z.
+- Account/owner: PA-MATRIX. Disclosure: creates and deletes one repo (zz-sec03-probe-20261008) in the org (no billing or seat effect); the 7 exact write commands are listed in 39-07-approved-writes.json; delete_repo scope is used once; the final GET must return 404; any unexpected status stops the plan with no retry and a loud report. Nothing outside the probe repo is touched.

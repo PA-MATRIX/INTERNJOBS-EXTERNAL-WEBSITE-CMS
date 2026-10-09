@@ -1,0 +1,16 @@
+{
+  "approved": [
+    {
+      "cmd": "brew install gitleaks",
+      "approved_at": "2026-10-09T04:50:15Z"
+    },
+    {
+      "cmd": "git -c credential.helper='!gh auth git-credential' clone --mirror https://github.com/PA-Ai-Team/Parrot.git /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot.git",
+      "approved_at": "2026-10-09T04:50:15Z"
+    },
+    {
+      "cmd": "git clone --mirror --no-hardlinks file:///Users/rajren/Documents/Parrot /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot-local.git",
+      "approved_at": "2026-10-09T04:50:15Z"
+    }
+  ]
+}
