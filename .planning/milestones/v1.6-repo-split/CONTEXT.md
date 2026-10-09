@@ -71,3 +71,11 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 ## D12: Phase 38 Parrot fast-forward APPROVED (2026-10-08) — supersedes the HOLD above
 
 - Raj reversed the Hold and approved ("proceed on both", 2026-10-08) `git fetch origin` + `git pull --ff-only origin main` on `~/Documents/Parrot`, main only: before `1ef2960b49d48d1f46c4151a0a115cce7e268e0d`, approved after `74880e45226e4920cfdf1dec6b36bea5fd8a190b`. D12 is now used (once). Worktrees and fix/* branches must stay unchanged. Record: `phases/38-code-map-coupling-inventory/parrot-ff-record.json`.
+
+## D13: Phase 38 outcomes (2026-10-08; executed, pending verification)
+
+- Parrot fast-forward (D12 approval, see D12 and `phases/38-code-map-coupling-inventory/parrot-ff-record.json`): `1ef2960b49d48d1f46c4151a0a115cce7e268e0d` -> `74880e45226e4920cfdf1dec6b36bea5fd8a190b` (841 commits), main only. Both worktrees and every fix/* branch measured unchanged by `--guard`.
+- Parrot worktrees left untouched: `Parrot-wt-dedupe` (`fix/contact-dedupe-on-send`, ece5eb8) backs open Parrot PR #11; `Parrot-wt-main-port` (`fix/sms-send-and-contact-dedupe-main`, 11b2277) backs open Parrot PR #12.
+- MAP-05 verdict: no shared source in either direction; the relationship is a runtime seam (Workspace iframes parrot.projecta.ai with a signed embed token, Parrot verifies against workspace.internjobs.ai JWKS). Must not change: worker name `internjobs-parrot`, domain `workspace.internjobs.ai`, `/oidc/jwks`, Parrot `/embed` route, `internjobs` embed tenant, `parrot.projecta.ai`.
+- MAP-04 inventory (input for Phase 40): 54 rows over three repos, dispositions keep 14, move 25, rewrite 15, delete 0. Parrot has zero layout hits at origin/main. `packages/shared` has no consumer.
+- Open notes (not blockers): (1) 38-03 advisory: removing a specific non-glob named-minimum row silently demotes it to its glob's disposition; an exact-path row requirement was not added (not cheap to do test-first without reworking the glob model), recorded here instead. (2) The 11 Excluded repos in REPO-MAP.md are justified only by zero references in the cms tree; Raj has not confirmed them. (3) Liveness of the legacy Render services (`render.yaml`) was not checked. (4) `handoff-preflight.js` is broken; ignored.

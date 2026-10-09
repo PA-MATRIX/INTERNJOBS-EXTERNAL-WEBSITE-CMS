@@ -1,0 +1,79 @@
+# live GREEN 2026-10-09T03:57:05Z
+$ --closure --baseline baseline.json
+MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+ok: gate maps green
+RELATIONSHIP OK
+ok: gate relationship green
+INVENTORY OK
+ok: gate inventoryCms green
+INVENTORY OK
+ok: gate inventoryParrot green
+INVENTORY OK
+ok: gate inventoryLegacy green
+REPO-MAP OK
+ok: gate repoMap green
+GUARD OK: legacy and Parrot match baseline
+ok: gate guard green
+ok: scope: working tree within allowlist
+ok: MAP-01 executed, pending verification
+ok: MAP-02 executed, pending verification
+ok: MAP-03 executed, pending verification
+ok: MAP-04 executed, pending verification
+ok: MAP-05 executed, pending verification
+ok: MAP-06 executed, pending verification
+ok: ROADMAP Phase 38 unticked, executed, pending verification
+ok: ROADMAP Phase 38 Plans: 4 plans
+ok: STATE frontmatter: phase 38, plan 4 of 4
+ok: STATE says executed, pending verification
+ok: current-intent.json names v1.6 / phase 38
+CLOSURE OK
+exit 0
+$ --closure --final
+MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+RELATIONSHIP OK
+INVENTORY OK
+INVENTORY OK
+INVENTORY OK
+REPO-MAP OK
+GUARD OK: legacy and Parrot match baseline
+FAIL: MAP-01 not [x]/Complete
+FAIL: MAP-02 not [x]/Complete
+FAIL: MAP-03 not [x]/Complete
+FAIL: MAP-04 not [x]/Complete
+FAIL: MAP-05 not [x]/Complete
+FAIL: MAP-06 not [x]/Complete
+FAIL: ROADMAP Phase 38 not ticked
+FAIL: STATE status not complete
+FAIL: 38-VERIFICATION.md missing or not status: passed (flip before verify)
+CLOSURE FAIL
+exit 
+$ --guard
+GUARD OK: legacy and Parrot match baseline
+exit 0
+--- scope negative control: cms_preexisting emptied
+MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+RELATIONSHIP OK
+INVENTORY OK
+INVENTORY OK
+INVENTORY OK
+REPO-MAP OK
+GUARD FAIL:
+  - parrot main 1ef2960b49d48d1f46c4151a0a115cce7e268e0d -> 74880e45226e4920cfdf1dec6b36bea5fd8a190b
+  - parrot origin/main 3775407740ccfb674a944ae53a880d3cc793b98c -> 74880e45226e4920cfdf1dec6b36bea5fd8a190b (no valid ff record)
+FAIL: gate guard red (1)
+FAIL: scope: out-of-scope change: apps/canary-monitor/package.json
+FAIL: scope: out-of-scope change: apps/canary-monitor/src/index.js
+FAIL: scope: out-of-scope change: apps/canary-monitor/wrangler.toml
+CLOSURE FAIL
+exit 
+--- parrot/legacy status vs baseline
+       7
+--- (rerun) scope negative control: cms_preexisting emptied, ff record copied beside it
+exit 1
+FAIL: scope: out-of-scope change: apps/canary-monitor/package.json
+FAIL: scope: out-of-scope change: apps/canary-monitor/src/index.js
+FAIL: scope: out-of-scope change: apps/canary-monitor/wrangler.toml
+CLOSURE FAIL
+--- exit codes: closure / final
+closure exit 0
+final exit 1

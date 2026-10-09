@@ -36,7 +36,7 @@ Focused scope: finish the last Workspace true-integration pane + take the startu
 **Milestone Goal:** one repo per concern, mapped to local folders: public website-only `internjobs-cms`, private `internjobs-platform`, `PA-Ai-Team/Parrot` unchanged, legacy archived. Context: `.planning/milestones/v1.6-repo-split/CONTEXT.md`. Every phase is TDD-first (failing test/readback recorded RED before the change), plan-checked before execution, verified after; live GitHub/prod steps run as executor tasks with Raj's approval recorded first.
 
 - [x] **Phase 37: Merge Nithin's v1.5 work into main** — complete 2026-10-08
-- [ ] **Phase 38: Map the three codebases + coupling inventory**
+- [ ] **Phase 38: Map the three codebases + coupling inventory** (executed, pending verification)
 - [ ] **Phase 39: Security gate + GitHub plan limits**
 - [ ] **Phase 40: Build and prove the two repos locally (no live GitHub)**
 - [ ] **Phase 41: GitHub repos + production re-pointing (live, approval-gated)**
@@ -69,7 +69,13 @@ Plans:
   2. A coupling inventory lists every place the layout is enforced, each with a keep/move/rewrite/delete disposition
   3. The `apps/parrot` vs `PA-Ai-Team/Parrot` relationship is written down
   4. `REPO-MAP.md` shows every repo with owner, visibility, purpose, local folder, deploy target and team
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [x] 38-01: read-only baseline snapshot + guard, Parrot fast-forward (approved, D12), 3 maps scaffolding
+- [x] 38-02: 3 x 7 code maps (cms, Parrot, legacy scratch) and the apps/parrot vs PA-Ai-Team/Parrot relationship (MAP-05)
+- [x] 38-03: coupling inventory over all 3 repos (MAP-04) and REPO-MAP.md (MAP-06)
+- [x] 38-04: closure verifier (`--closure`), records at executed, pending verification
 
 ### Phase 39: Security gate + GitHub plan limits
 **Goal**: Security gate + GitHub plan limits

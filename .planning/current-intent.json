@@ -1,26 +1,28 @@
 {
   "milestone_id": "v1.6 Repo Split + Code Mapping",
   "phase_id": "38 Code map + coupling inventory",
-  "plan_id": "38-03",
-  "intent": "38-03 executed (inventory + REPO-MAP verified live, 128/128 tests); pending rrr-verifier",
+  "plan_id": "38-04",
+  "intent": "Phase 38 plans 4/4 executed, pending verification; --closure green; awaiting phase-level rrr-verifier then Raj approval to flip",
   "allowed_paths": [
     ".planning/",
     "scripts/"
   ],
   "constraints": [
-    "Legacy and Parrot read-only except the approved Parrot ff (GIT_OPTIONAL_LOCKS=0)",
+    "Legacy and Parrot read-only (GIT_OPTIONAL_LOCKS=0); Parrot ff already done (D12)",
     "No .env* reads",
-    "No pushes/GitHub writes; read-only gh GETs only",
+    "No commits of runtime files, no pushes/GitHub writes",
     "TDD-first (RED before GREEN)",
-    "Entry gate 38-02 verified: passed"
+    "Entry gate 38-03 verified: passed",
+    "Do not flip MAP-01..06 to Complete before 38-VERIFICATION passed and Raj approves"
   ],
   "start_time": "2026-10-09T01:23:33.950089+00:00",
-  "saved_at": "2026-10-09T03:49:34.009Z",
-  "updated_at": "2026-10-09T03:49:34.009Z",
-  "active_plan": "38-03: coupling inventory + REPO-MAP",
+  "saved_at": "2026-10-09T03:57:05.148620Z",
+  "updated_at": "2026-10-09T03:57:05.148620Z",
+  "active_plan": "38-04: closure evaluator + records",
   "next": [
-    "rrr-verifier 38-03 (sample 8 inventory rows against the files)",
-    "Then plan 38-04"
+    "Phase-level rrr-verifier writes 38-VERIFICATION.md",
+    "Raj approves flip",
+    "Task 3: --closure --final"
   ],
   "handoff": ".planning/ROADMAP.md (Phase 38)"
 }
