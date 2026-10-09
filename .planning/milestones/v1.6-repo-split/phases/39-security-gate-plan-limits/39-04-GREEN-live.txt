@@ -1,0 +1,16 @@
+# 39-04 live run 2026-10-09 -- STATUS: blocked: rotation required (this is NOT a green record; no SCAN-RECORD written)
+live RED re-confirm: gate-prev 38 exit 0; scan-record (absent) exit 1; guard with scratch present exit 1
+gitleaks 8.30.1; GitHub mirror: 42 refs (28 heads + 14 refs/pull), 903 commits (rev-list --all); main 74880e45, fix tips ece5eb84 / 11b2277a
+history scan (git --log-opts=--all, --redact=100): exit 1, 406 findings (generic-api-key 401, curl-auth-header 5)
+tip trees (dir --redact=100): main 331, fix/contact-dedupe-on-send 3, fix/sms-send-and-contact-dedupe-main 3
+worktree-edit scan: not run (stopped on REAL candidates)
+classification (shape analysis only, no values printed):
+  369 token_id UUID (Cloudflare Access ids) + 31 sha256 hex hash fields (keyHash/callbackKeyHash/vapiKeyHash/api-v1-*) -> false-positive (identifiers/hashes)
+  1 prose table row (PARROT-EMBED-INTEGRATION.md), 3 curl docs with literal pk_live_... placeholder -> false-positive / test-fixture
+  2 curl Bearer 17-char low-entropy strings (openclaw plan) -> test-fixture (smoke-test token, unverified)
+  REAL candidates (high-entropy literal, real-key-shaped, still present in current tips):
+    1. server/routes/contacts.js L190, generic-api-key, commit 1a8dd6c0 (X-API-Key literal, 41 chars)
+    2. .planning/milestones/v1.0/phases/01-foundation/01-03-SUMMARY.md L87, generic-api-key, commit 33cd67dc (TELNYX_API_KEY literal, 58 chars, KEY-prefixed)
+no liveness check made (would send candidate secret to a provider)
+scratch dir deleted: guard exit 0; gh-log exit 0; scan-coverage not run (record not written)
+scan-record: not written

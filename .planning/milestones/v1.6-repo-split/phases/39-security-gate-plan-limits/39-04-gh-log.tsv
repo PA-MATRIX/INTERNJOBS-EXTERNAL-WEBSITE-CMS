@@ -1,3 +1,6 @@
 2026-10-09T04:50:34Z	brew install gitleaks
 2026-10-09T04:50:53Z	git -c credential.helper='!gh auth git-credential' clone --mirror https://github.com/PA-Ai-Team/Parrot.git /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot.git
 2026-10-09T04:50:55Z	git clone --mirror --no-hardlinks file:///Users/rajren/Documents/Parrot /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot-local.git
+2026-10-09T05:18:55Z	git -C /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot.git archive 74880e45226e4920cfdf1dec6b36bea5fd8a190b
+2026-10-09T05:18:57Z	git -C /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot.git archive ece5eb84d09d1dd10afb5fce1bc3945099f6d38d
+2026-10-09T05:18:58Z	git -C /private/tmp/claude-501/-Users-rajren-internjobs-cms/872e0f2b-7eb7-42c8-ac3c-fd1374c8b2d2/scratchpad/sec-scan/parrot.git archive 11b2277aefbaf8de77d254849f34f8720682ba5a
