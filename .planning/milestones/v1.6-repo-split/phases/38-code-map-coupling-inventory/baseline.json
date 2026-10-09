@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "taken_at": "2026-10-09T03:17:23.528Z",
+  "cms_preexisting": {
+    "path": "/Users/rajren/internjobs-cms",
+    "modified": [
+      ".planning/current-intent.json"
+    ],
+    "untracked": [
+      ".planning/.subagent-runs-state.json",
+      ".planning/subagent-runs.jsonl",
+      "apps/canary-monitor/package.json",
+      "apps/canary-monitor/src/index.js",
+      "apps/canary-monitor/wrangler.toml"
+    ]
+  },
+  "legacy": {
+    "path": "/Users/rajren/MayaOS/internjobs-ai",
+    "head": "99bcced93f997c8f09147c0cb18e132f8f3da751",
+    "files": {
+      "package.json": "cdd35f22694f023dedd98d20cb868a8cd20598c3fe5d4533a848aeffe19047e0",
+      "package-lock.json": "c5d63e929e31dd7f2fa27a8ea40a36316331bd8c4fe428ac800869b93893f50a",
+      "src/app/api/chat/route.ts": "7469ba0307f0d69b408a72dc2cc258a8510c2e05ba61f9eb8c518afac0b38633",
+      "tests/e2e/chat-interface.spec.ts": "d714727747f96a3bf8b1e583cda344173bf9cf06bee654455f8d87ccbb09759f"
+    },
+    "modified": [
+      "package-lock.json",
+      "package.json",
+      "src/app/api/chat/route.ts",
+      "tests/e2e/chat-interface.spec.ts"
+    ],
+    "untracked": [
+      "playwright-report/index.html",
+      "test-results.json",
+      "test-results/.last-run.json"
+    ],
+    "index": {
+      "mtimeMs": 1791071629204.5762,
+      "size": 6950
+    }
+  },
+  "parrot": {
+    "path": "/Users/rajren/Documents/Parrot",
+    "head": "1ef2960b49d48d1f46c4151a0a115cce7e268e0d",
+    "origin_main": "3775407740ccfb674a944ae53a880d3cc793b98c",
+    "worktrees": [
+      {
+        "path": "/Users/rajren/Documents/Parrot-wt-dedupe",
+        "head": "ece5eb84d09d1dd10afb5fce1bc3945099f6d38d",
+        "branch": "fix/contact-dedupe-on-send"
+      },
+      {
+        "path": "/Users/rajren/Documents/Parrot-wt-main-port",
+        "head": "11b2277aefbaf8de77d254849f34f8720682ba5a",
+        "branch": "fix/sms-send-and-contact-dedupe-main"
+      }
+    ],
+    "branches": {
+      "fix/api-v1-sms-send": "d6a33930ae08f7f3a3ce2874fd36bb2f6ba32f94",
+      "fix/contact-dedupe-on-send": "ece5eb84d09d1dd10afb5fce1bc3945099f6d38d",
+      "fix/sms-send-and-contact-dedupe-main": "11b2277aefbaf8de77d254849f34f8720682ba5a"
+    }
+  }
+}
