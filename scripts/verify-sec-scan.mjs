@@ -128,6 +128,162 @@ export function checkCoverage(rec, { source, mirror, requireRefs = [] }) {
   return p;
 }
 
+/** Guard: scratch mirror gone and Parrot/legacy untouched (delegated runner returns 0). */
+export function guardScan({ baseline, scratch, runner }) {
+  const problems = [];
+  if (scratch && existsSync(scratch)) problems.push("guard: scratch mirror directory still exists");
+  const run = runner || defaultGuardRunner;
+  let code;
+  try {
+    code = run(baseline);
+  } catch {
+    code = 1;
+  }
+  if (code !== 0) problems.push("guard: verify-code-maps --guard did not return 0");
+  return { ok: problems.length === 0, problems };
+}
+
+function defaultGuardRunner(baseline) {
+  const r = spawnSync("node", [path.join(here, "verify-code-maps.mjs"), "--guard", "--baseline", baseline], {
+    encoding: "utf8", env: { ...process.env, GIT_OPTIONAL_LOCKS: "0" },
+  });
+  return r.status === null ? 1 : r.status;
+}
+
+// ---- gh/brew/docker/git command log: default-deny ----
+function shellSplit(line) {
+  const out = [];
+  let cur = "";
+  let q = null;
+  let has = false;
+  for (const ch of line) {
+    if (q) {
+      if (ch === q) q = null;
+      else cur += ch;
+    } else if (ch === '"' || ch === "'") {
+      q = ch;
+      has = true;
+    } else if (/\s/.test(ch)) {
+      if (cur !== "" || has) out.push(cur);
+      cur = "";
+      has = false;
+    } else cur += ch;
+  }
+  if (cur !== "" || has) out.push(cur);
+  return out;
+}
+
+const PROBE = "zz-sec03-probe-";
+const GIT_READ = new Set([
+  "status", "log", "show", "diff", "rev-parse", "for-each-ref", "ls-tree", "cat-file", "rev-list",
+  "merge-base", "describe", "ls-files", "show-ref", "shortlog", "blame", "ls-remote",
+]);
+const GH_READ = {
+  repo: ["view", "list"],
+  pr: ["list", "view", "diff", "checks"],
+  issue: ["list", "view"],
+  run: ["list", "view"],
+  release: ["list", "view"],
+  auth: ["status"],
+};
+const API_VALUE_FLAGS = new Set(["--jq", "-q", "-H", "--header"]);
+const API_BOOL_FLAGS = new Set(["--paginate", "-i", "--include", "--slurp", "--silent"]);
+
+/** "allowed" | "approvable" | "never" */
+export function classifyCommand(cmd) {
+  const t = shellSplit(cmd);
+  if (!t.length) return "approvable";
+  if (t[0] === "gh") return classifyGh(t.slice(1));
+  if (t[0] === "git") return classifyGit(t.slice(1));
+  return "approvable"; // brew, docker, anything unlisted: only with approval
+}
+
+function classifyGh(a) {
+  if (!a.length) return "approvable";
+  if (a.includes("--help") || a[0] === "--help") return "allowed";
+  if (a.length === 1 && a[0] === "--version") return "allowed";
+  if (a[0] === "api") return classifyApi(a.slice(1));
+  const sub = GH_READ[a[0]];
+  if (sub && sub.includes(a[1])) return "allowed";
+  return "approvable";
+}
+
+function classifyApi(a) {
+  let path = null;
+  for (let i = 0; i < a.length; i++) {
+    let f = a[i];
+    let val;
+    const eq = f.startsWith("--") ? f.indexOf("=") : -1;
+    if (eq > 0) {
+      val = f.slice(eq + 1);
+      f = f.slice(0, eq);
+    }
+    if (f === "--method" || f === "-X" || /^-X./.test(f)) {
+      const m = /^-X(.+)$/.exec(f) ? /^-X(.+)$/.exec(f)[1] : val !== undefined ? val : a[++i];
+      if (String(m).toUpperCase() !== "GET") return "approvable";
+    } else if (API_VALUE_FLAGS.has(f)) {
+      if (val === undefined) i++;
+    } else if (API_BOOL_FLAGS.has(f)) {
+      // fine
+    } else if (f.startsWith("-")) {
+      return "approvable"; // -f -F --field --raw-field --input and any unknown flag
+    } else if (path === null) path = f;
+    else return "approvable";
+  }
+  if (path === null || path === "graphql") return "approvable";
+  return "allowed";
+}
+
+function classifyGit(a) {
+  let dir = null;
+  let i = 0;
+  while (i < a.length && a[i].startsWith("-")) {
+    if (a[i] === "-C") {
+      dir = a[i + 1] || "";
+      i += 2;
+    } else if (a[i] === "-c") i += 2;
+    else i++;
+  }
+  const sub = a[i];
+  const rest = a.slice(i + 1);
+  if (sub === "push" || sub === "commit") {
+    const inProbe = dir !== null && dir.includes(PROBE);
+    if (!inProbe) return "never";
+    if (sub === "push") {
+      const remote = rest.find((x) => !x.startsWith("-"));
+      if (remote !== "origin" && !(remote || "").includes(PROBE)) return "never";
+    }
+    return "approvable";
+  }
+  if (sub === "clone") return "approvable";
+  if (sub && GIT_READ.has(sub)) return "allowed";
+  if (sub === "worktree" && rest[0] === "list") return "allowed";
+  return "approvable";
+}
+
+export function checkGhLog(logText, approved) {
+  const p = [];
+  const lines = (logText || "").split("\n").filter((l) => l.trim() !== "");
+  if (!lines.length) return ["ghlog: log is empty (absence of evidence is not a pass)"];
+  const entries = (approved && Array.isArray(approved.approved) ? approved.approved : []).map((e) => ({
+    cmd: e && e.cmd, at: Date.parse(e && e.approved_at),
+  }));
+  lines.forEach((line, idx) => {
+    const n = idx + 1;
+    const tab = line.indexOf("\t");
+    if (tab < 0) return p.push(`ghlog: line ${n} malformed (no tab)`);
+    const ts = Date.parse(line.slice(0, tab));
+    const cmd = line.slice(tab + 1);
+    if (Number.isNaN(ts)) return p.push(`ghlog: line ${n} has an invalid timestamp`);
+    const cls = classifyCommand(cmd);
+    if (cls === "allowed") return;
+    if (cls === "never") return p.push(`ghlog: line ${n} is a never-approvable write`);
+    const hit = entries.some((e) => e.cmd === cmd && !Number.isNaN(e.at) && ts >= e.at);
+    if (!hit) p.push(`ghlog: line ${n} is not read-only and has no approval at or before its timestamp`);
+  });
+  return p;
+}
+
 function readJson(f, label) {
   if (!f || typeof f !== "string" || !existsSync(f)) throw new Error(`${label} not found`);
   const raw = readFileSync(f, "utf8");
@@ -161,6 +317,17 @@ export function main(argv) {
     if (a["scan-coverage"] !== undefined) {
       const { obj } = readJson(a["scan-coverage"], "record");
       return report("SCAN-COVERAGE", checkCoverage(obj, { source: a.source, mirror: a.mirror, requireRefs: a["require-ref"] }));
+    }
+    if (a.guard) {
+      if (typeof a.baseline !== "string") return report("GUARD", ["guard: --baseline required"]);
+      const r = guardScan({ baseline: a.baseline, scratch: typeof a.scratch === "string" ? a.scratch : null });
+      return report("GUARD", r.problems);
+    }
+    if (a["gh-log"] !== undefined) {
+      const f = a["gh-log"];
+      if (typeof f !== "string" || !existsSync(f)) return report("GH-LOG", ["ghlog: log file missing"]);
+      const approved = typeof a.approved === "string" ? readJson(a.approved, "approved file").obj : null;
+      return report("GH-LOG", checkGhLog(readFileSync(f, "utf8"), approved));
     }
   } catch (e) {
     console.log(`FAIL: ${e.message}`);

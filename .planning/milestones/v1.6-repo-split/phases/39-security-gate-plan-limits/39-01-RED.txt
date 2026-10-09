@@ -856,3 +856,901 @@ not ok 34 - T-cov-requires-source
 # skipped 0
 # todo 0
 # duration_ms 5832.656459
+
+## Task 2 (guard + gh-log, against stubs)
+TAP version 13
+# Subtest: control: known-good record passes
+ok 1 - control: known-good record passes
+  ---
+  duration_ms: 88.123333
+  ...
+# Subtest: T-gate: missing / gaps_found / passed
+ok 2 - T-gate: missing / gaps_found / passed
+  ---
+  duration_ms: 310.940542
+  ...
+# Subtest: T-leak-ghp
+ok 3 - T-leak-ghp
+  ---
+  duration_ms: 82.61875
+  ...
+# Subtest: T-leak-akia
+ok 4 - T-leak-akia
+  ---
+  duration_ms: 67.650458
+  ...
+# Subtest: T-leak-pem
+ok 5 - T-leak-pem
+  ---
+  duration_ms: 60.209791
+  ...
+# Subtest: T-leak-clean
+ok 6 - T-leak-clean
+  ---
+  duration_ms: 59.216125
+  ...
+# Subtest: T-leak never echoes the value
+ok 7 - T-leak never echoes the value
+  ---
+  duration_ms: 63.469291
+  ...
+# Subtest: T-schema-tool-name-empty
+ok 8 - T-schema-tool-name-empty
+  ---
+  duration_ms: 69.572416
+  ...
+# Subtest: T-schema-tool-version-empty
+ok 9 - T-schema-tool-version-empty
+  ---
+  duration_ms: 75.791875
+  ...
+# Subtest: T-schema-tool-singular-pos
+ok 10 - T-schema-tool-singular-pos
+  ---
+  duration_ms: 70.353
+  ...
+# Subtest: T-schema-tool-singular-neg
+ok 11 - T-schema-tool-singular-neg
+  ---
+  duration_ms: 64.134084
+  ...
+# Subtest: T-schema-no-tool
+ok 12 - T-schema-no-tool
+  ---
+  duration_ms: 57.753875
+  ...
+# Subtest: T-schema-redacted-false
+ok 13 - T-schema-redacted-false
+  ---
+  duration_ms: 58.262584
+  ...
+# Subtest: T-schema-finding-count-mismatch
+ok 14 - T-schema-finding-count-mismatch
+  ---
+  duration_ms: 58.506958
+  ...
+# Subtest: T-schema-bad-classification
+ok 15 - T-schema-bad-classification
+  ---
+  duration_ms: 67.030166
+  ...
+# Subtest: T-schema-classification-ok-real
+ok 16 - T-schema-classification-ok-real
+  ---
+  duration_ms: 59.894583
+  ...
+# Subtest: T-schema-classification-ok-false-positive
+ok 17 - T-schema-classification-ok-false-positive
+  ---
+  duration_ms: 72.70125
+  ...
+# Subtest: T-schema-classification-ok-test-fixture
+ok 18 - T-schema-classification-ok-test-fixture
+  ---
+  duration_ms: 61.707209
+  ...
+# Subtest: T-schema-classification-ok-public-by-design
+ok 19 - T-schema-classification-ok-public-by-design
+  ---
+  duration_ms: 54.511125
+  ...
+# Subtest: T-schema-missing-file
+ok 20 - T-schema-missing-file
+  ---
+  duration_ms: 50.502042
+  ...
+# Subtest: T-schema-missing-rule
+ok 21 - T-schema-missing-rule
+  ---
+  duration_ms: 58.939167
+  ...
+# Subtest: T-schema-missing-commit
+ok 22 - T-schema-missing-commit
+  ---
+  duration_ms: 50.852625
+  ...
+# Subtest: T-schema-missing-fingerprint
+ok 23 - T-schema-missing-fingerprint
+  ---
+  duration_ms: 49.435625
+  ...
+# Subtest: T-rotation-neg
+ok 24 - T-rotation-neg
+  ---
+  duration_ms: 181.124792
+  ...
+# Subtest: T-rotation-pos
+ok 25 - T-rotation-pos
+  ---
+  duration_ms: 44.1225
+  ...
+# Subtest: T-digest
+ok 26 - T-digest
+  ---
+  duration_ms: 87.650542
+  ...
+# Subtest: T-cov-pos
+ok 27 - T-cov-pos
+  ---
+  duration_ms: 287.384167
+  ...
+# Subtest: T-cov-drop-ref
+ok 28 - T-cov-drop-ref
+  ---
+  duration_ms: 289.721709
+  ...
+# Subtest: T-cov-tip-moved
+ok 29 - T-cov-tip-moved
+  ---
+  duration_ms: 300.499875
+  ...
+# Subtest: T-cov-require-ref
+ok 30 - T-cov-require-ref
+  ---
+  duration_ms: 280.446584
+  ...
+# Subtest: T-cov-note
+ok 31 - T-cov-note
+  ---
+  duration_ms: 351.2065
+  ...
+# Subtest: T-cov-two-mirrors-pos
+ok 32 - T-cov-two-mirrors-pos
+  ---
+  duration_ms: 321.912541
+  ...
+# Subtest: T-cov-wrong-source-neg
+ok 33 - T-cov-wrong-source-neg
+  ---
+  duration_ms: 280.224583
+  ...
+# Subtest: T-cov-requires-source
+ok 34 - T-cov-requires-source
+  ---
+  duration_ms: 281.352417
+  ...
+# Subtest: T-guard-scratch: scratch dir still present -> problem
+not ok 35 - T-guard-scratch: scratch dir still present -> problem
+  ---
+  duration_ms: 6.766292
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:250:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(r.problems.length > 0)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:253:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-delegate-neg: delegated runner non-zero -> problem
+not ok 36 - T-guard-delegate-neg: delegated runner non-zero -> problem
+  ---
+  duration_ms: 0.205041
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:256:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:258:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard-pos
+not ok 37 - T-guard-pos
+  ---
+  duration_ms: 0.110333
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:261:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'b.json'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'b.json'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:265:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-guard CLI: existing scratch exits 1 (control for --guard wiring)
+not ok 38 - T-guard CLI: existing scratch exits 1 (control for --guard wiring)
+  ---
+  duration_ms: 42.202917
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:267:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:268:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-get
+not ok 39 - T-ghlog-get
+  ---
+  duration_ms: 41.267417
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:285:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api repos/x/y
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ok (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:282:32)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:286:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-post
+not ok 40 - T-ghlog-post
+  ---
+  duration_ms: 42.615209
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:289:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api -X POST repos/x/y/issues
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:290:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-input
+not ok 41 - T-ghlog-input
+  ---
+  duration_ms: 44.716958
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:296:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api repos/x --input body.json
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:296:29)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-repo-delete
+not ok 42 - T-ghlog-repo-delete
+  ---
+  duration_ms: 42.0905
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:297:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh repo delete x/y --yes
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:298:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-field-implicit-post
+not ok 43 - T-ghlog-field-implicit-post
+  ---
+  duration_ms: 42.195
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:306:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api repos/x -f a=b
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:307:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-graphql
+not ok 44 - T-ghlog-graphql
+  ---
+  duration_ms: 44.975334
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:312:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api graphql -f query=x
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:314:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-create-run-release
+not ok 45 - T-ghlog-create-run-release
+  ---
+  duration_ms: 42.929166
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:317:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh issue create -t x
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:318:162)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-unknown-denied
+not ok 46 - T-ghlog-unknown-denied
+  ---
+  duration_ms: 41.76675
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:320:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh frobnicate now
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:321:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-approved-pos
+not ok 47 - T-ghlog-approved-pos
+  ---
+  duration_ms: 46.381875
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:325:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:327:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-approved-early-neg
+not ok 48 - T-ghlog-approved-early-neg
+  ---
+  duration_ms: 42.18575
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:330:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:332:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-approved-different-line-neg
+not ok 49 - T-ghlog-approved-different-line-neg
+  ---
+  duration_ms: 42.099958
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:334:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:335:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-allowed-reads
+not ok 50 - T-ghlog-allowed-reads
+  ---
+  duration_ms: 46.324292
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:338:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api repos/x --jq .a.b | gh api repos/x -q .a | gh api repos/x --paginate | gh repo view x/y | gh repo list x | gh pr list | gh pr view 3 | gh pr diff 3 | gh pr checks 3 | gh issue list | gh issue view 3 | gh run list | gh run view 3 | gh release list | gh release view v1 | gh auth status | gh --version | gh pr create --help | git log --oneline | git -C /tmp/r status | git for-each-ref refs/heads | git rev-parse HEAD | git ls-tree -r HEAD | git show HEAD | git diff --stat
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    ok (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:282:32)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:339:3)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-jq-with-field-neg
+not ok 51 - T-ghlog-jq-with-field-neg
+  ---
+  duration_ms: 41.960416
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:367:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gh api repos/x --jq .a -f a=b
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:367:41)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-brew-unapproved-neg
+not ok 52 - T-ghlog-brew-unapproved-neg
+  ---
+  duration_ms: 41.962542
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:368:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    brew install gitleaks
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:368:43)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-brew-approved-pos
+not ok 53 - T-ghlog-brew-approved-pos
+  ---
+  duration_ms: 40.936083
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:369:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:371:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-brew-early-neg
+not ok 54 - T-ghlog-brew-early-neg
+  ---
+  duration_ms: 41.702875
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:373:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:375:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-docker-pull-neg
+not ok 55 - T-ghlog-docker-pull-neg
+  ---
+  duration_ms: 42.965875
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:377:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    docker pull trufflesecurity/trufflehog
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:377:39)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-git-clone-neg
+not ok 56 - T-ghlog-git-clone-neg
+  ---
+  duration_ms: 42.421583
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:378:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    git clone https://github.com/x/y /tmp/y
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:378:37)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-git-clone-approved-pos
+not ok 57 - T-ghlog-git-clone-approved-pos
+  ---
+  duration_ms: 42.493666
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:379:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:381:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-git-push-neg
+not ok 58 - T-ghlog-git-push-neg
+  ---
+  duration_ms: 41.029667
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:383:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    git push origin main
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:383:36)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-git-commit-probe-neg
+not ok 59 - T-ghlog-git-commit-probe-neg
+  ---
+  duration_ms: 41.675333
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:384:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    git -C /tmp/zz-sec03-probe-a/repo commit -m x
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    bad (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:283:33)
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:384:44)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-git-probe-write-approved-pos
+not ok 60 - T-ghlog-git-probe-write-approved-pos
+  ---
+  duration_ms: 41.681791
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:385:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:388:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog-git-push-other-remote-neg
+not ok 61 - T-ghlog-git-push-other-remote-neg
+  ---
+  duration_ms: 41.239416
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:392:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    git -C /tmp/zz-sec03-probe-a/repo push https://github.com/x/y HEAD:main
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:398:13)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-ghlog empty/missing/malformed log fails
+not ok 62 - T-ghlog empty/missing/malformed log fails
+  ---
+  duration_ms: 43.485917
+  location: '/Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:400:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-sec-scan.test.mjs:404:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..62
+# tests 62
+# suites 0
+# pass 34
+# fail 28
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5603.700791

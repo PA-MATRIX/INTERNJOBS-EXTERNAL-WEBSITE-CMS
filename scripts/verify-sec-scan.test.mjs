@@ -243,3 +243,168 @@ test("T-cov-requires-source", () => {
   const f = writeJson(tmp("sec-cov-"), "r.json", covRecordFull(fx));
   assert.equal(run(["--scan-coverage", f, "--mirror", fx.github]).code, 1);
 });
+
+// ================= Task 2: --guard and --gh-log =================
+import { guardScan } from "./verify-sec-scan.mjs";
+
+test("T-guard-scratch: scratch dir still present -> problem", () => {
+  const scratch = tmp("sec-scratch-");
+  const r = guardScan({ baseline: "b.json", scratch, runner: () => 0 });
+  assert.ok(r.problems.length > 0);
+  assert.equal(r.ok, false);
+});
+test("T-guard-delegate-neg: delegated runner non-zero -> problem", () => {
+  const r = guardScan({ baseline: "b.json", scratch: "/nonexistent-sec-scratch-dir", runner: () => 1 });
+  assert.equal(r.ok, false);
+  assert.ok(r.problems.length > 0);
+});
+test("T-guard-pos", () => {
+  let seen;
+  const r = guardScan({ baseline: "b.json", scratch: "/nonexistent-sec-scratch-dir", runner: (b) => ((seen = b), 0) });
+  assert.equal(r.ok, true);
+  assert.equal(seen, "b.json");
+});
+test("T-guard CLI: existing scratch exits 1 (control for --guard wiring)", () => {
+  assert.equal(run(["--guard", "--baseline", "x.json", "--scratch", tmp("sec-scratch-")]).code, 1);
+});
+
+const T0 = "2026-10-09T01:00:00Z";
+const T1 = "2026-10-09T02:00:00Z";
+const EARLY = "2026-10-09T00:00:00Z";
+const ghlog = (lines, approved) => {
+  const d = tmp("sec-gh-");
+  const log = path.join(d, "gh.tsv");
+  writeFileSync(log, lines.map((l) => (Array.isArray(l) ? `${l[0]}\t${l[1]}` : `${T1}\t${l}`)).join("\n") + "\n");
+  const args = ["--gh-log", log];
+  if (approved) args.push("--approved", writeJson(d, "ap.json", { approved: approved }));
+  return run(args).code;
+};
+const ok = (...cmds) => assert.equal(ghlog(cmds), 0, cmds.join(" | "));
+const bad = (...cmds) => assert.equal(ghlog(cmds), 1, cmds.join(" | "));
+
+test("T-ghlog-get", () => {
+  ok("gh api repos/x/y");
+  ok('gh api -X GET "repos/x/y/pulls?state=all"');
+});
+test("T-ghlog-post", () => {
+  bad("gh api -X POST repos/x/y/issues");
+  bad("gh api -X PATCH repos/x/y");
+  bad("gh api --method DELETE repos/x/y");
+  bad("gh api --method=PUT repos/x/y");
+  bad("gh api -XPOST repos/x/y");
+});
+test("T-ghlog-input", () => bad("gh api repos/x --input body.json"));
+test("T-ghlog-repo-delete", () => {
+  bad("gh repo delete x/y --yes");
+  bad("gh repo create x/y");
+  bad("gh repo edit x/y --visibility private");
+  bad("gh repo rename z");
+  bad("gh repo archive x/y");
+  bad("gh secret set X");
+  bad("gh pr merge 5");
+});
+test("T-ghlog-field-implicit-post", () => {
+  bad("gh api repos/x -f a=b");
+  bad("gh api repos/x -F a=b");
+  bad("gh api repos/x --field a=b");
+  bad("gh api repos/x --raw-field a=b");
+});
+test("T-ghlog-graphql", () => {
+  const line = "gh api graphql -f query=x";
+  bad(line);
+  assert.equal(ghlog([[T1, line]], [{ cmd: line, approved_at: T0 }]), 0);
+});
+test("T-ghlog-create-run-release", () => {
+  for (const c of ["gh issue create -t x", "gh pr create -t x", "gh workflow run ci.yml", "gh release create v1", "gh release edit v1", "gh release delete v1"]) bad(c);
+});
+test("T-ghlog-unknown-denied", () => {
+  bad("gh frobnicate now");
+  bad("gh");
+  bad("rm -rf /");
+});
+test("T-ghlog-approved-pos", () => {
+  const line = "gh api -X PATCH repos/x/y";
+  assert.equal(ghlog([[T1, line]], [{ cmd: line, approved_at: T0 }]), 0);
+  assert.equal(ghlog([[T0, line]], [{ cmd: line, approved_at: T0 }]), 0, "equal timestamp ok");
+});
+test("T-ghlog-approved-early-neg", () => {
+  const line = "gh api -X PATCH repos/x/y";
+  assert.equal(ghlog([[EARLY, line]], [{ cmd: line, approved_at: T0 }]), 1);
+});
+test("T-ghlog-approved-different-line-neg", () => {
+  assert.equal(ghlog([[T1, "gh api -X PATCH repos/x/y"]], [{ cmd: "gh api -X PATCH repos/x/z", approved_at: T0 }]), 1);
+  assert.equal(ghlog([[T1, "gh frobnicate"]], [{ cmd: "gh frobnicate now", approved_at: T0 }]), 1);
+});
+test("T-ghlog-allowed-reads", () => {
+  ok(
+    "gh api repos/x --jq .a.b",
+    "gh api repos/x -q .a",
+    "gh api repos/x --paginate",
+    "gh repo view x/y",
+    "gh repo list x",
+    "gh pr list",
+    "gh pr view 3",
+    "gh pr diff 3",
+    "gh pr checks 3",
+    "gh issue list",
+    "gh issue view 3",
+    "gh run list",
+    "gh run view 3",
+    "gh release list",
+    "gh release view v1",
+    "gh auth status",
+    "gh --version",
+    "gh pr create --help",
+    "git log --oneline",
+    "git -C /tmp/r status",
+    "git for-each-ref refs/heads",
+    "git rev-parse HEAD",
+    "git ls-tree -r HEAD",
+    "git show HEAD",
+    "git diff --stat",
+  );
+});
+test("T-ghlog-jq-with-field-neg", () => bad("gh api repos/x --jq .a -f a=b"));
+test("T-ghlog-brew-unapproved-neg", () => bad("brew install gitleaks"));
+test("T-ghlog-brew-approved-pos", () => {
+  const l = "brew install gitleaks";
+  assert.equal(ghlog([[T1, l]], [{ cmd: l, approved_at: T0 }]), 0);
+});
+test("T-ghlog-brew-early-neg", () => {
+  const l = "brew install gitleaks";
+  assert.equal(ghlog([[EARLY, l]], [{ cmd: l, approved_at: T0 }]), 1);
+});
+test("T-ghlog-docker-pull-neg", () => bad("docker pull trufflesecurity/trufflehog"));
+test("T-ghlog-git-clone-neg", () => bad("git clone https://github.com/x/y /tmp/y"));
+test("T-ghlog-git-clone-approved-pos", () => {
+  const l = "git clone --mirror https://github.com/x/y /tmp/y";
+  assert.equal(ghlog([[T1, l]], [{ cmd: l, approved_at: T0 }]), 0);
+});
+test("T-ghlog-git-push-neg", () => bad("git push origin main"));
+test("T-ghlog-git-commit-probe-neg", () => bad("git -C /tmp/zz-sec03-probe-a/repo commit -m x"));
+test("T-ghlog-git-probe-write-approved-pos", () => {
+  const c = "git -C /tmp/zz-sec03-probe-a/repo commit -m x";
+  const p = "git -C /tmp/zz-sec03-probe-a/repo push origin HEAD:main";
+  assert.equal(
+    ghlog([[T1, c], [T1, p]], [{ cmd: c, approved_at: T0 }, { cmd: p, approved_at: T0 }]), 0);
+  assert.equal(ghlog([[EARLY, p]], [{ cmd: p, approved_at: T0 }]), 1, "early");
+});
+test("T-ghlog-git-push-other-remote-neg", () => {
+  for (const l of [
+    "git -C /tmp/zz-sec03-probe-a/repo push https://github.com/x/y HEAD:main",
+    "git -C /tmp/other/repo push origin HEAD:main",
+    "git push origin HEAD:main",
+    "git -C /tmp/other/repo commit -m x",
+  ]) assert.equal(ghlog([[T1, l]], [{ cmd: l, approved_at: T0 }]), 1, l);
+});
+test("T-ghlog empty/missing/malformed log fails", () => {
+  const d = tmp("sec-gh-");
+  const f = path.join(d, "e.tsv");
+  writeFileSync(f, "");
+  assert.equal(run(["--gh-log", f]).code, 1);
+  assert.equal(run(["--gh-log", path.join(d, "none.tsv")]).code, 1);
+  writeFileSync(f, "no-tab-here gh api repos/x\n");
+  assert.equal(run(["--gh-log", f]).code, 1);
+  writeFileSync(f, `notatime\tgh api repos/x\n`);
+  assert.equal(run(["--gh-log", f]).code, 1);
+});
