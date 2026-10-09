@@ -459,3 +459,18 @@ test("T-ghlog-quote-escape-neg", () => {
   bad('gh repo view "x" | sh');
   bad("gh repo view x\\\\; gh repo delete x");
 });
+
+const SHA40 = "a".repeat(40);
+test("T-ghlog-git-archive-read-pos", () => ok(`git -C /x/parrot.git archive ${SHA40}`));
+test("T-ghlog-git-cat-file-read-pos", () => ok(`git -C /x cat-file -p ${SHA40}`));
+test("T-ghlog-git-archive-output-neg", () => {
+  bad(`git archive --output=/x/y.tar ${SHA40}`);
+  bad(`git archive -o /x/y.tar ${SHA40}`);
+  bad(`git -C /x archive --output /x/y.tar ${SHA40}`);
+  bad(`git -C /x archive -o/x/y.tar ${SHA40}`);
+  bad(`git -C /x archive --remote=ssh://h/r ${SHA40}`);
+  const l = `git archive --output=/x/y.tar ${SHA40}`;
+  assert.equal(ghlog([[T1, l]], [{ cmd: l, approved_at: T0 }]), 0, "approved write passes");
+});
+test("T-ghlog-env-prefix-neg", () => bad(`GIT_OPTIONAL_LOCKS=0 git -C /x archive ${SHA40}`));
+test("T-ghlog-archive-pipe-neg", () => bad(`git -C /x archive ${SHA40} | tar -x -C /y`));

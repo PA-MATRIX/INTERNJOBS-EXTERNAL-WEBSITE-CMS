@@ -274,6 +274,12 @@ function classifyGit(a) {
   }
   if (sub === "clone") return "approvable";
   if (sub && GIT_READ.has(sub)) return "allowed";
+  if (sub === "archive") {
+    // streams a tree to stdout: read-only unless it writes a file (-o/--output) or talks to a remote
+    const writes = rest.some((x) => x === "-o" || /^-o./.test(x) || x === "--output" || x.startsWith("--output=") ||
+      x === "--remote" || x.startsWith("--remote=") || x === "--exec" || x.startsWith("--exec="));
+    return writes ? "approvable" : "allowed";
+  }
   if (sub === "worktree" && rest[0] === "list") return "allowed";
   return "approvable";
 }

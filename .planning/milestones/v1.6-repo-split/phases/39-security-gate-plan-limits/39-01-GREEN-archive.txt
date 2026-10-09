@@ -1,0 +1,390 @@
+TAP version 13
+# Subtest: control: known-good record passes
+ok 1 - control: known-good record passes
+  ---
+  duration_ms: 45.640542
+  ...
+# Subtest: T-gate: missing / gaps_found / passed
+ok 2 - T-gate: missing / gaps_found / passed
+  ---
+  duration_ms: 227.7015
+  ...
+# Subtest: T-leak-ghp
+ok 3 - T-leak-ghp
+  ---
+  duration_ms: 44.079791
+  ...
+# Subtest: T-leak-akia
+ok 4 - T-leak-akia
+  ---
+  duration_ms: 45.211709
+  ...
+# Subtest: T-leak-pem
+ok 5 - T-leak-pem
+  ---
+  duration_ms: 52.169958
+  ...
+# Subtest: T-leak-clean
+ok 6 - T-leak-clean
+  ---
+  duration_ms: 50.842875
+  ...
+# Subtest: T-leak never echoes the value
+ok 7 - T-leak never echoes the value
+  ---
+  duration_ms: 45.78575
+  ...
+# Subtest: T-schema-tool-name-empty
+ok 8 - T-schema-tool-name-empty
+  ---
+  duration_ms: 42.982625
+  ...
+# Subtest: T-schema-tool-version-empty
+ok 9 - T-schema-tool-version-empty
+  ---
+  duration_ms: 45.221917
+  ...
+# Subtest: T-schema-tool-singular-pos
+ok 10 - T-schema-tool-singular-pos
+  ---
+  duration_ms: 43.270708
+  ...
+# Subtest: T-schema-tool-singular-neg
+ok 11 - T-schema-tool-singular-neg
+  ---
+  duration_ms: 45.200791
+  ...
+# Subtest: T-schema-no-tool
+ok 12 - T-schema-no-tool
+  ---
+  duration_ms: 46.089459
+  ...
+# Subtest: T-schema-redacted-false
+ok 13 - T-schema-redacted-false
+  ---
+  duration_ms: 46.259083
+  ...
+# Subtest: T-schema-finding-count-mismatch
+ok 14 - T-schema-finding-count-mismatch
+  ---
+  duration_ms: 43.235541
+  ...
+# Subtest: T-schema-bad-classification
+ok 15 - T-schema-bad-classification
+  ---
+  duration_ms: 44.476417
+  ...
+# Subtest: T-schema-classification-ok-real
+ok 16 - T-schema-classification-ok-real
+  ---
+  duration_ms: 44.735667
+  ...
+# Subtest: T-schema-classification-ok-false-positive
+ok 17 - T-schema-classification-ok-false-positive
+  ---
+  duration_ms: 43.209875
+  ...
+# Subtest: T-schema-classification-ok-test-fixture
+ok 18 - T-schema-classification-ok-test-fixture
+  ---
+  duration_ms: 44.78875
+  ...
+# Subtest: T-schema-classification-ok-public-by-design
+ok 19 - T-schema-classification-ok-public-by-design
+  ---
+  duration_ms: 48.426708
+  ...
+# Subtest: T-schema-missing-file
+ok 20 - T-schema-missing-file
+  ---
+  duration_ms: 44.883875
+  ...
+# Subtest: T-schema-missing-rule
+ok 21 - T-schema-missing-rule
+  ---
+  duration_ms: 44.76825
+  ...
+# Subtest: T-schema-missing-commit
+ok 22 - T-schema-missing-commit
+  ---
+  duration_ms: 43.242584
+  ...
+# Subtest: T-schema-missing-fingerprint
+ok 23 - T-schema-missing-fingerprint
+  ---
+  duration_ms: 43.993291
+  ...
+# Subtest: T-rotation-neg
+ok 24 - T-rotation-neg
+  ---
+  duration_ms: 183.324958
+  ...
+# Subtest: T-rotation-pos
+ok 25 - T-rotation-pos
+  ---
+  duration_ms: 44.173291
+  ...
+# Subtest: T-digest
+ok 26 - T-digest
+  ---
+  duration_ms: 87.115541
+  ...
+# Subtest: T-cov-pos
+ok 27 - T-cov-pos
+  ---
+  duration_ms: 360.909959
+  ...
+# Subtest: T-cov-drop-ref
+ok 28 - T-cov-drop-ref
+  ---
+  duration_ms: 350.302
+  ...
+# Subtest: T-cov-tip-moved
+ok 29 - T-cov-tip-moved
+  ---
+  duration_ms: 314.824459
+  ...
+# Subtest: T-cov-require-ref
+ok 30 - T-cov-require-ref
+  ---
+  duration_ms: 328.506959
+  ...
+# Subtest: T-cov-note
+ok 31 - T-cov-note
+  ---
+  duration_ms: 511.796958
+  ...
+# Subtest: T-cov-two-mirrors-pos
+ok 32 - T-cov-two-mirrors-pos
+  ---
+  duration_ms: 398.351458
+  ...
+# Subtest: T-cov-wrong-source-neg
+ok 33 - T-cov-wrong-source-neg
+  ---
+  duration_ms: 348.555792
+  ...
+# Subtest: T-cov-requires-source
+ok 34 - T-cov-requires-source
+  ---
+  duration_ms: 320.144708
+  ...
+# Subtest: T-guard-scratch: scratch dir still present -> problem
+ok 35 - T-guard-scratch: scratch dir still present -> problem
+  ---
+  duration_ms: 0.288
+  ...
+# Subtest: T-guard-delegate-neg: delegated runner non-zero -> problem
+ok 36 - T-guard-delegate-neg: delegated runner non-zero -> problem
+  ---
+  duration_ms: 0.057291
+  ...
+# Subtest: T-guard-pos
+ok 37 - T-guard-pos
+  ---
+  duration_ms: 0.044291
+  ...
+# Subtest: T-guard CLI: existing scratch exits 1 (control for --guard wiring)
+ok 38 - T-guard CLI: existing scratch exits 1 (control for --guard wiring)
+  ---
+  duration_ms: 96.508334
+  ...
+# Subtest: T-ghlog-get
+ok 39 - T-ghlog-get
+  ---
+  duration_ms: 92.346667
+  ...
+# Subtest: T-ghlog-post
+ok 40 - T-ghlog-post
+  ---
+  duration_ms: 226.604209
+  ...
+# Subtest: T-ghlog-input
+ok 41 - T-ghlog-input
+  ---
+  duration_ms: 45.053125
+  ...
+# Subtest: T-ghlog-repo-delete
+ok 42 - T-ghlog-repo-delete
+  ---
+  duration_ms: 320.205625
+  ...
+# Subtest: T-ghlog-field-implicit-post
+ok 43 - T-ghlog-field-implicit-post
+  ---
+  duration_ms: 211.255375
+  ...
+# Subtest: T-ghlog-graphql
+ok 44 - T-ghlog-graphql
+  ---
+  duration_ms: 97.5775
+  ...
+# Subtest: T-ghlog-create-run-release
+ok 45 - T-ghlog-create-run-release
+  ---
+  duration_ms: 282.128125
+  ...
+# Subtest: T-ghlog-unknown-denied
+ok 46 - T-ghlog-unknown-denied
+  ---
+  duration_ms: 143.616083
+  ...
+# Subtest: T-ghlog-approved-pos
+ok 47 - T-ghlog-approved-pos
+  ---
+  duration_ms: 107.9625
+  ...
+# Subtest: T-ghlog-approved-early-neg
+ok 48 - T-ghlog-approved-early-neg
+  ---
+  duration_ms: 49.448834
+  ...
+# Subtest: T-ghlog-approved-different-line-neg
+ok 49 - T-ghlog-approved-different-line-neg
+  ---
+  duration_ms: 91.908041
+  ...
+# Subtest: T-ghlog-allowed-reads
+ok 50 - T-ghlog-allowed-reads
+  ---
+  duration_ms: 44.279041
+  ...
+# Subtest: T-ghlog-jq-with-field-neg
+ok 51 - T-ghlog-jq-with-field-neg
+  ---
+  duration_ms: 46.082875
+  ...
+# Subtest: T-ghlog-brew-unapproved-neg
+ok 52 - T-ghlog-brew-unapproved-neg
+  ---
+  duration_ms: 45.39425
+  ...
+# Subtest: T-ghlog-brew-approved-pos
+ok 53 - T-ghlog-brew-approved-pos
+  ---
+  duration_ms: 52.4465
+  ...
+# Subtest: T-ghlog-brew-early-neg
+ok 54 - T-ghlog-brew-early-neg
+  ---
+  duration_ms: 43.620625
+  ...
+# Subtest: T-ghlog-docker-pull-neg
+ok 55 - T-ghlog-docker-pull-neg
+  ---
+  duration_ms: 45.9985
+  ...
+# Subtest: T-ghlog-git-clone-neg
+ok 56 - T-ghlog-git-clone-neg
+  ---
+  duration_ms: 47.826291
+  ...
+# Subtest: T-ghlog-git-clone-approved-pos
+ok 57 - T-ghlog-git-clone-approved-pos
+  ---
+  duration_ms: 46.162083
+  ...
+# Subtest: T-ghlog-git-push-neg
+ok 58 - T-ghlog-git-push-neg
+  ---
+  duration_ms: 52.507792
+  ...
+# Subtest: T-ghlog-git-commit-probe-neg
+ok 59 - T-ghlog-git-commit-probe-neg
+  ---
+  duration_ms: 70.01475
+  ...
+# Subtest: T-ghlog-git-probe-write-approved-pos
+ok 60 - T-ghlog-git-probe-write-approved-pos
+  ---
+  duration_ms: 121.923375
+  ...
+# Subtest: T-ghlog-git-push-other-remote-neg
+ok 61 - T-ghlog-git-push-other-remote-neg
+  ---
+  duration_ms: 194.044542
+  ...
+# Subtest: T-ghlog empty/missing/malformed log fails
+ok 62 - T-ghlog empty/missing/malformed log fails
+  ---
+  duration_ms: 187.51925
+  ...
+# Subtest: T-ghlog-chain-semicolon-neg
+ok 63 - T-ghlog-chain-semicolon-neg
+  ---
+  duration_ms: 90.176459
+  ...
+# Subtest: T-ghlog-chain-and-neg
+ok 64 - T-ghlog-chain-and-neg
+  ---
+  duration_ms: 177.928042
+  ...
+# Subtest: T-ghlog-chain-pipe-neg
+ok 65 - T-ghlog-chain-pipe-neg
+  ---
+  duration_ms: 114.098584
+  ...
+# Subtest: T-ghlog-substitution-neg
+ok 66 - T-ghlog-substitution-neg
+  ---
+  duration_ms: 189.800083
+  ...
+# Subtest: T-ghlog-redirect-neg
+ok 67 - T-ghlog-redirect-neg
+  ---
+  duration_ms: 134.406375
+  ...
+# Subtest: T-ghlog-newline-neg
+ok 68 - T-ghlog-newline-neg
+  ---
+  duration_ms: 44.41375
+  ...
+# Subtest: T-ghlog-chain-approved-neg
+ok 69 - T-ghlog-chain-approved-neg
+  ---
+  duration_ms: 131.632583
+  ...
+# Subtest: T-ghlog-jq-pipe-in-quotes-pos
+ok 70 - T-ghlog-jq-pipe-in-quotes-pos
+  ---
+  duration_ms: 238.058459
+  ...
+# Subtest: T-ghlog-quote-escape-neg
+ok 71 - T-ghlog-quote-escape-neg
+  ---
+  duration_ms: 145.082292
+  ...
+# Subtest: T-ghlog-git-archive-read-pos
+ok 72 - T-ghlog-git-archive-read-pos
+  ---
+  duration_ms: 43.168
+  ...
+# Subtest: T-ghlog-git-cat-file-read-pos
+ok 73 - T-ghlog-git-cat-file-read-pos
+  ---
+  duration_ms: 45.848333
+  ...
+# Subtest: T-ghlog-git-archive-output-neg
+ok 74 - T-ghlog-git-archive-output-neg
+  ---
+  duration_ms: 265.7235
+  ...
+# Subtest: T-ghlog-env-prefix-neg
+ok 75 - T-ghlog-env-prefix-neg
+  ---
+  duration_ms: 44.185667
+  ...
+# Subtest: T-ghlog-archive-pipe-neg
+ok 76 - T-ghlog-archive-pipe-neg
+  ---
+  duration_ms: 47.501542
+  ...
+1..76
+# tests 76
+# suites 0
+# pass 76
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9079.847084

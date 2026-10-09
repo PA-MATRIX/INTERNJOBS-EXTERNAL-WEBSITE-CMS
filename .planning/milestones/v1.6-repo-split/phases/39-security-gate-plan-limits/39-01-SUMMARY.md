@@ -51,3 +51,13 @@ None - no plan conflicts arose.
 ## Next
 
 rrr-verifier to write 39-01-VERIFICATION.md before 39-04/05/07/08 start. Sibling plans 39-02/39-03 own their own STATE lines (orchestrator writes them).
+
+## Archive read amendment
+
+Plan-checker gap on 39-04: its tip-tree extraction logs `git -C <repo> archive <sha>`, which classified as approvable and would fail `--gh-log`.
+
+- Fix: `classifyCommand`/`classifyGit` now treats `git archive` as `allowed` unless it carries `-o`, `--output`, `--remote` or `--exec` (those stay `approvable`). `cat-file` was already in `GIT_READ`.
+- Tests added (5): T-ghlog-git-archive-read-pos, -git-cat-file-read-pos, -git-archive-output-neg, -env-prefix-neg, -archive-pipe-neg.
+- RED (39-01-RED-archive.txt): 76 tests, 75 pass, 1 fail (T-ghlog-git-archive-read-pos, assertion failure). The other four already passed pre-fix and are kept as negative controls (cat-file was already read-only; env-prefixed and piped lines were already rejected).
+- GREEN (39-01-GREEN-archive.txt): 76/76.
+- Env-prefixed lines (`GIT_OPTIONAL_LOCKS=0 git ...`) remain unapproved by design; 39-04-PLAN.md Task 1 and Task 3 (steps 2c, 3) now say to log without the prefix and without pipes, extracting via `tar` as an unlogged separate step.
