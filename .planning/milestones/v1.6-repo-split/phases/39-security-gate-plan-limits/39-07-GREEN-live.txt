@@ -1,0 +1,9 @@
+# 39-07 live run STOPPED (not GREEN) 2026-10-09T04:51:25Z
+## probe-record gate
+PROBE FAIL:
+  - final readback status is not 404 (probe repo left behind)
+exit=1
+## gh-log vs approved
+GH-LOG OK
+exit=0
+## final GET: repo still exists (private:true) -> 200; clone failed 403 'Repository is disabled'
