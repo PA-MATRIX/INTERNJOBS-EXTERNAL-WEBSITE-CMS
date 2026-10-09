@@ -1,0 +1,17 @@
+# live check, 2026-10-09T03:44:46Z
+$ verify-code-maps --inventory .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md --repo /Users/rajren/internjobs-cms
+INVENTORY FAIL:
+  - inventory missing: .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md
+exit 1
+$ verify-code-maps --inventory .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md --repo /Users/rajren/Documents/Parrot --ref origin/main --repo-name parrot
+INVENTORY FAIL:
+  - inventory missing: .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md
+exit 1
+$ verify-code-maps --inventory .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md --repo /Users/rajren/MayaOS/internjobs-ai --ref HEAD --repo-name legacy
+INVENTORY FAIL:
+  - inventory missing: .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/COUPLING-INVENTORY.md
+exit 1
+$ verify-code-maps --repo-map .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/REPO-MAP.md --gh-json .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/gh-snapshot.json
+REPO-MAP FAIL:
+  - repo map missing: .planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory/REPO-MAP.md
+exit 1

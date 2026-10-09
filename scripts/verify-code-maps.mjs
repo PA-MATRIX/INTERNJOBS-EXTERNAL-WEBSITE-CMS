@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Phase 38 read-only verifier (v1.6 repo split).
-// Modes: --gate-prev, --snapshot, --guard, --parrot-preflight, --parrot-ff-check, --maps, --relationship.
+// Modes: --gate-prev, --snapshot, --guard, --parrot-preflight, --parrot-ff-check, --maps, --relationship,
+// --inventory (plus --list-hits), --repo-map.
 // Every git call against legacy/Parrot runs with GIT_OPTIONAL_LOCKS=0 and uses read-only
 // plumbing (ls-files, rev-parse, for-each-ref, merge-base, worktree list). Plain `git status`
 // is never used because it refreshes (writes) the index.
@@ -273,6 +274,8 @@ const SECRET_PATTERNS = [
   ["PEM header", /-----BEGIN/],
   ["JWT", /\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/],
   ["KEY= assignment", /\b[A-Za-z0-9_]*KEY\s*=\s*["']?[A-Za-z0-9+\/_.-]{12,}/],
+  ["SECRET/TOKEN/PASSWORD= assignment", /\b[A-Za-z0-9_]*(?:SECRET|TOKEN|PASSWORD)\s*=\s*["']?[A-Za-z0-9+\/_.-]{12,}/],
+  ["URL credentials", /\b[a-z][a-z0-9+.-]*:\/\/[^\s:\/@]+:[^\s@\/]+@/i],
   ["dotenv assignment", /\.env[\w.-]*\s*=\s*["']?[^\s"'`]{4,}/],
 ];
 
@@ -453,6 +456,166 @@ export function checkRelationship({ doc, cms, parrot }) {
   return problems;
 }
 
+// ---------------- Plan 38-03: --inventory (MAP-04) ----------------
+export const COUPLING_PATTERNS = [
+  "apps/marketing", "apps/employers", "apps/app", "apps/parrot", "apps/startup", "apps/mac-bridge",
+  "packages/shared", "internjobs-marketing-website", "PA-MATRIX/", "internjobs-ai",
+];
+const APP_DIR_RE = /^(apps\/[A-Za-z0-9_-]+|packages\/shared)$/;
+export const NAMED_MINIMUM = [
+  ".github/workflows/ci.yml", "package.json", "package-lock.json", "README.md",
+  "apps/marketing/wrangler.toml", "apps/employers/src/styles.css", "apps/employers/tailwind.config.ts",
+  "apps/app/src/views.mjs", "apps/marketing/src/components/StartupAccessSection.tsx",
+  "packages/shared/**", ".planning/**", "infra/**", "scripts/**",
+];
+const DISPOSITIONS = ["keep", "move", "rewrite", "delete"];
+
+/** Tracked-file hit set via `git grep -l -E` per pattern; a file whose only hits are patterns naming its own
+ * app directory is excluded. With `ref` only the committed tree is read; untracked files are never touched. */
+export function computeHits(repo, ref) {
+  const hits = new Set();
+  for (const pat of COUPLING_PATTERNS) {
+    const own = APP_DIR_RE.test(pat) ? `${pat}/` : null;
+    let out;
+    try {
+      out = git(repo, ["grep", "-l", "-I", "-E", "-e", pat, ...(ref ? [ref] : []), "--"]);
+    } catch (e) {
+      if (e.status === 1) continue; // no match
+      throw e;
+    }
+    for (const raw of out.split("\n")) {
+      if (!raw) continue;
+      const f = ref && raw.startsWith(`${ref}:`) ? raw.slice(ref.length + 1) : raw;
+      if (own && f.startsWith(own)) continue;
+      hits.add(f);
+    }
+  }
+  return [...hits].sort();
+}
+
+const unq = (c) => c.replace(/`/g, "").trim();
+function parseRows(text, cols) {
+  const rows = [];
+  for (const line of text.split("\n")) {
+    if (!line.startsWith("|")) continue;
+    const cells = line.replace(/^\|/, "").replace(/\|\s*$/, "").split("|").map(unq);
+    if (cells.length !== cols) continue;
+    if (cells.every((c) => /^:?-{3,}:?$/.test(c))) continue;
+    rows.push(cells);
+  }
+  return rows;
+}
+const covers = (rowPath, target) => {
+  if (rowPath === target) return true;
+  if (rowPath.endsWith("/**")) {
+    const pre = rowPath.slice(0, -2); // keeps trailing slash
+    return target.startsWith(pre) || target === rowPath.slice(0, -3);
+  }
+  return false;
+};
+
+export function checkInventory({ doc, repo, ref, repoName = "cms" }) {
+  const problems = [];
+  if (!existsSync(doc)) return [`inventory missing: ${doc}`];
+  const text = readFileSync(doc, "utf8");
+  for (const n of scanSecrets(text)) problems.push(`inventory: secret-shaped string (${n})`);
+  const all = parseRows(text, 7).filter((c) => c[0] !== "repo");
+  const rows = all.filter((c) => c[0] === repoName);
+  if (!rows.length) problems.push(`no rows for repo section "${repoName}"`);
+  for (const [, p, , kind, disp, dest, note] of rows) {
+    if (!p) problems.push(`row with empty path`);
+    if (!DISPOSITIONS.includes(disp)) problems.push(`${p}: disposition "${disp}" is not one of ${DISPOSITIONS.join("|")}`);
+    if (disp === "move" && !["website", "platform"].includes(dest)) problems.push(`${p}: move row needs destination website or platform (got "${dest}")`);
+    if (!note) problems.push(`${p}: empty rationale`);
+    else if (disp === "rewrite" && !/^rewrite:\s*\S/.test(note)) problems.push(`${p}: rewrite row needs a note starting "rewrite: "`);
+    if (!kind) problems.push(`${p}: empty kind`);
+  }
+  const paths = rows.map((r) => r[1]);
+  for (const h of computeHits(repo, ref)) {
+    if (!paths.some((rp) => covers(rp, h))) problems.push(`uncovered hit: ${h}`);
+  }
+  if (repoName === "cms") {
+    for (const n of NAMED_MINIMUM) {
+      if (!paths.some((rp) => covers(rp, n))) problems.push(`named minimum not covered: ${n}`);
+    }
+  }
+  return problems;
+}
+
+// ---------------- Plan 38-03: --repo-map (MAP-06) ----------------
+const MATCH_RE = /intern|parrot|marketing|growth/i;
+export const REQUIRED_REPOS = ["PA-MATRIX/internjobs-marketing-website", "PA-Ai-Team/Parrot", "growthpods/Internjobs"];
+const expandHome = (p) => (p === "~" || p.startsWith("~/") ? path.join(os.homedir(), p.slice(1)) : p);
+const slugFromUrl = (u) => {
+  const m = (u || "").match(/github\.com[:/]([^/\s]+)\/([^/\s]+?)(?:\.git)?\/?$/);
+  return m ? `${m[1]}/${m[2]}` : null;
+};
+
+export function checkRepoMap({ doc, ghJson, teamMode }) {
+  const problems = [];
+  if (!existsSync(doc)) return [`repo map missing: ${doc}`];
+  if (!existsSync(ghJson)) return [`gh json missing: ${ghJson}`];
+  let gh, teams;
+  try { gh = JSON.parse(readFileSync(ghJson, "utf8")); } catch { return [`gh json unreadable: ${ghJson}`]; }
+  try { teams = Object.keys(JSON.parse(readFileSync(teamMode, "utf8")).teams || {}); } catch { return [`team-mode unreadable: ${teamMode}`]; }
+  const text = readFileSync(doc, "utf8");
+  for (const n of scanSecrets(text)) problems.push(`repo map: secret-shaped string (${n})`);
+
+  // split into sections by "## " heading; only the non-Planned, non-Excluded sections hold current rows
+  const current = [];
+  const excluded = [];
+  let section = "";
+  for (const line of text.split("\n")) {
+    const h = line.match(/^##\s+(.*)$/);
+    if (h) { section = h[1].trim().toLowerCase(); continue; }
+    if (section.startsWith("planned")) continue;
+    if (section.startsWith("excluded")) {
+      const m = line.match(/^\s*[-*]\s+`?([^\s:`]+)`?\s*:\s*(.*)$/);
+      if (m) excluded.push({ slug: m[1], reason: m[2].trim() });
+      continue;
+    }
+    if (!line.startsWith("|")) continue;
+    const cells = line.replace(/^\|/, "").replace(/\|\s*$/, "").split("|").map(unq);
+    if (cells.length !== 7 || cells.every((c) => /^:?-{3,}:?$/.test(c)) || cells[0].toLowerCase() === "repo") continue;
+    current.push(cells);
+  }
+  const COLS = ["repo", "owner", "visibility", "purpose", "local folder", "deploy target", "owning team"];
+  const bySlug = new Map(current.map((c) => [c[0], c]));
+  for (const req of REQUIRED_REPOS) if (!bySlug.has(req)) problems.push(`missing row for ${req}`);
+  for (const c of current) {
+    const [slug, owner, vis, , folder, , team] = c;
+    c.forEach((v, i) => { if (!v) problems.push(`${slug || "(row)"}: empty column ${COLS[i]}`); });
+    const g = gh.repos?.[slug];
+    if (!g) problems.push(`${slug}: no gh data for this repo in ${path.basename(ghJson)}`);
+    else {
+      if (vis && String(g.visibility).toLowerCase() !== vis.toLowerCase()) problems.push(`${slug}: visibility ${vis} != gh ${g.visibility}`);
+      const gOwner = g.owner?.login ?? g.owner;
+      if (owner && String(gOwner).toLowerCase() !== owner.toLowerCase()) problems.push(`${slug}: owner ${owner} != gh ${gOwner}`);
+    }
+    if (folder) {
+      const dir = expandHome(folder);
+      if (!existsSync(dir)) problems.push(`${slug}: local folder missing: ${folder}`);
+      else {
+        const url = tryGit(dir, ["remote", "get-url", "origin"]);
+        const got = slugFromUrl(url);
+        if (!got || got.toLowerCase() !== slug.toLowerCase()) problems.push(`${slug}: remote origin of ${folder} is ${got ?? "unreadable"}`);
+      }
+    }
+    if (team && !teams.includes(team) && !/^unmanaged:\s*\S/.test(team)) {
+      problems.push(`${slug}: owning team "${team}" is not a team-mode.json team (${teams.join(", ")}) or "unmanaged: <reason>"`);
+    }
+  }
+  for (const e of excluded) if (!e.reason) problems.push(`excluded ${e.slug}: reason missing`);
+  const listed = new Set([...bySlug.keys(), ...excluded.filter((e) => e.reason).map((e) => e.slug)].map((s) => s.toLowerCase()));
+  for (const [org, list] of Object.entries(gh.lists || {})) {
+    for (const r of list) {
+      if (!MATCH_RE.test(r.name)) continue;
+      if (!listed.has(`${org}/${r.name}`.toLowerCase())) problems.push(`enumerated repo ${org}/${r.name} is neither a row nor in Excluded`);
+    }
+  }
+  return problems;
+}
+
 function main(argv) {
   const a = parseArgs(argv);
   const defRecord = (b) => path.join(path.dirname(b), "parrot-ff-record.json");
@@ -541,6 +704,38 @@ function main(argv) {
         return 1;
       }
       console.log("RELATIONSHIP OK");
+      return 0;
+    }
+    if (a.inventory !== undefined) {
+      if (typeof a.repo !== "string") return usage("--repo required");
+      const ref = typeof a.ref === "string" ? a.ref : undefined;
+      if (a["list-hits"]) {
+        for (const h of computeHits(a.repo, ref)) console.log(h);
+        return 0;
+      }
+      if (typeof a.inventory !== "string") return usage("--inventory <doc> required");
+      const problems = checkInventory({
+        doc: a.inventory, repo: a.repo, ref, repoName: typeof a["repo-name"] === "string" ? a["repo-name"] : "cms",
+      });
+      if (problems.length) {
+        console.log("INVENTORY FAIL:\n" + problems.map((p) => `  - ${p}`).join("\n"));
+        return 1;
+      }
+      console.log("INVENTORY OK");
+      return 0;
+    }
+    if (a["repo-map"] !== undefined) {
+      if (typeof a["repo-map"] !== "string") return usage("--repo-map <doc> required");
+      if (typeof a["gh-json"] !== "string") return usage("--gh-json required");
+      const cmsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+      const problems = checkRepoMap({
+        doc: a["repo-map"], ghJson: a["gh-json"], teamMode: a["team-mode"] || path.join(cmsRoot, ".planning", "team-mode.json"),
+      });
+      if (problems.length) {
+        console.log("REPO-MAP FAIL:\n" + problems.map((p) => `  - ${p}`).join("\n"));
+        return 1;
+      }
+      console.log("REPO-MAP OK");
       return 0;
     }
     return usage("no mode given");

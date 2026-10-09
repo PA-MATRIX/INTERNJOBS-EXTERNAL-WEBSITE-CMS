@@ -24,6 +24,15 @@ const gitW = (cwd, ...a) =>
   execFileSync("git", ["-c", "user.email=t@t", "-c", "user.name=t", "-c", "commit.gpgsign=false", ...a], {
     cwd, encoding: "utf8",
   }).trim();
+// plain `git status` control: must NOT inherit GIT_OPTIONAL_LOCKS=0 from the invoking shell,
+// otherwise it does not refresh (rewrite) the index and the fixture-sensitivity control is vacuous.
+const gitPlain = (cwd, ...a) => {
+  const e = { ...process.env };
+  delete e.GIT_OPTIONAL_LOCKS;
+  return execFileSync("git", ["-c", "user.email=t@t", "-c", "user.name=t", "-c", "commit.gpgsign=false", ...a], {
+    cwd, encoding: "utf8", env: e,
+  }).trim();
+};
 const tmp = (p) => mkdtempSync(path.join(os.tmpdir(), p));
 const put = (root, rel, body) => {
   mkdirSync(path.dirname(path.join(root, rel)), { recursive: true });
@@ -177,7 +186,7 @@ test("T-guard-legacy-index: plain git status rewrites index -> 1", () => {
   const e = env();
   assert.equal(e.snap.status, 0, e.snap.stderr);
   assert.equal(guard(e).status, 0);
-  gitW(e.legacy, "status", "--short");
+  gitPlain(e.legacy, "status", "--short");
   assert.equal(guard(e).status, 1);
 });
 test("T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not", () => {
@@ -193,7 +202,7 @@ test("T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain st
   assert.equal(idxStat(legacy), l0, "legacy index changed");
   assert.equal(idxStat(p.clone), p0, "parrot index changed");
   // negative control: the fixture is sensitive (plain status would rewrite the index)
-  gitW(legacy, "status", "--short");
+  gitPlain(legacy, "status", "--short");
   assert.notEqual(idxStat(legacy), l0);
   // and the script source pins GIT_OPTIONAL_LOCKS=0
   assert.match(readFileSync(SCRIPT, "utf8"), /GIT_OPTIONAL_LOCKS/);
@@ -442,6 +451,10 @@ const SECRETS = {
   JWT: "jwt eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijklmnop",
   "KEY=": "SOME_KEY=abcdefghijklmnop12",
   ".env=": "see .env.local=abcdef1234 for details",
+  "SECRET=": "APP_SECRET=abcdefghijklmnop12",
+  "TOKEN=": "API_TOKEN=abcdefghijklmnop12",
+  "PASSWORD=": "DB_PASSWORD=abcdefghijklmnop12",
+  "url creds": "postgres://admin:hunter2pass@db.example.com/x",
 };
 for (const [name, body] of Object.entries(SECRETS)) {
   test(`T-maps-secret: ${name} pattern -> 1`, () => {
@@ -569,4 +582,296 @@ test("T-rel-fixture: never reads .env*", () => {
   put(x.cms, "apps/parrot/.env", `NAME=${CANARY}\n`);
   const r = rel(x, x.doc());
   assert.ok(!(r.stdout + r.stderr).includes(CANARY));
+});
+
+// ---- 38-03 advisory: extended secret shapes, negative (false-positive) controls ----
+for (const [name, body] of Object.entries({
+  "SECRET= short value": "APP_SECRET=short",
+  "TOKEN= empty": "GITHUB_TOKEN= (set in Actions)",
+  "TOKEN= templated": "TOKEN=${{ secrets.NPM_TOKEN }}",
+  "PASSWORD= name only": "`DB_PASSWORD=` is read from Infisical",
+  "url without creds": "postgres://localhost:5432/db and https://example.com/a@b",
+})) {
+  test(`T-maps-secret-negative: ${name} -> 0`, () => {
+    const m = makeMaps();
+    appendFileSync(path.join(m.cms, "INTEGRATIONS.md"), `\n${body}\n`);
+    const r = maps(m);
+    assert.equal(r.status, 0, r.stdout);
+  });
+}
+
+// ================= Plan 38-03: --inventory / --repo-map =================
+const NAMED = [
+  ".github/workflows/ci.yml", "package.json", "package-lock.json", "README.md",
+  "apps/marketing/wrangler.toml", "apps/employers/src/styles.css", "apps/employers/tailwind.config.ts",
+  "apps/app/src/views.mjs", "apps/marketing/src/components/StartupAccessSection.tsx",
+  "packages/shared/**", ".planning/**", "infra/**", "scripts/**",
+];
+const INV_FILES = {
+  ".github/workflows/ci.yml": "run: cd apps/marketing && npm ci\n",
+  "package.json": '{"scripts":{"build:marketing":"npm -w apps/marketing run build"}}\n',
+  "package-lock.json": '{"packages":{"apps/employers":{}}}\n',
+  "README.md": "see apps/app\n",
+  "apps/marketing/wrangler.toml": 'name = "internjobs-ai"\n',
+  "apps/employers/src/styles.css": '@source "apps/marketing/src";\n',
+  "apps/employers/tailwind.config.ts": "// apps/marketing\n",
+  "apps/app/src/views.mjs": "// apps/marketing\n",
+  "apps/marketing/src/components/StartupAccessSection.tsx": "// apps/employers\n",
+  "packages/shared/x.ts": "// apps/parrot\n",
+  ".planning/STATE.md": "PA-MATRIX/ repo\n",
+  "infra/a.tf": "# internjobs-ai\n",
+  "scripts/s.mjs": "// apps/app\n",
+  "apps/marketing/src/self.ts": "// apps/marketing only mentions itself\n",
+  "src/clean.ts": "export {};\n",
+};
+function makeInvRepo(files = INV_FILES, { envCanary = false } = {}) {
+  const dir = tmp("inv-");
+  gitW(dir, "init", "-q", "-b", "main");
+  for (const [f, b] of Object.entries(files)) put(dir, f, b);
+  gitW(dir, "add", "-A");
+  gitW(dir, "commit", "-qm", "init");
+  if (envCanary) put(dir, ".env.local", `internjobs-ai ${CANARY}\n`);
+  return dir;
+}
+const HIT_ROWS = NAMED.map((p) => ({ path: p }));
+const fmtRow = (r) =>
+  `| ${r.repo ?? "cms"} | ${r.path} | ${r.pat ?? "apps/marketing"} | ${r.kind ?? "config"} | ${r.disp ?? "keep"} | ${r.dest ?? "n/a"} | ${r.note ?? "stays valid unchanged"} |`;
+const invDoc = (rows, dir = tmp("invdoc-")) => {
+  const f = path.join(dir, "COUPLING-INVENTORY.md");
+  writeFileSync(f, `# Inventory\n\nProse | with a pipe is not a row.\n\n| repo | path | pattern(s) | kind | disposition | destination | note |\n|---|---|---|---|---|---|---|\n${rows.map(fmtRow).join("\n")}\n`);
+  return f;
+};
+const inv = (doc, repo, extra = []) => cli(["--inventory", doc, "--repo", repo, ...extra]);
+
+test("T-inv-complete: every recomputed hit covered, named minimum present -> 0", () => {
+  const repo = makeInvRepo();
+  const r = inv(invDoc(HIT_ROWS), repo);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+test("T-inv-excluded: a file inside apps/marketing mentioning only apps/marketing needs no row, but one mentioning packages/shared does", () => {
+  const repo = makeInvRepo({ ...INV_FILES, "apps/marketing/src/uses-shared.ts": "import 'packages/shared';\n" });
+  const r = inv(invDoc(HIT_ROWS), repo);
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(r.stdout, /apps\/marketing\/src\/uses-shared\.ts/);
+  assert.doesNotMatch(r.stdout, /self\.ts/);
+});
+for (const row of HIT_ROWS) {
+  test(`T-inv-row-removed: deleting the ${row.path} row -> 1 naming an uncovered path`, () => {
+    const repo = makeInvRepo();
+    const doc = invDoc(HIT_ROWS.filter((x) => x !== row));
+    const r = inv(doc, repo);
+    assert.equal(r.status, 1, r.stdout);
+    assert.ok(r.stdout.includes(row.path.replace(/\/\*\*$/, "")), r.stdout);
+  });
+}
+test("T-inv-named: each named-minimum row removed in turn -> 1 (independent of the hit set)", () => {
+  const repo = makeInvRepo({ "src/clean.ts": "export {};\n" });
+  assert.equal(inv(invDoc(HIT_ROWS), repo).status, 0);
+  for (const n of NAMED) {
+    const r = inv(invDoc(HIT_ROWS.filter((x) => x.path !== n)), repo);
+    assert.equal(r.status, 1, `${n}: ${r.stdout}`);
+    assert.match(r.stdout, /named minimum/);
+    assert.ok(r.stdout.includes(n), r.stdout);
+  }
+});
+test("T-inv-named: a covering glob satisfies a named file", () => {
+  const repo = makeInvRepo({ "src/clean.ts": "export {};\n" });
+  const rows = HIT_ROWS.filter((x) => x.path !== "apps/app/src/views.mjs").concat([{ path: "apps/app/**" }]);
+  assert.equal(inv(invDoc(rows), repo).status, 0);
+});
+test("T-inv-disposition: positive, plus four negatives (one per defect)", () => {
+  const repo = makeInvRepo({ "src/clean.ts": "export {};\n" });
+  const base = HIT_ROWS.filter((x) => x.path !== "README.md");
+  const ok = (extra) => inv(invDoc(base.concat([{ path: "README.md", ...extra }])), repo);
+  assert.equal(ok({ disp: "move", dest: "website" }).status, 0);
+  assert.equal(ok({ disp: "move", dest: "platform" }).status, 0);
+  assert.equal(ok({ disp: "rewrite", note: "rewrite: point links at the new repo" }).status, 0);
+  assert.equal(ok({ disp: "delete" }).status, 0);
+  let r = ok({ disp: "maybe" });
+  assert.equal(r.status, 1); assert.match(r.stdout, /disposition/);
+  r = ok({ disp: "keep|move" });
+  assert.equal(r.status, 1);
+  r = ok({ disp: "move", dest: "n/a" });
+  assert.equal(r.status, 1); assert.match(r.stdout, /destination/);
+  r = ok({ disp: "move", dest: "elsewhere" });
+  assert.equal(r.status, 1);
+  r = ok({ disp: "rewrite", note: "it changes somehow" });
+  assert.equal(r.status, 1); assert.match(r.stdout, /rewrite/);
+  r = ok({ note: "" });
+  assert.equal(r.status, 1); assert.match(r.stdout, /rationale/);
+  r = ok({ note: "   " });
+  assert.equal(r.status, 1);
+});
+test("T-inv-listhits: --inventory --list-hits prints the recomputed hit set, nothing else", () => {
+  const repo = makeInvRepo();
+  const r = cli(["--inventory", "--list-hits", "--repo", repo]);
+  assert.equal(r.status, 0, r.stderr);
+  const got = r.stdout.split("\n").filter(Boolean);
+  assert.ok(got.includes("scripts/s.mjs") && got.includes("README.md"));
+  assert.ok(!got.includes("src/clean.ts") && !got.includes("apps/marketing/src/self.ts"));
+});
+test("T-inv-crossrepo: committed tree at a ref only; untracked .env.local canary never read or printed; row removal -> 1", () => {
+  const repo = makeInvRepo({ "server/a.ts": "// uses internjobs-ai\n", "README": "plain\n" }, { envCanary: true });
+  const rows = [{ repo: "parrot", path: "server/a.ts", pat: "internjobs-ai", kind: "doc" }];
+  const doc = invDoc(rows);
+  const r = inv(doc, repo, ["--ref", "HEAD", "--repo-name", "parrot"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(!(r.stdout + r.stderr).includes(CANARY));
+  assert.ok(!readFileSync(doc, "utf8").includes(CANARY));
+  const l = cli(["--inventory", "--list-hits", "--repo", repo, "--ref", "HEAD"]);
+  assert.ok(!l.stdout.includes(".env.local") && !l.stdout.includes(CANARY), l.stdout);
+  // cms-only named minimum must not be demanded of other repos
+  const bad = inv(invDoc([]), repo, ["--ref", "HEAD", "--repo-name", "parrot"]);
+  assert.equal(bad.status, 1);
+  assert.match(bad.stdout, /server\/a\.ts/);
+  assert.ok(!(bad.stdout + bad.stderr).includes(CANARY));
+  // rows for a different repo section do not cover this repo's hits
+  const other = inv(invDoc([{ repo: "legacy", path: "server/a.ts" }]), repo, ["--ref", "HEAD", "--repo-name", "parrot"]);
+  assert.equal(other.status, 1);
+});
+test("T-inv-secret: a secret-shaped string in the inventory -> 1 without echoing it", () => {
+  const repo = makeInvRepo({ "src/clean.ts": "export {};\n" });
+  const doc = invDoc(HIT_ROWS.map((x) => (x.path === "README.md" ? { ...x, note: "API_TOKEN=abcdefghijklmnop12" } : x)));
+  const r = inv(doc, repo);
+  assert.equal(r.status, 1);
+  assert.ok(!r.stdout.includes("abcdefghijklmnop12"));
+});
+
+// ---------- --repo-map ----------
+const SLUGS = {
+  site: "PA-MATRIX/internjobs-marketing-website",
+  parrot: "PA-Ai-Team/Parrot",
+  legacy: "growthpods/Internjobs",
+};
+function makeRepoMapEnv() {
+  const root = tmp("rm-");
+  const folders = {};
+  const urls = {
+    site: "https://github.com/PA-MATRIX/internjobs-marketing-website.git",
+    parrot: "git@github.com:PA-Ai-Team/Parrot.git",
+    legacy: "https://github.com/growthpods/Internjobs",
+  };
+  for (const k of Object.keys(SLUGS)) {
+    const d = path.join(root, k);
+    mkdirSync(d);
+    gitW(d, "init", "-q", "-b", "main");
+    gitW(d, "remote", "add", "origin", urls[k]);
+    folders[k] = d;
+  }
+  const gh = {
+    repos: {
+      [SLUGS.site]: { nameWithOwner: SLUGS.site, visibility: "PUBLIC", owner: { login: "PA-MATRIX" } },
+      [SLUGS.parrot]: { nameWithOwner: SLUGS.parrot, visibility: "PRIVATE", owner: { login: "PA-Ai-Team" } },
+      [SLUGS.legacy]: { nameWithOwner: SLUGS.legacy, visibility: "PRIVATE", owner: { login: "growthpods" } },
+    },
+    lists: {
+      "PA-MATRIX": [{ name: "internjobs-marketing-website", visibility: "PUBLIC" }, { name: "unrelated-thing", visibility: "PRIVATE" }],
+      "PA-Ai-Team": [{ name: "Parrot", visibility: "PRIVATE" }],
+      growthpods: [{ name: "Internjobs", visibility: "PRIVATE" }],
+    },
+  };
+  const ghFile = path.join(root, "gh.json");
+  const teamFile = path.join(root, "team-mode.json");
+  writeFileSync(teamFile, JSON.stringify({ teams: { "team-cms": {}, "team-workspace": {} } }));
+  const baseRows = () => [
+    { slug: SLUGS.site, owner: "PA-MATRIX", vis: "Public", purpose: "website", folder: folders.site, deploy: "Cloudflare Pages internjobs-ai", team: "team-cms" },
+    { slug: SLUGS.parrot, owner: "PA-Ai-Team", vis: "Private", purpose: "Parrot", folder: folders.parrot, deploy: "Fly", team: "unmanaged: separate org" },
+    { slug: SLUGS.legacy, owner: "growthpods", vis: "Private", purpose: "legacy app", folder: folders.legacy, deploy: "none", team: "unmanaged: legacy, archive pending" },
+  ];
+  const write = ({ rows = baseRows(), excluded = [], ghOver, planned = true } = {}) => {
+    writeFileSync(ghFile, JSON.stringify(ghOver ?? gh));
+    const f = path.join(root, "REPO-MAP.md");
+    const line = (r) => `| ${r.slug} | ${r.owner} | ${r.vis} | ${r.purpose} | ${r.folder} | ${r.deploy} | ${r.team} |`;
+    writeFileSync(f, [
+      "# Repo map", "", "## Repos", "",
+      "| Repo | Owner | Visibility | Purpose | Local folder | Deploy target | Owning team |", "|---|---|---|---|---|---|---|",
+      ...rows.map(line), "",
+      "## Planned", "",
+      "| Repo | Owner | Visibility | Purpose | Local folder | Deploy target | Owning team |", "|---|---|---|---|---|---|---|",
+      ...(planned ? ["| PA-MATRIX/internjobs-platform | PA-MATRIX | Private | planned | /nonexistent/planned | planned | team-foo |"] : []), "",
+      "## Excluded", "", ...excluded.map((e) => `- ${e}`), "",
+    ].join("\n"));
+    return f;
+  };
+  return { root, folders, gh, ghFile, teamFile, baseRows, write };
+}
+const rmap = (x, f) => cli(["--repo-map", f, "--gh-json", x.ghFile, "--team-mode", x.teamFile]);
+
+test("T-repomap positive: matching rows, planned section ignored -> 0", () => {
+  const x = makeRepoMapEnv();
+  const r = rmap(x, x.write());
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+for (const col of ["owner", "vis", "purpose", "folder", "deploy", "team"]) {
+  test(`T-repomap-columns: blank ${col} -> 1`, () => {
+    const x = makeRepoMapEnv();
+    const rows = x.baseRows();
+    rows[1] = { ...rows[1], [col]: "" };
+    const r = rmap(x, x.write({ rows }));
+    assert.equal(r.status, 1, r.stdout);
+    assert.match(r.stdout, /Parrot/);
+  });
+}
+for (const k of Object.keys(SLUGS)) {
+  test(`T-repomap-columns: row for ${SLUGS[k]} missing -> 1`, () => {
+    const x = makeRepoMapEnv();
+    const rows = x.baseRows().filter((r) => r.slug !== SLUGS[k]);
+    const r = rmap(x, x.write({ rows }));
+    assert.equal(r.status, 1);
+    assert.ok(r.stdout.includes(SLUGS[k]), r.stdout);
+  });
+}
+test("T-repomap-visibility: doc says Public, gh says PRIVATE -> 1", () => {
+  const x = makeRepoMapEnv();
+  const rows = x.baseRows(); rows[1].vis = "Public";
+  const r = rmap(x, x.write({ rows }));
+  assert.equal(r.status, 1); assert.match(r.stdout, /visibility/);
+});
+test("T-repomap-owner: owner differs from gh -> 1", () => {
+  const x = makeRepoMapEnv();
+  const rows = x.baseRows(); rows[0].owner = "someone-else";
+  const r = rmap(x, x.write({ rows }));
+  assert.equal(r.status, 1); assert.match(r.stdout, /owner/);
+});
+test("T-repomap-remote: local folder's origin is another repo -> 1", () => {
+  const x = makeRepoMapEnv();
+  gitW(x.folders.parrot, "remote", "set-url", "origin", "https://github.com/PA-Ai-Team/Other.git");
+  const r = rmap(x, x.write());
+  assert.equal(r.status, 1); assert.match(r.stdout, /remote/);
+});
+test("T-repomap-folder: local folder missing -> 1", () => {
+  const x = makeRepoMapEnv();
+  const rows = x.baseRows(); rows[2].folder = path.join(x.root, "gone");
+  const r = rmap(x, x.write({ rows }));
+  assert.equal(r.status, 1); assert.match(r.stdout, /folder/);
+});
+test("T-repomap-enum: enumerated matching repo absent -> 1; Excluded with reason -> 0; reasonless -> 1; non-matching ignored", () => {
+  const x = makeRepoMapEnv();
+  const g = JSON.parse(JSON.stringify(x.gh));
+  g.lists["PA-MATRIX"].push({ name: "intern-extra", visibility: "PRIVATE" });
+  let r = rmap(x, x.write({ ghOver: g }));
+  assert.equal(r.status, 1); assert.match(r.stdout, /intern-extra/);
+  r = rmap(x, x.write({ ghOver: g, excluded: ["PA-MATRIX/intern-extra: scratch experiment"] }));
+  assert.equal(r.status, 0, r.stdout);
+  r = rmap(x, x.write({ ghOver: g, excluded: ["PA-MATRIX/intern-extra:"] }));
+  assert.equal(r.status, 1);
+  g.lists["PA-Ai-Team"].push({ name: "growth-notes", visibility: "PRIVATE" });
+  r = rmap(x, x.write({ ghOver: g, excluded: ["PA-MATRIX/intern-extra: scratch experiment"] }));
+  assert.equal(r.status, 1); assert.match(r.stdout, /growth-notes/);
+});
+test("T-repomap-team: unknown team -> 1; unmanaged with reason -> 0; unmanaged without reason -> 1", () => {
+  const x = makeRepoMapEnv();
+  let rows = x.baseRows(); rows[0].team = "team-nobody";
+  let r = rmap(x, x.write({ rows }));
+  assert.equal(r.status, 1); assert.match(r.stdout, /team/);
+  rows = x.baseRows(); rows[1].team = "unmanaged:";
+  assert.equal(rmap(x, x.write({ rows })).status, 1);
+  rows = x.baseRows(); rows[1].team = "team-workspace";
+  assert.equal(rmap(x, x.write({ rows })).status, 0);
+});
+test("T-repomap: missing doc or gh json -> 1", () => {
+  const x = makeRepoMapEnv();
+  const f = x.write();
+  assert.equal(cli(["--repo-map", path.join(x.root, "absent.md"), "--gh-json", x.ghFile, "--team-mode", x.teamFile]).status, 1);
+  assert.equal(cli(["--repo-map", f, "--gh-json", path.join(x.root, "absent.json"), "--team-mode", x.teamFile]).status, 1);
 });

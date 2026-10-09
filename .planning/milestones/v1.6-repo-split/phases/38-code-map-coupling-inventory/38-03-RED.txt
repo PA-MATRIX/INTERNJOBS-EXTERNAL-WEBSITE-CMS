@@ -1,0 +1,1498 @@
+TAP version 13
+# Subtest: T-gate: entry gate reads VERIFICATION status
+ok 1 - T-gate: entry gate reads VERIFICATION status
+  ---
+  duration_ms: 446.525291
+  ...
+# Subtest: T-guard-legacy positive: unchanged -> 0
+ok 2 - T-guard-legacy positive: unchanged -> 0
+  ---
+  duration_ms: 1655.583833
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package.json -> 1
+ok 3 - T-guard-legacy-hash: one byte in package.json -> 1
+  ---
+  duration_ms: 1997.565833
+  ...
+# Subtest: T-guard-legacy-hash: one byte in package-lock.json -> 1
+ok 4 - T-guard-legacy-hash: one byte in package-lock.json -> 1
+  ---
+  duration_ms: 1071.906292
+  ...
+# Subtest: T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+ok 5 - T-guard-legacy-hash: one byte in src/app/api/chat/route.ts -> 1
+  ---
+  duration_ms: 1206.489083
+  ...
+# Subtest: T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+ok 6 - T-guard-legacy-hash: one byte in tests/e2e/chat-interface.spec.ts -> 1
+  ---
+  duration_ms: 1061.369375
+  ...
+# Subtest: T-guard-legacy-head: new commit -> 1
+ok 7 - T-guard-legacy-head: new commit -> 1
+  ---
+  duration_ms: 1225.689583
+  ...
+# Subtest: T-guard-legacy-status: extra untracked path -> 1
+ok 8 - T-guard-legacy-status: extra untracked path -> 1
+  ---
+  duration_ms: 846.428291
+  ...
+# Subtest: T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+ok 9 - T-guard-legacy-status: new file inside snapshotted untracked dir -> 1
+  ---
+  duration_ms: 1196.273709
+  ...
+# Subtest: T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+ok 10 - T-guard-legacy-status: tracked file reverted leaves modified list -> 1
+  ---
+  duration_ms: 935.269875
+  ...
+# Subtest: T-guard-legacy-index: plain git status rewrites index -> 1
+ok 11 - T-guard-legacy-index: plain git status rewrites index -> 1
+  ---
+  duration_ms: 1007.451583
+  ...
+# Subtest: T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+ok 12 - T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+  ---
+  duration_ms: 929.969875
+  ...
+# Subtest: T-snapshot-cms: pre-existing cms paths by name, never contents
+ok 13 - T-snapshot-cms: pre-existing cms paths by name, never contents
+  ---
+  duration_ms: 779.820041
+  ...
+# Subtest: T-no-secrets-read: .env canary never reaches output; source never touches .env
+ok 14 - T-no-secrets-read: .env canary never reaches output; source never touches .env
+  ---
+  duration_ms: 729.36625
+  ...
+# Subtest: T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+ok 15 - T-guard-worktree: unchanged 0; new commit on worktree branch 1; removed worktree 1
+  ---
+  duration_ms: 1970.891792
+  ...
+# Subtest: T-guard-originmain-pos: moved to after_sha with record -> 0
+ok 16 - T-guard-originmain-pos: moved to after_sha with record -> 0
+  ---
+  duration_ms: 888.698333
+  ...
+# Subtest: T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+ok 17 - T-guard-originmain-neg-elsewhere: moved to another sha with record -> 1
+  ---
+  duration_ms: 881.347917
+  ...
+# Subtest: T-guard-originmain-neg-norecord: moved, no record -> 1
+ok 18 - T-guard-originmain-neg-norecord: moved, no record -> 1
+  ---
+  duration_ms: 936.681583
+  ...
+# Subtest: T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+ok 19 - T-preflight-clean: ff-able clean clone -> 0 (untracked-only tolerated)
+  ---
+  duration_ms: 662.036792
+  ...
+# Subtest: T-preflight-dirty: modified tracked file -> 1
+ok 20 - T-preflight-dirty: modified tracked file -> 1
+  ---
+  duration_ms: 574.51225
+  ...
+# Subtest: T-preflight-branch: non-main checkout -> 1
+ok 21 - T-preflight-branch: non-main checkout -> 1
+  ---
+  duration_ms: 564.806833
+  ...
+# Subtest: T-preflight-diverged: local main has unique commit -> 1
+ok 22 - T-preflight-diverged: local main has unique commit -> 1
+  ---
+  duration_ms: 616.330667
+  ...
+# Subtest: T-ff-check: ff'd clone with record -> 0
+ok 23 - T-ff-check: ff'd clone with record -> 0
+  ---
+  duration_ms: 977.495833
+  ...
+# Subtest: T-ff-check: pre-ff -> 1
+ok 24 - T-ff-check: pre-ff -> 1
+  ---
+  duration_ms: 880.243333
+  ...
+# Subtest: T-ff-check: expect-after differs -> 1
+ok 25 - T-ff-check: expect-after differs -> 1
+  ---
+  duration_ms: 909.794792
+  ...
+# Subtest: T-ff-check: moved worktree -> 1
+ok 26 - T-ff-check: moved worktree -> 1
+  ---
+  duration_ms: 978.184166
+  ...
+# Subtest: T-ff-check: dirty tree -> 1
+ok 27 - T-ff-check: dirty tree -> 1
+  ---
+  duration_ms: 1270.631167
+  ...
+# Subtest: T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+ok 28 - T-ff-record: record missing -> 1; record after_sha differs from HEAD -> 1
+  ---
+  duration_ms: 1159.167375
+  ...
+# Subtest: T-ff-record: before_sha not an ancestor of HEAD -> 1
+ok 29 - T-ff-record: before_sha not an ancestor of HEAD -> 1
+  ---
+  duration_ms: 927.643083
+  ...
+# Subtest: T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed
+ok 30 - T-gate-plan: --gate-prev 38-01 red without VERIFICATION, green with passed
+  ---
+  duration_ms: 132.10125
+  ...
+# Subtest: T-maps-positive: complete stamped clean maps -> 0
+ok 31 - T-maps-positive: complete stamped clean maps -> 0
+  ---
+  duration_ms: 50.73325
+  ...
+# Subtest: T-maps-missing: cms/STACK.md deleted -> 1 naming it
+ok 32 - T-maps-missing: cms/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.532334
+  ...
+# Subtest: T-maps-missing: cms/INTEGRATIONS.md deleted -> 1 naming it
+ok 33 - T-maps-missing: cms/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.998667
+  ...
+# Subtest: T-maps-missing: cms/ARCHITECTURE.md deleted -> 1 naming it
+ok 34 - T-maps-missing: cms/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.252833
+  ...
+# Subtest: T-maps-missing: cms/STRUCTURE.md deleted -> 1 naming it
+ok 35 - T-maps-missing: cms/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.831792
+  ...
+# Subtest: T-maps-missing: cms/CONVENTIONS.md deleted -> 1 naming it
+ok 36 - T-maps-missing: cms/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 48.734709
+  ...
+# Subtest: T-maps-missing: cms/TESTING.md deleted -> 1 naming it
+ok 37 - T-maps-missing: cms/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.250416
+  ...
+# Subtest: T-maps-missing: cms/CONCERNS.md deleted -> 1 naming it
+ok 38 - T-maps-missing: cms/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 49.0095
+  ...
+# Subtest: T-maps-missing: cms empty doc -> 1
+ok 39 - T-maps-missing: cms empty doc -> 1
+  ---
+  duration_ms: 47.273083
+  ...
+# Subtest: T-maps-missing: parrot/STACK.md deleted -> 1 naming it
+ok 40 - T-maps-missing: parrot/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 52.29175
+  ...
+# Subtest: T-maps-missing: parrot/INTEGRATIONS.md deleted -> 1 naming it
+ok 41 - T-maps-missing: parrot/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 49.359958
+  ...
+# Subtest: T-maps-missing: parrot/ARCHITECTURE.md deleted -> 1 naming it
+ok 42 - T-maps-missing: parrot/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 49.086417
+  ...
+# Subtest: T-maps-missing: parrot/STRUCTURE.md deleted -> 1 naming it
+ok 43 - T-maps-missing: parrot/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.960375
+  ...
+# Subtest: T-maps-missing: parrot/CONVENTIONS.md deleted -> 1 naming it
+ok 44 - T-maps-missing: parrot/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.5765
+  ...
+# Subtest: T-maps-missing: parrot/TESTING.md deleted -> 1 naming it
+ok 45 - T-maps-missing: parrot/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 45.707875
+  ...
+# Subtest: T-maps-missing: parrot/CONCERNS.md deleted -> 1 naming it
+ok 46 - T-maps-missing: parrot/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.864583
+  ...
+# Subtest: T-maps-missing: parrot empty doc -> 1
+ok 47 - T-maps-missing: parrot empty doc -> 1
+  ---
+  duration_ms: 47.24625
+  ...
+# Subtest: T-maps-missing: legacy/STACK.md deleted -> 1 naming it
+ok 48 - T-maps-missing: legacy/STACK.md deleted -> 1 naming it
+  ---
+  duration_ms: 48.0105
+  ...
+# Subtest: T-maps-missing: legacy/INTEGRATIONS.md deleted -> 1 naming it
+ok 49 - T-maps-missing: legacy/INTEGRATIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.870833
+  ...
+# Subtest: T-maps-missing: legacy/ARCHITECTURE.md deleted -> 1 naming it
+ok 50 - T-maps-missing: legacy/ARCHITECTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 48.895875
+  ...
+# Subtest: T-maps-missing: legacy/STRUCTURE.md deleted -> 1 naming it
+ok 51 - T-maps-missing: legacy/STRUCTURE.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.14225
+  ...
+# Subtest: T-maps-missing: legacy/CONVENTIONS.md deleted -> 1 naming it
+ok 52 - T-maps-missing: legacy/CONVENTIONS.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.00025
+  ...
+# Subtest: T-maps-missing: legacy/TESTING.md deleted -> 1 naming it
+ok 53 - T-maps-missing: legacy/TESTING.md deleted -> 1 naming it
+  ---
+  duration_ms: 46.536959
+  ...
+# Subtest: T-maps-missing: legacy/CONCERNS.md deleted -> 1 naming it
+ok 54 - T-maps-missing: legacy/CONCERNS.md deleted -> 1 naming it
+  ---
+  duration_ms: 47.513042
+  ...
+# Subtest: T-maps-missing: legacy empty doc -> 1
+ok 55 - T-maps-missing: legacy empty doc -> 1
+  ---
+  duration_ms: 46.493
+  ...
+# Subtest: T-maps-stamp-missing: no stamp line -> 1 naming the doc
+ok 56 - T-maps-stamp-missing: no stamp line -> 1 naming the doc
+  ---
+  duration_ms: 45.55625
+  ...
+# Subtest: T-maps-stamp-wrong-repo: stamp names another repo -> 1
+ok 57 - T-maps-stamp-wrong-repo: stamp names another repo -> 1
+  ---
+  duration_ms: 46.864125
+  ...
+# Subtest: T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1
+ok 58 - T-maps-stamp-wrong-sha: stamp sha differs from MANIFEST -> 1
+  ---
+  duration_ms: 47.06275
+  ...
+# Subtest: T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted
+ok 59 - T-maps-stamp-short-sha: a 7-char prefix of the manifest sha is accepted
+  ---
+  duration_ms: 52.381625
+  ...
+# Subtest: T-maps-stamp-stale-date: cms stamp date before merge_date -> 1
+ok 60 - T-maps-stamp-stale-date: cms stamp date before merge_date -> 1
+  ---
+  duration_ms: 52.305333
+  ...
+# Subtest: T-maps-stamp-not-first-line: stamp on line 2 -> 1
+ok 61 - T-maps-stamp-not-first-line: stamp on line 2 -> 1
+  ---
+  duration_ms: 52.695166
+  ...
+# Subtest: T-maps-secret: sk- pattern -> 1
+ok 62 - T-maps-secret: sk- pattern -> 1
+  ---
+  duration_ms: 48.777375
+  ...
+# Subtest: T-maps-secret: AKIA pattern -> 1
+ok 63 - T-maps-secret: AKIA pattern -> 1
+  ---
+  duration_ms: 49.124125
+  ...
+# Subtest: T-maps-secret: ghp_ pattern -> 1
+ok 64 - T-maps-secret: ghp_ pattern -> 1
+  ---
+  duration_ms: 50.140166
+  ...
+# Subtest: T-maps-secret: xoxb- pattern -> 1
+ok 65 - T-maps-secret: xoxb- pattern -> 1
+  ---
+  duration_ms: 47.46475
+  ...
+# Subtest: T-maps-secret: PEM pattern -> 1
+ok 66 - T-maps-secret: PEM pattern -> 1
+  ---
+  duration_ms: 45.230417
+  ...
+# Subtest: T-maps-secret: JWT pattern -> 1
+ok 67 - T-maps-secret: JWT pattern -> 1
+  ---
+  duration_ms: 46.833375
+  ...
+# Subtest: T-maps-secret: KEY= pattern -> 1
+ok 68 - T-maps-secret: KEY= pattern -> 1
+  ---
+  duration_ms: 45.766583
+  ...
+# Subtest: T-maps-secret: .env= pattern -> 1
+ok 69 - T-maps-secret: .env= pattern -> 1
+  ---
+  duration_ms: 45.748542
+  ...
+# Subtest: T-maps-secret: SECRET= pattern -> 1
+not ok 70 - T-maps-secret: SECRET= pattern -> 1
+  ---
+  duration_ms: 48.196583
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:460:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+    
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:464:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-maps-secret: TOKEN= pattern -> 1
+not ok 71 - T-maps-secret: TOKEN= pattern -> 1
+  ---
+  duration_ms: 47.116625
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:460:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+    
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:464:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-maps-secret: PASSWORD= pattern -> 1
+not ok 72 - T-maps-secret: PASSWORD= pattern -> 1
+  ---
+  duration_ms: 48.792125
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:460:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+    
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:464:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-maps-secret: url creds pattern -> 1
+not ok 73 - T-maps-secret: url creds pattern -> 1
+  ---
+  duration_ms: 47.181917
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:460:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    MAPS OK: 3 x 7 docs present, stamped, clean, outside source repos
+    
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:464:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-maps-secret: env var named without a value -> 0 (false-positive control)
+ok 74 - T-maps-secret: env var named without a value -> 0 (false-positive control)
+  ---
+  duration_ms: 46.647583
+  ...
+# Subtest: T-maps-location: map dir inside a Parrot or legacy work tree -> 1
+ok 75 - T-maps-location: map dir inside a Parrot or legacy work tree -> 1
+  ---
+  duration_ms: 202.637417
+  ...
+# Subtest: T-rel-fixture positive: claims match files -> 0
+ok 76 - T-rel-fixture positive: claims match files -> 0
+  ---
+  duration_ms: 80.50275
+  ...
+# Subtest: T-rel-fixture NEG: wrong worker name -> 1
+ok 77 - T-rel-fixture NEG: wrong worker name -> 1
+  ---
+  duration_ms: 69.086833
+  ...
+# Subtest: T-rel-fixture NEG: wrong Parrot package name -> 1
+ok 78 - T-rel-fixture NEG: wrong Parrot package name -> 1
+  ---
+  duration_ms: 67.747083
+  ...
+# Subtest: T-rel-fixture NEG: shared item missing in the Parrot tree -> 1
+ok 79 - T-rel-fixture NEG: shared item missing in the Parrot tree -> 1
+  ---
+  duration_ms: 68.737709
+  ...
+# Subtest: T-rel-fixture NEG: shared item missing in the cms tree -> 1
+ok 80 - T-rel-fixture NEG: shared item missing in the cms tree -> 1
+  ---
+  duration_ms: 68.204417
+  ...
+# Subtest: T-rel-fixture NEG: must_not_change row omitted -> 1
+ok 81 - T-rel-fixture NEG: must_not_change row omitted -> 1
+  ---
+  duration_ms: 70.048917
+  ...
+# Subtest: T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1
+ok 82 - T-rel-fixture NEG: relationship value absent or not in the vocabulary -> 1
+  ---
+  duration_ms: 208.385042
+  ...
+# Subtest: T-rel-fixture NEG: doc missing -> 1
+ok 83 - T-rel-fixture NEG: doc missing -> 1
+  ---
+  duration_ms: 46.64275
+  ...
+# Subtest: T-rel-fixture: Parrot content is read at origin/main, not the working tree
+ok 84 - T-rel-fixture: Parrot content is read at origin/main, not the working tree
+  ---
+  duration_ms: 428.915667
+  ...
+# Subtest: T-rel-fixture: never reads .env*
+ok 85 - T-rel-fixture: never reads .env*
+  ---
+  duration_ms: 71.197333
+  ...
+# Subtest: T-maps-secret-negative: SECRET= short value -> 0
+ok 86 - T-maps-secret-negative: SECRET= short value -> 0
+  ---
+  duration_ms: 45.69575
+  ...
+# Subtest: T-maps-secret-negative: TOKEN= empty -> 0
+ok 87 - T-maps-secret-negative: TOKEN= empty -> 0
+  ---
+  duration_ms: 46.451
+  ...
+# Subtest: T-maps-secret-negative: TOKEN= templated -> 0
+ok 88 - T-maps-secret-negative: TOKEN= templated -> 0
+  ---
+  duration_ms: 45.972625
+  ...
+# Subtest: T-maps-secret-negative: PASSWORD= name only -> 0
+ok 89 - T-maps-secret-negative: PASSWORD= name only -> 0
+  ---
+  duration_ms: 47.712875
+  ...
+# Subtest: T-maps-secret-negative: url without creds -> 0
+ok 90 - T-maps-secret-negative: url without creds -> 0
+  ---
+  duration_ms: 47.894542
+  ...
+# Subtest: T-inv-complete: every recomputed hit covered, named minimum present -> 0
+not ok 91 - T-inv-complete: every recomputed hit covered, named minimum present -> 0
+  ---
+  duration_ms: 111.058541
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:646:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:649:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-excluded: a file inside apps/marketing mentioning only apps/marketing needs no row, but one mentioning packages/shared does
+not ok 92 - T-inv-excluded: a file inside apps/marketing mentioning only apps/marketing needs no row, but one mentioning packages/shared does
+  ---
+  duration_ms: 161.022042
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:651:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:654:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the .github/workflows/ci.yml row -> 1 naming an uncovered path
+not ok 93 - T-inv-row-removed: deleting the .github/workflows/ci.yml row -> 1 naming an uncovered path
+  ---
+  duration_ms: 122.436459
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the package.json row -> 1 naming an uncovered path
+not ok 94 - T-inv-row-removed: deleting the package.json row -> 1 naming an uncovered path
+  ---
+  duration_ms: 130.7765
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the package-lock.json row -> 1 naming an uncovered path
+not ok 95 - T-inv-row-removed: deleting the package-lock.json row -> 1 naming an uncovered path
+  ---
+  duration_ms: 120.066
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the README.md row -> 1 naming an uncovered path
+not ok 96 - T-inv-row-removed: deleting the README.md row -> 1 naming an uncovered path
+  ---
+  duration_ms: 224.245292
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/marketing/wrangler.toml row -> 1 naming an uncovered path
+not ok 97 - T-inv-row-removed: deleting the apps/marketing/wrangler.toml row -> 1 naming an uncovered path
+  ---
+  duration_ms: 126.053166
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/employers/src/styles.css row -> 1 naming an uncovered path
+not ok 98 - T-inv-row-removed: deleting the apps/employers/src/styles.css row -> 1 naming an uncovered path
+  ---
+  duration_ms: 111.971334
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/employers/tailwind.config.ts row -> 1 naming an uncovered path
+not ok 99 - T-inv-row-removed: deleting the apps/employers/tailwind.config.ts row -> 1 naming an uncovered path
+  ---
+  duration_ms: 103.892333
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/app/src/views.mjs row -> 1 naming an uncovered path
+not ok 100 - T-inv-row-removed: deleting the apps/app/src/views.mjs row -> 1 naming an uncovered path
+  ---
+  duration_ms: 112.031209
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the apps/marketing/src/components/StartupAccessSection.tsx row -> 1 naming an uncovered path
+not ok 101 - T-inv-row-removed: deleting the apps/marketing/src/components/StartupAccessSection.tsx row -> 1 naming an uncovered path
+  ---
+  duration_ms: 103.321083
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the packages/shared/** row -> 1 naming an uncovered path
+not ok 102 - T-inv-row-removed: deleting the packages/shared/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 104.869125
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the .planning/** row -> 1 naming an uncovered path
+not ok 103 - T-inv-row-removed: deleting the .planning/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 108.759333
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the infra/** row -> 1 naming an uncovered path
+not ok 104 - T-inv-row-removed: deleting the infra/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 111.519292
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-row-removed: deleting the scripts/** row -> 1 naming an uncovered path
+not ok 105 - T-inv-row-removed: deleting the scripts/** row -> 1 naming an uncovered path
+  ---
+  duration_ms: 178.50025
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:659:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:663:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-named: each named-minimum row removed in turn -> 1 (independent of the hit set)
+not ok 106 - T-inv-named: each named-minimum row removed in turn -> 1 (independent of the hit set)
+  ---
+  duration_ms: 89.584042
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:667:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:669:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-named: a covering glob satisfies a named file
+not ok 107 - T-inv-named: a covering glob satisfies a named file
+  ---
+  duration_ms: 88.547625
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:677:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:680:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-disposition: positive, plus four negatives (one per defect)
+not ok 108 - T-inv-disposition: positive, plus four negatives (one per defect)
+  ---
+  duration_ms: 85.715042
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:682:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:686:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-listhits: --inventory --list-hits prints the recomputed hit set, nothing else
+not ok 109 - T-inv-listhits: --inventory --list-hits prints the recomputed hit set, nothing else
+  ---
+  duration_ms: 100.579
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:705:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:708:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-crossrepo: committed tree at a ref only; untracked .env.local canary never read or printed; row removal -> 1
+not ok 110 - T-inv-crossrepo: committed tree at a ref only; untracked .env.local canary never read or printed; row removal -> 1
+  ---
+  duration_ms: 86.579416
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:713:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:718:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-inv-secret: a secret-shaped string in the inventory -> 1 without echoing it
+not ok 111 - T-inv-secret: a secret-shaped string in the inventory -> 1 without echoing it
+  ---
+  duration_ms: 86.131958
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:732:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:736:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap positive: matching rows, planned section ignored -> 0
+not ok 112 - T-repomap positive: matching rows, planned section ignored -> 0
+  ---
+  duration_ms: 116.586458
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:800:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    not implemented
+    
+    
+    2 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:803:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: blank owner -> 1
+not ok 113 - T-repomap-columns: blank owner -> 1
+  ---
+  duration_ms: 118.497834
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:806:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:811:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: blank vis -> 1
+not ok 114 - T-repomap-columns: blank vis -> 1
+  ---
+  duration_ms: 116.096417
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:806:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:811:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: blank purpose -> 1
+not ok 115 - T-repomap-columns: blank purpose -> 1
+  ---
+  duration_ms: 107.736208
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:806:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:811:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: blank folder -> 1
+not ok 116 - T-repomap-columns: blank folder -> 1
+  ---
+  duration_ms: 107.737917
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:806:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:811:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: blank deploy -> 1
+not ok 117 - T-repomap-columns: blank deploy -> 1
+  ---
+  duration_ms: 110.068125
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:806:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:811:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: blank team -> 1
+not ok 118 - T-repomap-columns: blank team -> 1
+  ---
+  duration_ms: 108.529083
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:806:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:811:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: row for PA-MATRIX/internjobs-marketing-website missing -> 1
+not ok 119 - T-repomap-columns: row for PA-MATRIX/internjobs-marketing-website missing -> 1
+  ---
+  duration_ms: 110.071167
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:816:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:820:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: row for PA-Ai-Team/Parrot missing -> 1
+not ok 120 - T-repomap-columns: row for PA-Ai-Team/Parrot missing -> 1
+  ---
+  duration_ms: 111.75075
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:816:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:820:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-columns: row for growthpods/Internjobs missing -> 1
+not ok 121 - T-repomap-columns: row for growthpods/Internjobs missing -> 1
+  ---
+  duration_ms: 125.078333
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:816:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:820:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-visibility: doc says Public, gh says PRIVATE -> 1
+not ok 122 - T-repomap-visibility: doc says Public, gh says PRIVATE -> 1
+  ---
+  duration_ms: 120.231875
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:824:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:828:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-owner: owner differs from gh -> 1
+not ok 123 - T-repomap-owner: owner differs from gh -> 1
+  ---
+  duration_ms: 121.339625
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:830:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:834:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-remote: local folder's origin is another repo -> 1
+not ok 124 - T-repomap-remote: local folder's origin is another repo -> 1
+  ---
+  duration_ms: 120.746084
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:836:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:840:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-folder: local folder missing -> 1
+not ok 125 - T-repomap-folder: local folder missing -> 1
+  ---
+  duration_ms: 113.378833
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:842:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:846:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-enum: enumerated matching repo absent -> 1; Excluded with reason -> 0; reasonless -> 1; non-matching ignored
+not ok 126 - T-repomap-enum: enumerated matching repo absent -> 1; Excluded with reason -> 0; reasonless -> 1; non-matching ignored
+  ---
+  duration_ms: 115.503375
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:848:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:853:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap-team: unknown team -> 1; unmanaged with reason -> 0; unmanaged without reason -> 1
+not ok 127 - T-repomap-team: unknown team -> 1; unmanaged with reason -> 0; unmanaged without reason -> 1
+  ---
+  duration_ms: 133.579625
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:862:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:866:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: T-repomap: missing doc or gh json -> 1
+not ok 128 - T-repomap: missing doc or gh json -> 1
+  ---
+  duration_ms: 113.153916
+  location: '/Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:872:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms/scripts/verify-code-maps.test.mjs:875:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..128
+# tests 128
+# suites 0
+# pass 86
+# fail 42
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37734.902834

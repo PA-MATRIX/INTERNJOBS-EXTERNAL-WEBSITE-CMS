@@ -1,0 +1,12 @@
+## advisory 1 RED: pre-change tests with GIT_OPTIONAL_LOCKS=0 exported
+not ok 1 - T-guard-legacy-index: plain git status rewrites index -> 1
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+not ok 2 - T-readonly-index: snapshot+guard leave .git/index stat unchanged; plain status does not
+    Expected "actual" to be strictly unequal to:
+  name: 'AssertionError'
+  expected: '1577836800000:652'
+  actual: '1577836800000:652'
+# pass 0
+# fail 2
