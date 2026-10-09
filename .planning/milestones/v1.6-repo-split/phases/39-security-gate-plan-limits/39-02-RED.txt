@@ -1,0 +1,47 @@
+# 39-02 RED - Task 1 (stub exits 2)
+not ok 1 - T-state-pos
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+not ok 2 - T-state-owner-missing
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 3 - T-enumerated
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 4 - T-prs-query
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 5 - T-403-message
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 6 - T-403-missing
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 7 - T-free-private-200
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 8 - T-matrix-pos
+  name: 'AssertionError'
+  expected: 0
+  actual: 2
+not ok 9 - T-matrix-plan-mismatch
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 10 - T-matrix-owner-row-missing
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+not ok 11 - T-limits-leak
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+# pass 0
+# fail 11
