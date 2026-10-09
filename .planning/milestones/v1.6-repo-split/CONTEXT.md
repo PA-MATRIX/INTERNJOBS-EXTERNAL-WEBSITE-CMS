@@ -67,3 +67,7 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 
 - Raj declined (chose Hold) the `git fetch` + `git pull --ff-only` of `~/Documents/Parrot` (before `1ef2960b…`, proposed after `74880e45…`) at the 38-01 checkpoint. Nothing in Parrot was touched; no `parrot-ff-record.json` written. The D12 number stays reserved for an eventual approval.
 - Effect: Plan 38-01 Task 3 not run; 38-01 incomplete; waves 2–4 (depend on 38-01) are blocked. MAP-02 would map the stale Parrot tree unless Raj re-approves or chooses another route.
+
+## D12: Phase 38 Parrot fast-forward APPROVED (2026-10-08) — supersedes the HOLD above
+
+- Raj reversed the Hold and approved ("proceed on both", 2026-10-08) `git fetch origin` + `git pull --ff-only origin main` on `~/Documents/Parrot`, main only: before `1ef2960b49d48d1f46c4151a0a115cce7e268e0d`, approved after `74880e45226e4920cfdf1dec6b36bea5fd8a190b`. D12 is now used (once). Worktrees and fix/* branches must stay unchanged. Record: `phases/38-code-map-coupling-inventory/parrot-ff-record.json`.

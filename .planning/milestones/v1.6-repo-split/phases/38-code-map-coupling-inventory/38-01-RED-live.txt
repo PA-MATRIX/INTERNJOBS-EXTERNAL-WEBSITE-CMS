@@ -1,0 +1,5 @@
+FF-CHECK FAIL:
+  - local main 1ef2960b49d48d1f46c4151a0a115cce7e268e0d != expect-after 74880e45226e4920cfdf1dec6b36bea5fd8a190b
+  - origin/main 3775407740ccfb674a944ae53a880d3cc793b98c != expect-after 74880e45226e4920cfdf1dec6b36bea5fd8a190b
+  - record after_sha 74880e45226e4920cfdf1dec6b36bea5fd8a190b != HEAD 1ef2960b49d48d1f46c4151a0a115cce7e268e0d
+exit=1
