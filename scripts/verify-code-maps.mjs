@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Phase 38 read-only verifier (v1.6 repo split).
 // Modes: --gate-prev, --snapshot, --guard, --parrot-preflight, --parrot-ff-check, --maps, --relationship,
-// --inventory (plus --list-hits), --repo-map.
+// --inventory (plus --list-hits), --repo-map, --closure [--final] --baseline <json>.
 // Every git call against legacy/Parrot runs with GIT_OPTIONAL_LOCKS=0 and uses read-only
 // plumbing (ls-files, rev-parse, for-each-ref, merge-base, worktree list). Plain `git status`
 // is never used because it refreshes (writes) the index.
@@ -616,6 +616,118 @@ export function checkRepoMap({ doc, ghJson, teamMode }) {
   return problems;
 }
 
+// ---------------- Plan 38-04: --closure ----------------
+const PEND = "executed, pending verification";
+const CLOSURE_PHASE_DIR = path.join(DEFAULT_PHASES_DIR, "38-code-map-coupling-inventory");
+
+/** Changed-path set from the WORKING TREE (never origin/main...HEAD, which is empty when nothing is committed). */
+export function changedPaths(repo) {
+  const set = new Set();
+  const add = (out) => out.split("\0").filter(Boolean).forEach((x) => set.add(x));
+  add(git(repo, ["diff", "--name-only", "-z", "origin/main"]));
+  add(git(repo, ["ls-files", "-z", "--others", "--exclude-standard"]));
+  const st = git(repo, ["status", "--porcelain=v1", "-z", "--untracked-files=all"]).split("\0").filter(Boolean);
+  for (let i = 0; i < st.length; i++) {
+    const code = st[i].slice(0, 2);
+    set.add(st[i].slice(3));
+    if (code[0] === "R" || code[0] === "C") { i++; set.add(st[i]); } // -z: the origin path follows
+  }
+  return [...set].sort();
+}
+
+/** Returns problems (empty = in scope). Allowlist: verifier script/test, .planning/**, baseline cms_preexisting exact paths. */
+export function scopeCheck(repo, baseline) {
+  const pre = baseline && baseline.cms_preexisting;
+  const exempt = new Set(Array.isArray(pre) ? pre : [...((pre && pre.modified) || []), ...((pre && pre.untracked) || [])]);
+  const problems = [];
+  for (const f of changedPaths(repo)) {
+    if (f.startsWith(".planning/") || /^scripts\/verify-code-maps[^/]*$/.test(f) || exempt.has(f)) continue;
+    problems.push(`out-of-scope change: ${f}`);
+  }
+  return problems;
+}
+
+function defaultRunners({ repo, phaseDir, baselineFile, parrot, legacy }) {
+  const call = (argv) => main(argv);
+  const inv = path.join(phaseDir, "COUPLING-INVENTORY.md");
+  return {
+    maps: () => call(["--maps", "--manifest", path.join(phaseDir, "maps", "MANIFEST.json")]),
+    relationship: () => call(["--relationship", path.join(phaseDir, "PARROT-RELATIONSHIP.md")]),
+    inventoryCms: () => call(["--inventory", inv, "--repo", repo]),
+    inventoryParrot: () => call(["--inventory", inv, "--repo", parrot, "--ref", "origin/main", "--repo-name", "parrot"]),
+    inventoryLegacy: () => call(["--inventory", inv, "--repo", legacy, "--ref", "HEAD", "--repo-name", "legacy"]),
+    repoMap: () => call(["--repo-map", path.join(phaseDir, "REPO-MAP.md"), "--gh-json", path.join(phaseDir, "gh-snapshot.json")]),
+    guard: () => call(["--guard", "--baseline", baselineFile]),
+  };
+}
+
+/**
+ * Phase 38 closure: aggregate of every phase gate + records + working-tree scope.
+ * `runners` (injectable for tests) map gate name -> () => exit code. Returns { failed }.
+ */
+export function runClosure(opts, runners) {
+  const { repo, phaseDir, final = false, log = console.log, baseline: baselineFile } = opts;
+  let failed = false;
+  const ok = (m) => log(`ok: ${m}`);
+  const fail = (m) => { failed = true; log(`FAIL: ${m}`); };
+  const chk = (c, good, bad) => (c ? ok(good) : fail(bad));
+  const rd = (f) => { const p = path.join(repo, ".planning", f); return existsSync(p) ? readFileSync(p, "utf8") : null; };
+
+  for (const [name, fn] of Object.entries(runners)) {
+    if (typeof fn !== "function") continue;
+    let code;
+    try { code = fn(); } catch (e) { code = `threw: ${e.message}`; }
+    if (code === 0) ok(`gate ${name} green`);
+    else fail(`gate ${name} red (${code})`);
+  }
+  if (typeof runners.scope !== "function") {
+    let bl = null;
+    try { bl = JSON.parse(readFileSync(baselineFile, "utf8")); } catch { /* reported below */ }
+    if (!bl) fail(`scope: baseline unreadable: ${baselineFile}`);
+    else {
+      let probs;
+      try { probs = scopeCheck(opts.scopeRepo || repo, bl); } catch (e) { probs = [`scope check error: ${e.message}`]; }
+      if (probs.length) probs.forEach((p) => fail(`scope: ${p}`));
+      else ok("scope: working tree within allowlist");
+    }
+  }
+
+  const Q = rd("REQUIREMENTS.md"), R = rd("ROADMAP.md"), S = rd("STATE.md");
+  for (const [n, t] of [["REQUIREMENTS.md", Q], ["ROADMAP.md", R], ["STATE.md", S]]) if (t === null) fail(`${n} missing`);
+  for (let n = 1; n <= 6; n++) {
+    const id = `MAP-0${n}`;
+    const line = (Q || "").split("\n").find((l) => l.includes(`**${id}**`)) || "";
+    const row = (Q || "").split("\n").find((l) => new RegExp(`^\\|\\s*${id}\\s*\\|`).test(l)) || "";
+    if (final) chk(/^- \[x\]/.test(line) && /Complete/.test(row), `${id} Complete`, `${id} not [x]/Complete`);
+    else chk(/^- \[ \]/.test(line) && line.includes(PEND) && /Pending verification/.test(row), `${id} ${PEND}`, `${id} lacks '${PEND}' (unticked, traceability 'Pending verification')`);
+  }
+  const rl = (R || "").split("\n").find((l) => /\*\*Phase 38:/.test(l) && /^- \[/.test(l)) || "";
+  if (final) chk(/^- \[x\]/.test(rl), "ROADMAP Phase 38 ticked", "ROADMAP Phase 38 not ticked");
+  else chk(/^- \[ \]/.test(rl) && rl.includes(PEND), `ROADMAP Phase 38 unticked, ${PEND}`, `ROADMAP Phase 38 not unticked with '${PEND}'`);
+  const sec = /^### Phase 38:[\s\S]*?(?=^### Phase |(?![\s\S]))/m.exec(R || "");
+  const plans = sec ? (/^\*\*Plans\*\*:\s*(.*)$/m.exec(sec[0]) || [])[1] : undefined;
+  chk(!!plans && /^4 plans\b/.test(plans.trim()), "ROADMAP Phase 38 Plans: 4 plans", `ROADMAP Phase 38 Plans is '${plans}', expected '4 plans'`);
+  const fm = /^---\n([\s\S]*?)\n---/.exec(S || "");
+  const fmv = (k) => (new RegExp(`^${k}:\\s*"?([^"\\n]*?)"?\\s*$`, "m").exec(fm ? fm[1] : "") || [])[1];
+  chk(fmv("phase") === "38" && fmv("plan") === "4" && fmv("plan_total") === "4", "STATE frontmatter: phase 38, plan 4 of 4", "STATE frontmatter does not show phase 38 plan 4 of 4");
+  if (final) chk(/complete/i.test(fmv("status") || "") && !(fmv("status") || "").includes(PEND), "STATE status complete", "STATE status not complete");
+  else chk((fmv("status") || "").includes(PEND) && (S || "").includes(PEND), `STATE says ${PEND}`, `STATE lacks '${PEND}'`);
+  let ci = null;
+  try { ci = JSON.parse(rd("current-intent.json")); } catch { /* below */ }
+  if (!ci || typeof ci !== "object") fail("current-intent.json missing or unparseable");
+  else {
+    const miss = ["milestone_id", "phase_id", "plan_id", "intent", "updated_at"].filter((k) => !ci[k]);
+    if (miss.length) fail(`current-intent.json lacks ${miss.join(", ")}`);
+    else chk(/v1\.6/.test(String(ci.milestone_id)) && /^38\b/.test(String(ci.phase_id)), "current-intent.json names v1.6 / phase 38", "current-intent.json does not name v1.6 and phase 38");
+  }
+  if (final) {
+    const ver = path.join(phaseDir, "38-VERIFICATION.md");
+    const vfm = existsSync(ver) ? /^---\n([\s\S]*?)\n---/.exec(readFileSync(ver, "utf8")) : null;
+    chk(!!vfm && /^status:\s*passed\s*$/m.test(vfm[1]), "38-VERIFICATION.md status passed", "38-VERIFICATION.md missing or not status: passed (flip before verify)");
+  }
+  return { failed };
+}
+
 function main(argv) {
   const a = parseArgs(argv);
   const defRecord = (b) => path.join(path.dirname(b), "parrot-ff-record.json");
@@ -624,6 +736,19 @@ function main(argv) {
       const r = gatePrev(a["gate-prev"], a["phases-dir"] || DEFAULT_PHASES_DIR);
       console.log(`${r.ok ? "GATE OK" : "GATE FAIL"}: ${r.why}`);
       return r.ok ? 0 : 1;
+    }
+    if (a.closure) {
+      if (typeof a.baseline !== "string") return usage("--baseline <json> required with --closure");
+      const cmsRoot = path.resolve(a.repo || path.join(path.dirname(fileURLToPath(import.meta.url)), ".."));
+      const phaseDir = path.resolve(a["phase-dir"] || path.join(cmsRoot, CLOSURE_PHASE_DIR));
+      const runners = defaultRunners({
+        repo: cmsRoot, phaseDir, baselineFile: a.baseline,
+        parrot: a.parrot || path.join(os.homedir(), "Documents", "Parrot"),
+        legacy: a.legacy || path.join(os.homedir(), "MayaOS", "internjobs-ai"),
+      });
+      const r = runClosure({ repo: cmsRoot, phaseDir, final: a.final === true, baseline: a.baseline }, runners);
+      console.log(r.failed ? "CLOSURE FAIL" : `CLOSURE OK${a.final === true ? " (final)" : ""}`);
+      return r.failed ? 1 : 0;
     }
     if (a.snapshot) {
       for (const k of ["legacy", "parrot", "cms", "out"]) if (typeof a[k] !== "string") return usage(`--${k} required`);

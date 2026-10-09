@@ -8,6 +8,8 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { runClosure, scopeCheck } from "./verify-code-maps.mjs";
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const SCRIPT = path.join(here, "verify-code-maps.mjs");
 const CANARY = "SECRET_CANARY_9f3a1c77";
@@ -874,4 +876,140 @@ test("T-repomap: missing doc or gh json -> 1", () => {
   const f = x.write();
   assert.equal(cli(["--repo-map", path.join(x.root, "absent.md"), "--gh-json", x.ghFile, "--team-mode", x.teamFile]).status, 1);
   assert.equal(cli(["--repo-map", f, "--gh-json", path.join(x.root, "absent.json"), "--team-mode", x.teamFile]).status, 1);
+});
+
+// ---------------- Plan 38-04: --closure ----------------
+const PEND4 = "executed, pending verification";
+const GREEN = { maps: () => 0, relationship: () => 0, inventoryCms: () => 0, inventoryParrot: () => 0, inventoryLegacy: () => 0, repoMap: () => 0, guard: () => 0, scope: () => 0 };
+const PHASE_REL = ".planning/milestones/v1.6-repo-split/phases/38-code-map-coupling-inventory";
+
+function makeRecords({ final = false, verification = null, patch = {} } = {}) {
+  const root = tmp("rec-");
+  const mapLine = (n) => final ? `- [x] **MAP-0${n}**: thing` : `- [ ] **MAP-0${n}**: thing ${PEND4}`;
+  const mapRow = (n) => `| MAP-0${n} | Phase 38 | ${final ? "Complete" : "Pending verification"} |`;
+  const q = [1, 2, 3, 4, 5, 6].map(mapLine).join("\n") + "\n\n" + [1, 2, 3, 4, 5, 6].map(mapRow).join("\n") + "\n";
+  const r = `- [${final ? "x" : " "}] **Phase 38: Map the three codebases**${final ? "" : " (" + PEND4 + ")"}\n\n### Phase 38: Map\n**Plans**: 4 plans\n`;
+  const st = `---\nphase: 38\nplan: 4\nplan_total: 4\nstatus: "${final ? "complete" : PEND4}"\n---\n\nStatus: ${final ? "complete" : PEND4}\n`;
+  const ci = { milestone_id: "v1.6 Repo Split", phase_id: "38 Code map", plan_id: "38-04", intent: "x", updated_at: "2026-10-09" };
+  put(root, ".planning/REQUIREMENTS.md", patch.q ? patch.q(q) : q);
+  put(root, ".planning/ROADMAP.md", patch.r ? patch.r(r) : r);
+  put(root, ".planning/STATE.md", patch.st ? patch.st(st) : st);
+  if (patch.ci !== null) put(root, ".planning/current-intent.json", patch.ci ? patch.ci(ci) : JSON.stringify(ci));
+  if (verification) put(root, `${PHASE_REL}/38-VERIFICATION.md`, `---\nstatus: ${verification}\n---\n`);
+  return root;
+}
+const closure = (root, opts = {}, runners = GREEN) =>
+  runClosure({ repo: root, phaseDir: path.join(root, PHASE_REL), final: false, log: () => {}, ...opts }, { ...GREEN, ...runners });
+
+test("T-closure-pre: pending-verification records -> 0; --final -> 1 (T-closure-final-neg)", () => {
+  const root = makeRecords();
+  assert.equal(closure(root).failed, false);
+  assert.equal(closure(root, { final: true }).failed, true);
+});
+
+test("T-closure-line-*: each restored old line fails closure", () => {
+  const cases = {
+    "MAP row Pending": { q: (q) => q.replace("| MAP-03 | Phase 38 | Pending verification |", "| MAP-03 | Phase 38 | Pending |") },
+    "MAP line missing annotation": { q: (q) => q.replace(`thing ${PEND4}`, "thing") },
+    "MAP line ticked": { q: (q) => q.replace("- [ ] **MAP-01**", "- [x] **MAP-01**") },
+    "ROADMAP Plans TBD": { r: (r) => r.replace("4 plans", "TBD") },
+    "ROADMAP phase ticked": { r: (r) => r.replace("- [ ] **Phase 38", "- [x] **Phase 38") },
+    "ROADMAP annotation missing": { r: (r) => r.replace(` (${PEND4})`, "") },
+    "STATE on phase 37": { st: (s) => s.replace("phase: 38", "phase: 37") },
+    "STATE plan 3 of 4": { st: (s) => s.replace("plan: 4", "plan: 3") },
+    "STATE annotation missing": { st: (s) => s.split(PEND4).join("in progress") },
+  };
+  for (const [name, patch] of Object.entries(cases)) {
+    assert.equal(closure(makeRecords({ patch })).failed, true, name);
+  }
+});
+
+test("T-closure-flip-neg/-pos: flipped records without passed verification -> final 1; with passed -> 0", () => {
+  assert.equal(closure(makeRecords({ final: true }), { final: true }).failed, true);
+  assert.equal(closure(makeRecords({ final: true, verification: "gaps_found" }), { final: true }).failed, true);
+  assert.equal(closure(makeRecords({ final: true, verification: "passed" }), { final: true }).failed, false);
+});
+
+test("T-closure-intent: missing / invalid / lacking phase_id / wrong phase -> red", () => {
+  assert.equal(closure(makeRecords({ patch: { ci: null } })).failed, true);
+  assert.equal(closure(makeRecords({ patch: { ci: () => "{not json" } })).failed, true);
+  assert.equal(closure(makeRecords({ patch: { ci: (c) => { delete c.phase_id; return JSON.stringify(c); } } })).failed, true);
+  assert.equal(closure(makeRecords({ patch: { ci: (c) => JSON.stringify({ ...c, phase_id: "37 x" }) } })).failed, true);
+  assert.equal(closure(makeRecords({ patch: { ci: (c) => JSON.stringify({ ...c, milestone_id: "v1.5" }) } })).failed, true);
+});
+
+test("T-closure-aggregates: each sub-gate red in turn makes closure red", () => {
+  const root = makeRecords();
+  for (const k of Object.keys(GREEN)) {
+    assert.equal(closure(root, {}, { [k]: () => 1 }).failed, true, k);
+  }
+  assert.equal(closure(root, {}, { guard: () => { throw new Error("boom"); } }).failed, true, "a throwing gate is red");
+});
+
+function makeScopeRepo() {
+  const dir = tmp("scope-");
+  gitW(dir, "init", "-q", "-b", "main");
+  put(dir, "apps/app/x.ts", "x\n");
+  put(dir, "scripts/verify-code-maps.mjs", "v\n");
+  put(dir, ".planning/STATE.md", "s\n");
+  gitW(dir, "add", "-A");
+  gitW(dir, "commit", "-qm", "init");
+  gitW(dir, "update-ref", "refs/remotes/origin/main", "HEAD");
+  put(dir, "apps/canary-monitor/one.ts", "1\n");
+  put(dir, "apps/canary-monitor/two.ts", "2\n");
+  const baseline = { cms_preexisting: { modified: [".planning/current-intent.json"], untracked: ["apps/canary-monitor/one.ts", "apps/canary-monitor/two.ts"] } };
+  return { dir, baseline };
+}
+
+test("T-closure-scope: working-tree scope guard, six cases", () => {
+  const { dir, baseline } = makeScopeRepo();
+  // the old committed-diff check is blind: HEAD == origin/main
+  assert.equal(git(dir, "diff", "origin/main...HEAD"), "");
+  // untracked directory of 2+ files is reported per file and covered by the snapshot
+  assert.deepEqual(scopeCheck(dir, baseline), []);
+  // allowed edits: verifier script, .planning files
+  appendFileSync(path.join(dir, "scripts/verify-code-maps.mjs"), "more\n");
+  put(dir, ".planning/new/thing.md", "t\n");
+  assert.deepEqual(scopeCheck(dir, baseline), []);
+  // 1. tracked apps/ file edited
+  appendFileSync(path.join(dir, "apps/app/x.ts"), "edit\n");
+  assert.ok(scopeCheck(dir, baseline).some((p) => p.includes("apps/app/x.ts")));
+  gitW(dir, "checkout", "--", "apps/app/x.ts");
+  assert.deepEqual(scopeCheck(dir, baseline), []);
+  // 2. staged apps/ change
+  appendFileSync(path.join(dir, "apps/app/x.ts"), "staged\n");
+  gitW(dir, "add", "apps/app/x.ts");
+  assert.ok(scopeCheck(dir, baseline).some((p) => p.includes("apps/app/x.ts")));
+  gitW(dir, "reset", "-q", "HEAD", "apps/app/x.ts");
+  gitW(dir, "checkout", "--", "apps/app/x.ts");
+  // 3. stray untracked file outside allowlist
+  put(dir, "stray.txt", "s\n");
+  assert.ok(scopeCheck(dir, baseline).some((p) => p.includes("stray.txt")));
+  rmSync(path.join(dir, "stray.txt"));
+  // 4. new file inside the snapshotted canary dir but not in the snapshot
+  put(dir, "apps/canary-monitor/three.ts", "3\n");
+  assert.ok(scopeCheck(dir, baseline).some((p) => p.includes("apps/canary-monitor/three.ts")));
+  rmSync(path.join(dir, "apps/canary-monitor/three.ts"));
+  assert.deepEqual(scopeCheck(dir, baseline), []);
+  // 5. empty cms_preexisting names the canary directory
+  const probs = scopeCheck(dir, { cms_preexisting: { modified: [], untracked: [] } });
+  assert.ok(probs.some((p) => p.includes("apps/canary-monitor/")));
+  // 6. deleted tracked apps file
+  rmSync(path.join(dir, "apps/app/x.ts"));
+  assert.ok(scopeCheck(dir, baseline).some((p) => p.includes("apps/app/x.ts")));
+});
+
+test("T-closure-scope via runClosure: scope problems make closure red", () => {
+  const { dir, baseline } = makeScopeRepo();
+  const root = makeRecords();
+  const bl = path.join(root, "baseline.json");
+  writeFileSync(bl, JSON.stringify({ cms_preexisting: { modified: [], untracked: [] } }));
+  // real scope runner against the git fixture, records from the records fixture
+  const res = runClosure({ repo: root, scopeRepo: dir, baseline: bl, phaseDir: path.join(root, PHASE_REL), final: false, log: () => {} }, { ...GREEN, scope: undefined });
+  assert.equal(res.failed, true);
+});
+
+test("T-closure CLI: --closure without --baseline is a usage error (2)", () => {
+  const r = cli(["--closure"]);
+  assert.equal(r.status, 2);
 });

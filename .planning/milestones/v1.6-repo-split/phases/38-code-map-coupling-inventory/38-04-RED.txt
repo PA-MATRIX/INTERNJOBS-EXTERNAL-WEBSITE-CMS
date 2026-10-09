@@ -1,0 +1,18 @@
+# RED 2026-10-09T03:54:49Z (stub: --closure/runClosure/scopeCheck throw or exit 2 'not implemented')
+not ok 129 - T-closure-pre: pending-verification records -> 0; --final -> 1 (T-closure-final-neg)
+  error: 'not implemented'
+not ok 130 - T-closure-line-*: each restored old line fails closure
+  error: 'not implemented'
+not ok 131 - T-closure-flip-neg/-pos: flipped records without passed verification -> final 1; with passed -> 0
+  error: 'not implemented'
+not ok 132 - T-closure-intent: missing / invalid / lacking phase_id / wrong phase -> red
+  error: 'not implemented'
+not ok 133 - T-closure-aggregates: each sub-gate red in turn makes closure red
+  error: 'not implemented'
+not ok 134 - T-closure-scope: working-tree scope guard, six cases
+  error: 'not implemented'
+not ok 135 - T-closure-scope via runClosure: scope problems make closure red
+  error: 'not implemented'
+# tests 136
+# pass 129
+# fail 7
