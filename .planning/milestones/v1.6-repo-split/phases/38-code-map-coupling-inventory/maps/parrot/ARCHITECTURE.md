@@ -8,7 +8,7 @@
 
 - `.planning/NORTH-STAR.md`: not present in internjobs-cms.
 - Locked source: `/Users/rajren/internjobs-cms/.planning/milestones/v1.6-repo-split/` (CONTEXT.md, HANDOFF-next-session.md) is the active milestone. This map is an input to its coupling inventory and takes no side on split decisions.
-- Parrot is the separate repo behind the "Workspace" naming in internjobs-cms memory. This is a distinct Parrot softphone/dialer CRM codebase (Fly app `parrot-o3vkuq`), not `apps/parrot/` in internjobs-cms. No locked rule was found that is contradicted by anything below.
+- Parrot is a separate softphone/dialer CRM codebase (Fly app `parrot-o3vkuq`), not `apps/parrot/` in internjobs-cms. The Workspace is `apps/parrot/`; Parrot is the backing service it embeds (see PARROT-RELATIONSHIP.md). No locked rule was found that is contradicted by anything below.
 - Note: Parrot's root `CLAUDE.md` is a generic Neon skill file, not project guidance.
 
 ## Pattern Overview

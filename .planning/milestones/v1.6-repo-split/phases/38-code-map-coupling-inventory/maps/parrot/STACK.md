@@ -4,7 +4,7 @@
 **Analysis Date:** 2026-10-08
 **Source:** PA-Ai-Team/Parrot, main worktree, read at origin/main `74880e45226e4920cfdf1dec6b36bea5fd8a190b` (read-only, via `git show`/`ls-tree`/`grep` on the ref).
 
-Parrot is the employee-facing sales dialer product (a softphone and AI dialer CRM). In the internjobs-cms repo it is called "Workspace" and is deployed from here as the Fly apps below. It is a separate repo from internjobs-cms.
+Parrot is the employee-facing sales dialer product (a softphone and AI dialer CRM). It is a separate repo from internjobs-cms and is deployed from here as the Fly apps below. The internjobs-cms Workspace (`apps/parrot/`) is a different codebase that embeds Parrot in an iframe; see PARROT-RELATIONSHIP.md.
 
 ## Languages
 

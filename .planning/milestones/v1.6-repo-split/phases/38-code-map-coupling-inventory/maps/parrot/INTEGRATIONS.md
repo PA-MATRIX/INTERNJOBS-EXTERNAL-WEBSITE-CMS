@@ -71,7 +71,7 @@
 
 **Hosting:**
 - Fly.io (web: `parrot-o3vkuq`, `parrot-dev`; workers: `parrot-ai-agent`, `parrot-ai-agent-prod`). Public domains under `projecta.ai`.
-- Deploy is manual. A full replace of `parrot-o3vkuq`, so deploy only from main (see the internjobs-cms memory note "Workspace deploy = full replace"). The internjobs-cms workspace app (`apps/parrot/`) is the other place this surface exists. Reconcile which is the source of truth in the coupling inventory.
+- Deploy is manual (Fly). Nothing in this repo says whether a deploy is a full replace. The internjobs-cms note "Workspace deploy = full replace" is about the `internjobs-parrot` Worker (`apps/parrot/`), not this Fly app.
 - Legacy `render.yaml`.
 
 **CI Pipeline:**
