@@ -1,0 +1,19 @@
+{
+  "first_write_at": "2026-10-09T05:32:35Z",
+  "repos": [
+    {
+      "repo": "PA-MATRIX/internjobs-marketing-website",
+      "visibility": "public",
+      "plan": "free",
+      "outcome": "enabled",
+      "before": {"secret_scanning": "disabled", "push_protection": "disabled", "validity_checks": "disabled"},
+      "after": {"secret_scanning": "enabled", "push_protection": "enabled", "validity_checks": "disabled"},
+      "commands": ["gh api -X PATCH repos/PA-MATRIX/internjobs-marketing-website --input <scratch>/enable.json"],
+      "alerts_api_before": {"status": 404},
+      "alerts_api_after": {"status": 200, "open_alert_count": 1, "alert_types": ["Stripe Webhook Signing Secret"]},
+      "push_protection_doc": {"url": "https://docs.github.com/en/code-security/secret-scanning/introduction/about-push-protection", "verified_on": "2026-10-09"},
+      "c3_resolution": "AVAILABLE on a Free-plan public repo: the PATCH was accepted and the readback shows secret_scanning_push_protection enabled (measured 2026-10-09). The docs wording 'Requires GitHub Secret Protection' does not block it for public repos."
+    }
+  ],
+  "not_enabled_by_plan": []
+}
