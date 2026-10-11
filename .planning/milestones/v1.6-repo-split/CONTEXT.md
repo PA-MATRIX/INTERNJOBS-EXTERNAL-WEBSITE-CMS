@@ -155,3 +155,7 @@ Impact: D16 scope and 39-08 enable record name the old slug; they refer to this 
 
 Raj: "test it". Scope: one read-only `select 1` login attempt with the connection string in Parrot `01-03-SUMMARY.md` (read via `git show origin/main:`), value never printed. Purpose: learn whether the leaked password is still current. No rotation, no writes.
 D24 outcome: login SUCCEEDED (`select 1` returned 1). The password committed in Parrot's history is the LIVE `neondb_owner` credential. Rotation is required, and it will break Parrot until Fly's NEON_DATABASE_URL is updated. Not rotated yet.
+
+## D25 (2026-10-11): branch pushed
+
+Raj: "push to the right github as well". Pre-push gitleaks on origin..HEAD (61 commits): 9 findings, all test fixtures/route name, no real secret. Pushed `docs/phase-38-code-map` 9ee26db..e05ab15 to PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS (public). No PR opened (D10 holds). `main` untouched.
