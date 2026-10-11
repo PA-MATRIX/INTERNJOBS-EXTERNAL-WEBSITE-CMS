@@ -150,3 +150,8 @@ State checked 2026-10-08: `integration/v1.5` is 86 commits / 101 files (+14,238/
 Raj: "github for cms moved to https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS".
 Measured: `PA-MATRIX/internjobs-marketing-website` now redirects to `PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS` (same repo, public, default branch main, pushedAt 2026-10-09T02:21:05Z). Local `origin` updated to the new URL.
 Impact: D16 scope and 39-08 enable record name the old slug; they refer to this same repo (redirect). 39-10 closure should re-read secret-scanning/push-protection state under the new slug. `PA-MATRIX/internjobs-cms` does not exist.
+
+## D24 (2026-10-11): Raj approved connection test of the leaked Neon credential
+
+Raj: "test it". Scope: one read-only `select 1` login attempt with the connection string in Parrot `01-03-SUMMARY.md` (read via `git show origin/main:`), value never printed. Purpose: learn whether the leaked password is still current. No rotation, no writes.
+D24 outcome: login SUCCEEDED (`select 1` returned 1). The password committed in Parrot's history is the LIVE `neondb_owner` credential. Rotation is required, and it will break Parrot until Fly's NEON_DATABASE_URL is updated. Not rotated yet.
