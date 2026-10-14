@@ -153,6 +153,9 @@ export function createSafetyEventsHandler({ store, config, readBody, sendJson, s
     }
 
     // POST /internal/safety-events/mark-reviewed — mark event(s) reviewed.
+    // With ids: only those rows. Without ids ("Mark all reviewed"): marks
+    // every row the log shows (the same 7-day window as GET). The 24 h
+    // unreviewed-count badge window is intentionally unchanged.
     if (req.method === "POST" && url.pathname === "/internal/safety-events/mark-reviewed") {
       let body = {};
       try {
@@ -177,7 +180,7 @@ export function createSafetyEventsHandler({ store, config, readBody, sendJson, s
             `update safety_events
                 set reviewed = true, reviewed_at = now(), reviewed_by = $1
               where reviewed = false
-                and created_at > now() - interval '24 hours'`,
+                and created_at > now() - interval '${VISIBLE_WINDOW}'`,
             [reviewedBy],
           );
         }
