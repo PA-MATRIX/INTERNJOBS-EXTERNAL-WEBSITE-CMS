@@ -3,6 +3,8 @@
 // Walks: index (follows redirects, max 5) -> manifest-*.js -> routes/inbox module + its
 // static imports, and checks the Phase 36 markers. Phase 32 non-regression: `parrot-token`
 // must appear in the JS reachable from root/inbox (default on; --no-require-parrot disables).
+// Phase 43 (LAK-05), opt-in via --require-move-control: the routes/ops.safety module + its
+// static imports must contain the "Move to Inbox" label and the move-to-inbox endpoint.
 import { fileURLToPath } from "node:url";
 
 const MARKERS = [
@@ -10,6 +12,11 @@ const MARKERS = [
   ["trust-sender", /trust-sender/],
   ["Spam-folder reference (folder=spam)", /folder=spam/],
 ];
+const MOVE_MARKERS = [
+  ["Move to Inbox label", /Move to Inbox/],
+  ["move-to-inbox endpoint", /move-to-inbox/],
+];
+const SAFETY_ROUTE = "routes/ops.safety";
 const MAX_HOPS = 5;
 
 async function get(url) {
@@ -29,7 +36,7 @@ async function get(url) {
 }
 
 /** Returns {ok, problems[], notes[]}. Never exits 0 by absence: every failure is a problem. */
-export async function checkBundle(base, { requireParrot = true } = {}) {
+export async function checkBundle(base, { requireParrot = true, requireMoveControl = false } = {}) {
   const problems = [];
   const notes = [];
   try {
@@ -73,6 +80,21 @@ export async function checkBundle(base, { requireParrot = true } = {}) {
     if (/parrot-token/.test(allJs)) notes.push("present: parrot-token (Phase 32)");
     else if (requireParrot) problems.push("missing in served JS: parrot-token (Phase 32 embed)");
     else notes.push("absent: parrot-token (not required)");
+
+    if (requireMoveControl) {
+      const safety = manifest?.routes?.[SAFETY_ROUTE];
+      if (!safety?.module) {
+        problems.push(`manifest has no ${SAFETY_ROUTE} module (Move to Inbox control required)`);
+      } else {
+        const safetyJs = await fetchClosure([safety.module, ...(safety.imports ?? [])]);
+        notes.push(`${SAFETY_ROUTE} closure: ${safetyJs.size} files`);
+        const safetyAll = [...safetyJs.values()].join("\n");
+        for (const [name, re] of MOVE_MARKERS) {
+          if (re.test(safetyAll)) notes.push(`present: ${name}`);
+          else problems.push(`missing in served ${SAFETY_ROUTE} chunk: ${name}`);
+        }
+      }
+    }
   } catch (e) {
     problems.push(`fetch/traversal failure: ${e.message}`);
   }
@@ -83,7 +105,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const a = process.argv.slice(2);
   const bi = a.indexOf("--base");
   const base = bi >= 0 ? a[bi + 1] : "https://workspace.internjobs.ai";
-  const r = await checkBundle(base, { requireParrot: !a.includes("--no-require-parrot") });
+  const r = await checkBundle(base, {
+    requireParrot: !a.includes("--no-require-parrot"),
+    requireMoveControl: a.includes("--require-move-control"),
+  });
   for (const n of r.notes) console.log(n);
   for (const p of r.problems) console.log(`FAIL: ${p}`);
   console.log(r.ok ? `GREEN ${base}` : `RED ${base}`);
