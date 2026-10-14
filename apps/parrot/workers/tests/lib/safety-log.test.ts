@@ -13,6 +13,7 @@ import {
 	safetyLogReducer,
 	initialSafetyLogState,
 	loaded,
+	loadFailed,
 	moveStarted,
 	moveFinished,
 	markAllStarted,
@@ -262,5 +263,17 @@ describe("safetyLogReducer", () => {
 		expect(s.statusById.a).toBe("done");
 		expect(s.events[0].reviewed).toBe(true);
 		expect(s.toast).toEqual({ kind: "success", message: "Moved to Inbox" });
+	});
+
+	it("a failed load ends loading without wiping rows already on screen", () => {
+		// Initial load failure (403 for a non-operator, network): empty state.
+		const first = safetyLogReducer(initialSafetyLogState, loadFailed());
+		expect(first.loading).toBe(false);
+		expect(first.events).toEqual([]);
+
+		// Refetch failure after a move: the table keeps its rows.
+		const s = safetyLogReducer(stateWith([ev({ id: "a" })]), loadFailed());
+		expect(s.loading).toBe(false);
+		expect(s.events.map((e) => e.id)).toEqual(["a"]);
 	});
 });
