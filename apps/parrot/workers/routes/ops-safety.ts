@@ -3,6 +3,12 @@
 //   GET  /api/ops/safety                    — paginated flag log (operator-only)
 //   GET  /api/ops/safety/unreviewed-count   — badge count (any authed employee)
 //   POST /api/ops/safety/mark-reviewed      — mark event(s) reviewed (operator-only)
+//   POST /api/ops/safety/:eventId/move-to-inbox
+//                                           — v1.7 Phase 43-02: move a quarantined
+//                                             email from the OWNING employee's Spam
+//                                             to their Inbox (operator-only; D31 no
+//                                             auto-trust; D32 unique-match fallback;
+//                                             audit log line on every attempt)
 //
 // Neon-exit (2026-05-21): safety_events lives in the student app's Postgres
 // (see apps/app migration 0009_v1_3_safety_events.sql). That DB moved off
@@ -13,7 +19,15 @@
 
 import { Hono } from "hono";
 import type { ParrotContext } from "../lib/mailbox";
+import { getMailboxStub } from "../lib/mailbox";
 import { requireOperator } from "../lib/operator";
+import {
+	canMoveToInbox,
+	moveQuarantinedToInbox,
+	type SafetyEventRow,
+	type SafetyMoveMailbox,
+} from "../lib/safety-move";
+import { getFolderDisplayName } from "../../shared/folders";
 
 // Human-readable labels for Lakera reason codes (FEATURES.md UX gotcha:
 // raw codes are confusing in the table — operators want plain English).
@@ -23,21 +37,8 @@ const REASON_LABELS: Record<string, string> = {
 	pii_detection: "Personal info detected",
 	unknown: "Policy violation",
 	passed_lakera_unavailable: "Lakera unavailable (passed through)",
+	lakera_flagged: "Flagged by Lakera Guard",
 };
-
-interface SafetyEventRow {
-	id: string;
-	channel: string;
-	action: string;
-	reason: string | null;
-	score: number | null;
-	sender_last4: string | null;
-	preview: string | null;
-	employee_id: string | null;
-	reviewed: boolean;
-	reviewed_at: string | null;
-	created_at: string;
-}
 
 // Call the student app's internal safety-events API. Returns null when the
 // API is not configured or the request throws — callers degrade fail-soft.
@@ -72,11 +73,17 @@ opsSafety.get("/", requireOperator, async (c) => {
 	}
 	try {
 		const data = (await res.json()) as { events?: SafetyEventRow[] };
-		const events = (data.events ?? []).map((row) => ({
-			...row,
-			reason_label: REASON_LABELS[row.reason ?? ""] ?? String(row.reason ?? "unknown"),
-			preview: String(row.preview ?? "").slice(0, 80),
-		}));
+		const events = (data.events ?? []).map((row) => {
+			// source_id is an internal identifier (Message-ID / mailbox uuid);
+			// the browser never needs it — Move to Inbox resolves it server-side.
+			const { source_id: _sourceId, ...rest } = row;
+			return {
+				...rest,
+				reason_label: REASON_LABELS[row.reason ?? ""] ?? String(row.reason ?? "unknown"),
+				preview: String(row.preview ?? "").slice(0, 80),
+				can_move_to_inbox: canMoveToInbox(row),
+			};
+		});
 		return c.json({ events, total: events.length });
 	} catch (err) {
 		console.error(
@@ -120,4 +127,104 @@ opsSafety.post("/mark-reviewed", requireOperator, async (c) => {
 		return c.json({ ok: false, error: "not_configured" }, 503);
 	}
 	return c.json({ ok: true });
+});
+
+// POST /api/ops/safety/:eventId/move-to-inbox — v1.7 Phase 43-02.
+//
+// The ONLY route that opens ANOTHER employee's mailbox (the target is the
+// safety row's employee_id, resolved to its Clerk id via WorkspaceDO). Gated by
+// the same requireOperator as the rest of this file; D31 (Raj, 2026-10-13) is
+// the recorded approval. Never trusts the sender (D31). Emits one structured
+// audit line per attempt (actor + target; no preview or sender text) — the
+// mailbox DO has no audit_events table, so this line plus reviewed_by on the
+// safety row is the audit trail.
+opsSafety.post("/:eventId/move-to-inbox", requireOperator, async (c) => {
+	const eventId = c.req.param("eventId");
+	const actor = c.var.employee;
+	const actorEmail = actor?.email ?? "operator";
+
+	const audit = (
+		outcome: string,
+		match: string | null,
+		targetEmployeeId: string | null,
+	) => {
+		console.log(
+			JSON.stringify({
+				level: "info",
+				event: "ops_safety_move_to_inbox",
+				actor_email: actorEmail,
+				actor_id: actor?.employeeId ?? null,
+				target_employee_id: targetEmployeeId,
+				safety_event_id: eventId,
+				outcome,
+				match,
+			}),
+		);
+	};
+
+	const listRes = await callStudentApi(c.env, "/internal/safety-events");
+	if (!listRes || !listRes.ok) {
+		audit("unavailable", null, null);
+		return c.json({ ok: false, outcome: "unavailable" }, 503);
+	}
+	let rows: SafetyEventRow[];
+	try {
+		const data = (await listRes.json()) as { events?: SafetyEventRow[] };
+		rows = data.events ?? [];
+	} catch {
+		audit("unavailable", null, null);
+		return c.json({ ok: false, outcome: "unavailable" }, 503);
+	}
+
+	const row = rows.find((r) => r.id === eventId);
+	if (!row) {
+		audit("event_not_found", null, null);
+		return c.json({ ok: false, outcome: "event_not_found" }, 404);
+	}
+	const targetId = row.employee_id ?? null;
+	if (row.channel !== "email") {
+		audit("not_email", null, targetId);
+		return c.json({ ok: false, outcome: "not_email" }, 400);
+	}
+	if (row.action !== "blocked") {
+		audit("not_quarantined", null, targetId);
+		return c.json({ ok: false, outcome: "not_quarantined" }, 400);
+	}
+	if (!targetId) {
+		audit("no_target_employee", null, null);
+		return c.json({ ok: false, outcome: "no_target_employee" }, 400);
+	}
+
+	const workspace = c.env.WORKSPACE.get(c.env.WORKSPACE.idFromName("workspace"));
+	const employee = await workspace.getEmployeeById(targetId);
+	if (!employee || !employee.clerk_user_id) {
+		audit("not_found", null, targetId);
+		return c.json({ ok: false, outcome: "not_found" }, 404);
+	}
+
+	const stub = getMailboxStub(c.env, employee.clerk_user_id) as unknown as SafetyMoveMailbox;
+	const result = await moveQuarantinedToInbox(stub, row);
+	audit(result.outcome, result.match, targetId);
+
+	switch (result.outcome) {
+		case "moved":
+		case "already_in_inbox": {
+			const mark = await callStudentApi(c.env, "/internal/safety-events/mark-reviewed", {
+				method: "POST",
+				body: JSON.stringify({ ids: [eventId], reviewed_by: actorEmail }),
+			});
+			return c.json({ ok: true, outcome: result.outcome, reviewed: !!mark?.ok }, 200);
+		}
+		case "elsewhere": {
+			const folder = result.folder ?? "";
+			return c.json(
+				{ ok: false, outcome: "elsewhere", folder, folder_name: getFolderDisplayName(folder) },
+				200,
+			);
+		}
+		case "ambiguous":
+			return c.json({ ok: false, outcome: "ambiguous" }, 409);
+		default:
+			return c.json({ ok: false, outcome: "not_found" }, 404);
+	}
 });

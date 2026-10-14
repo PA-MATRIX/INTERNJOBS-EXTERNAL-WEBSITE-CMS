@@ -38,6 +38,11 @@ import {
 	MM_USER_ID_NONE,
 } from "../lib/mattermost";
 import { buildVapidAuthHeader } from "../lib/vapid";
+import {
+	findEmailBySourceId as findEmailBySourceIdSql,
+	findSpamCandidatesByPreview as findSpamCandidatesByPreviewSql,
+	type EmailLocation,
+} from "../lib/mailbox-lookup";
 import { createRoom } from "../lib/daily";
 // Phase 31 Wave 4 (plan 31-05, CHAT-RT-04): offline @mention/DM email.
 import { sendOfflineChatNotification } from "../lib/email-sender";
@@ -579,6 +584,35 @@ export class EmployeeMailboxDO extends DurableObject<Env> {
 			await this.deleteEmail(row.id);
 		}
 		return { purged: rows.length };
+	}
+
+	/**
+	 * v1.7 Phase 43-02: exact lookup of an email by the safety_events
+	 * source_id (Message-ID, or the internal uuid when none was stored).
+	 * Returns location only (id + folder), never content.
+	 */
+	async findEmailBySourceId(sourceId: string): Promise<EmailLocation | null> {
+		return findEmailBySourceIdSql(
+			(q, ...p) => [...this.ctx.storage.sql.exec(q, ...p)],
+			sourceId,
+		);
+	}
+
+	/**
+	 * v1.7 Phase 43-02 (D32): Spam rows near `createdAtIso` whose body starts
+	 * with the safety preview. At most 3 (enough to detect ambiguity).
+	 */
+	async findSpamCandidatesByPreview(
+		preview: string,
+		createdAtIso: string,
+		windowMs?: number,
+	): Promise<EmailLocation[]> {
+		return findSpamCandidatesByPreviewSql(
+			(q, ...p) => [...this.ctx.storage.sql.exec(q, ...p)],
+			preview,
+			createdAtIso,
+			windowMs,
+		);
 	}
 
 	/**

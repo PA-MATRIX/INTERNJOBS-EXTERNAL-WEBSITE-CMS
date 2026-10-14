@@ -61,6 +61,37 @@ jobs:
       - name: verify app (student)
         run: npm run build:app
 
+  # ---- Student app unit + integration tests (apps/app) ---------------------
+  # v1.7 Phase 43-01 (v1.5 gap 6): runs auth, safety screen (VERIFY-03*) and
+  # safety-events tests. The postgres service lets the safety-events
+  # integration tests apply the real migrations 0009 + 0015 into a throwaway
+  # schema. Live Lakera tests (VERIFY-01/02) skip without LAKERA_GUARD_API_KEY.
+  app-tests:
+    name: student app tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: apps/app tests (node:test)
+        run: npm test --workspace apps/app
+        env:
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+
   # ---- Workspace Worker (apps/parrot) — excluded from root workspaces ----
   parrot:
     name: workspace worker (parrot)

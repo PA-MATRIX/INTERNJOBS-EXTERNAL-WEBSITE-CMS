@@ -11,10 +11,11 @@ afterEach(() => vi.restoreAllMocks());
 
 describe("ops-safety route smoke", () => {
 	it("GET /api/ops/safety/unreviewed-count with dev employee returns not-404 and not-500", async () => {
-		// The route calls stub.getUnreviewedCount() on the mailbox DO.
-		// In the inner app, requireEmployeeMailbox fires first (no employee in
-		// context) → 401. Either way: route is mounted (not 404), no unhandled
-		// crash (not 500).
+		// The route proxies to the student app's
+		// /internal/safety-events/unreviewed-count (fail-soft count=0 when
+		// STUDENT_API_URL/SECRET are unset). In the inner app,
+		// requireEmployeeMailbox fires first (no employee in context) → 401.
+		// Either way: route is mounted (not 404), no unhandled crash (not 500).
 		const req = new Request(
 			"https://parrot.example.com/api/ops/safety/unreviewed-count",
 			{
