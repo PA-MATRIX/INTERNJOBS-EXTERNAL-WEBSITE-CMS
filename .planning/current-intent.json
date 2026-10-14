@@ -1,7 +1,7 @@
 {
   "milestone_id": "v1.7 Students on Telnyx SMS (no Mac)",
   "phase_id": "43 Lakera Safety log \u2014 Move to Inbox",
-  "plan_id": "none yet",
+  "plan_id": "43-05",
   "intent": "Plan Phase 43 (LAK-01..05) TDD-first; then Telnyx phases 44-49",
   "allowed_paths": [
     ".planning/",
@@ -16,9 +16,9 @@
     "D10 main freeze: merge/deploy needs recorded exception"
   ],
   "start_time": "2026-10-14T02:59:20.443296+00:00",
-  "saved_at": "2026-10-14T03:24:40.094085+00:00",
-  "updated_at": "2026-10-14T03:24:40.094085+00:00",
-  "active_plan": "none",
+  "saved_at": "2026-10-14T04:50:47.690563+00:00",
+  "updated_at": "2026-10-14T04:50:47.690563+00:00",
+  "active_plan": "43-05 checkpoint:human-verify \u2014 live sequence done (951e103, Fly v58, mig 0015, Worker f7f6c851); awaiting Raj production UAT + Lakera tier",
   "next": [
     "/rrr:plan-phase 43",
     "/rrr:execute-phase 43",
