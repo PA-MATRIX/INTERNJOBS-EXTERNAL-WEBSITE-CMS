@@ -27,3 +27,13 @@ GET status=200 rows=9 error=null any_row_has_source_id_key=false
 ```
 - No row carries a source_id key (RED as expected).
 - Secret source: Infisical CLI returned 403 "project does not belong to your selected organization" (CLI on the wrong org). Per the run rules (Infisical/Fly env), the readback ran inside the Fly machine using its own INTERNAL_API_SECRET env var against the public URL. Value never printed.
+
+## Step 2: A1 merge (2026-10-14T04:34:54Z)
+- Guard: `grep -qx "A1: yes" $EVID/APPROVAL-43.md` -> exit 0
+- Before: PR #29 OPEN, head 7f3b948c073ebc8a20c52c7913a77bac0898d05f, CLEAN, 7/7 CI SUCCESS; origin/main = d1658aa
+- Action: `gh pr merge 29 -R PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS --merge --match-head-commit 7f3b948...` -> exit 0
+- After: PR MERGED 2026-10-14T04:34:58Z, **merge commit 951e103468ad8c224e3740f99cc4ed9833c865ac**, parents d1658aa5ba0c... and 7f3b948c073e... (merge commit, not squash); origin/main = 951e103
+- `git merge-base --is-ancestor d1658aa 951e103` -> yes; `... 7f3b948 951e103` -> yes
+- Deploy worktree: `git worktree add --detach /Users/rajren/internjobs-cms-wt-43-deploy 951e103` -> HEAD 951e103, clean (0 porcelain lines)
+- `git diff --stat d1658aa..951e103`: 21 files, all planned Phase 43 paths (.github/workflows/ci.yml [43-01/43-04], apps/app/db/migrations/0015, apps/app/{package.json,src/server.mjs,src/safety/events-api*.mjs}, apps/parrot/{app/components/SafetyMoveCell.tsx,app/lib/safety-log.ts,app/routes/ops.safety.tsx,vitest.config.ts,workers/durableObject/index.ts,workers/lib/{mailbox-lookup,safety-move}.ts,workers/routes/ops-safety.ts,workers/tests/...}, scripts/verify-workspace-quarantine-live{,.test}.mjs)
+- Post-merge CI: ci.yml triggers only on pull_request (main, integration/**) and push to integration/**, so no run exists for a push to main. PR CI ran against base d1658aa (main unchanged since), so the CI-tested merge equals 951e103's tree.
