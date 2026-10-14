@@ -142,6 +142,7 @@ export const initialSafetyLogState: SafetyLogState = {
 
 export type SafetyLogAction =
 	| { type: "loaded"; events: SafetyEvent[] }
+	| { type: "loadFailed" }
 	| { type: "moveStarted"; id: string }
 	| { type: "moveFinished"; id: string; result: MoveResult }
 	| { type: "markAllStarted" }
@@ -149,6 +150,7 @@ export type SafetyLogAction =
 	| { type: "dismissToast" };
 
 export const loaded = (events: SafetyEvent[]): SafetyLogAction => ({ type: "loaded", events });
+export const loadFailed = (): SafetyLogAction => ({ type: "loadFailed" });
 export const moveStarted = (id: string): SafetyLogAction => ({ type: "moveStarted", id });
 export const moveFinished = (id: string, result: MoveResult): SafetyLogAction => ({
 	type: "moveFinished",
@@ -169,6 +171,9 @@ export function safetyLogReducer(
 	switch (action.type) {
 		case "loaded":
 			return { ...state, events: action.events, loading: false };
+		case "loadFailed":
+			// Initial failure shows the empty state; a failed refetch keeps the rows.
+			return { ...state, loading: false };
 		case "moveStarted":
 			return { ...state, statusById: { ...state.statusById, [action.id]: "moving" } };
 		case "moveFinished": {
