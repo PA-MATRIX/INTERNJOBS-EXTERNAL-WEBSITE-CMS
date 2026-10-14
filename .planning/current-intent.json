@@ -1,25 +1,29 @@
 {
-  "milestone_id": "v1.6 Repo Split + Code Mapping",
-  "phase_id": "39 Security gate + GitHub plan limits",
-  "plan_id": "39 (plans 01-10, wave-parallel)",
-  "intent": "Phase 39 wave 1: build SEC-01 verifier (39-01), plus 39-02/39-03 verifiers in parallel; TDD-first",
+  "milestone_id": "v1.7 Students on Telnyx SMS (no Mac)",
+  "phase_id": "none (defining requirements)",
+  "plan_id": "none",
+  "intent": "Start v1.7: define requirements and roadmap for Telnyx SMS replacing HostMyApple iMessage (D26-D29)",
   "allowed_paths": [
-    ".planning/",
-    "scripts/"
+    ".planning/"
   ],
   "constraints": [
-    "Parrot and legacy read-only (GIT_OPTIONAL_LOCKS=0)",
-    "No .env* reads",
-    "No GitHub writes except approval-gated live tasks; no pushes",
     "TDD-first (RED before GREEN)",
-    "Entry gate: 38-VERIFICATION status passed"
+    "No Telnyx/Fly/production calls without Raj's recorded approval",
+    "No secret values in chat/git; secrets to Infisical first",
+    "D10 main freeze: merge/deploy needs recorded exception"
   ],
-  "start_time": "2026-10-09T01:23:33.950089+00:00",
-  "saved_at": "2026-10-09T05:00:00.000000Z",
-  "updated_at": "2026-10-09T05:00:00.000000Z",
-  "active_plan": "39-01..39-03 verifiers (wave 1)",
+  "start_time": "2026-10-14T02:59:20.443296+00:00",
+  "saved_at": "2026-10-14T02:59:20.443296+00:00",
+  "updated_at": "2026-10-14T02:59:20.443296+00:00",
+  "active_plan": "none",
   "next": [
-    "39-01..03 verified, then wave 2 (39-04, 39-05, 39-07, 39-08)"
+    "/rrr:define-requirements",
+    "/rrr:create-roadmap (phases from 43)",
+    "/rrr:plan-phase 43"
   ],
-  "handoff": ".planning/milestones/v1.6-repo-split/phases/39-security-gate-plan-limits/"
+  "handoff": ".planning/milestones/v1.7-telnyx-sms/",
+  "paused": {
+    "milestone": "v1.6 Repo Split + Code Mapping",
+    "at": "Phase 39 (39-04 blocked on rotation; 39-10 not started)"
+  }
 }

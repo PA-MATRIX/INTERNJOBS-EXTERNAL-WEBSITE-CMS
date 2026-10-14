@@ -159,3 +159,31 @@ D24 outcome: login SUCCEEDED (`select 1` returned 1). The password committed in 
 ## D25 (2026-10-11): branch pushed
 
 Raj: "push to the right github as well". Pre-push gitleaks on origin..HEAD (61 commits): 9 findings, all test fixtures/route name, no real secret. Pushed `docs/phase-38-code-map` 9ee26db..e05ab15 to PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS (public). No PR opened (D10 holds). `main` untouched.
+
+## D26 (2026-10-13): drop iMessage; student messaging moves to Telnyx SMS
+
+Raj: "or just move it to telnyx?? ... and forget about having imessage part ... just sms is fine with me". Context: the HostMyApple Mac mini was down at the time (canary 530 / CF error 1033, about 10h), and Raj was moving off HostMyApple.
+Decision: iMessage (BlueBubbles + apps/mac-bridge + Mac mini + the canary) is retired as the student channel; plain SMS via Telnyx replaces it. No self-hosted Mac.
+Not a v1.6 (repo split) phase. It needs its own inserted phase/plan (TDD-first, plan-checker) for: a TelnyxSmsProvider behind the existing `apps/app/src/sms/provider.mjs` seam (`SMS_PROVIDER=telnyx`), a new Telnyx API key (old key dead, D21), a number with US carrier registration (toll-free verification or A2P 10DLC), the production cutover with Raj's recorded approval, then decommissioning mac-bridge, the canary monitor Worker, the bridge/canary tunnel hostnames and the HostMyApple subscription.
+Not executed yet; nothing changed in production.
+D26 update (2026-10-13): Raj reports HostMyApple CANCELED the Mac mini service (the cause of the 530 / CF 1033 outage). He is trying to get it back. Until the Telnyx cutover, student iMessage is down.
+
+## D27 (2026-10-13): keep the student number, port it into Telnyx
+
+Raj: "can we use the same number and port it to telnyx ... right ... this will save us our cost to not maintain a number as well".
+Decision: the student-facing number +1 406-321-0019 (`AGENT_NUMBER`, `apps/app/fly.toml:12`; formerly the Mac's iMessage number) is ported into Telnyx and becomes `TELNYX_FROM_NUMBER`. No second number. This supersedes the open "reuse startup toll-free vs new number" question for students.
+Open facts (Raj): current carrier and account holder of the number, plus account number/PIN for the port LOA. Because it's a local number, A2P 10DLC brand+campaign registration is required; start it in parallel with the port. After the port, deregister the number from iMessage (Apple deregister page; the SMS code arrives via Telnyx) so iPhones stop sending blue messages into nowhere.
+Not executed. The port order and 10DLC registration are outward-facing live actions that need Raj's go-ahead.
+
+## D28 (2026-10-13): Telnyx SMS becomes its own milestone v1.7
+
+Raj (AskUserQuestion): "New milestone v1.7". The HostMyApple → Telnyx student SMS work (D26, D27) is a new feature milestone, "v1.7 Students on Telnyx SMS (no Mac)". It is NOT part of the v1.6 repo split. The inserted Phase 39.1 entry and directory move into v1.7 (research and context carry over). Pending: create v1.7 via /rrr:new-milestone, then remove 39.1 from the v1.6 roadmap.
+
+## Workspace finding (2026-10-13): Ridhi cannot move Lakera-flagged mail
+
+Raj: Ridhi sees the flagged emails in the Safety Screening Log (/ops/safety). Read-only checks: live Worker = 77f32645 (v1.5.1, deployed 2026-10-09T02:18Z), and `verify-workspace-quarantine-live.mjs` is GREEN (Trust sender + Spam in the live bundle). The Safety log only has "Mark all reviewed" (`apps/parrot/app/routes/ops.safety.tsx`); it is an audit list by design and has no move action. Recovery lives in Inbox → Spam → open message → Trust sender (shield). Mail flagged between 2026-07-20 (Phase-32 branch deploy 69c90a82) and 2026-10-09 was dropped, not quarantined, so it is unrecoverable and appears only in the log. Open: whether the log should get a "Move to Inbox" action is a feature request, not yet decided.
+
+## D29 (2026-10-13): v1.6 paused; v1.7 active
+
+Raj (AskUserQuestion): "Pause v1.6, v1.7 active". v1.6 pauses at Phase 39 (39-04 blocked on rotation D22/D24; 39-10 not started; D10 main freeze still stands) and resumes after v1.7. The inserted Phase 39.1 is removed from the v1.6 roadmap. Its research moved to `.planning/milestones/v1.7-telnyx-sms/research/TELNYX-SMS-RESEARCH.md` and its context to `.planning/milestones/v1.7-telnyx-sms/CONTEXT.md`.
+Open conflict for v1.7: D10 freezes main to non-v1.6 changes. Shipping v1.7 needs Raj's explicit exception to D10, recorded before any merge/deploy.
