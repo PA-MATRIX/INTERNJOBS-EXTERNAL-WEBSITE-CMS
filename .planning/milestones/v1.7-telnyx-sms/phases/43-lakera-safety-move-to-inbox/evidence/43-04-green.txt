@@ -1,0 +1,123 @@
+$ node --test scripts/verify-workspace-quarantine-live.test.mjs  # GREEN after implementation
+TAP version 13
+# Subtest: 1 NEG: no 'Trust sender' anywhere -> exit 1 naming the marker
+ok 1 - 1 NEG: no 'Trust sender' anywhere -> exit 1 naming the marker
+  ---
+  duration_ms: 117.436833
+  ...
+# Subtest: 2 POSITIVE: all three markers in an imported chunk -> exit 0
+ok 2 - 2 POSITIVE: all three markers in an imported chunk -> exit 0
+  ---
+  duration_ms: 94.397208
+  ...
+# Subtest: 3 NEG: markers only in a chunk unreachable from manifest/inbox -> exit 1
+ok 3 - 3 NEG: markers only in a chunk unreachable from manifest/inbox -> exit 1
+  ---
+  duration_ms: 95.372333
+  ...
+# Subtest: 4 NEG: markers present but parrot-token absent -> exit 1
+ok 4 - 4 NEG: markers present but parrot-token absent -> exit 1
+  ---
+  duration_ms: 87.150041
+  ...
+# Subtest: 5a NEG: terminal 500 on index -> exit 1
+ok 5 - 5a NEG: terminal 500 on index -> exit 1
+  ---
+  duration_ms: 54.305417
+  ...
+# Subtest: 5b NEG: index lacks manifest URL -> exit 1
+ok 6 - 5b NEG: index lacks manifest URL -> exit 1
+  ---
+  duration_ms: 55.309958
+  ...
+# Subtest: 5c NEG: manifest 404 -> exit 1
+ok 7 - 5c NEG: manifest 404 -> exit 1
+  ---
+  duration_ms: 56.002708
+  ...
+# Subtest: 6 REDIRECT: / -> 302 /sign-in?redirect_url=%2F, script follows and exits 0
+ok 8 - 6 REDIRECT: / -> 302 /sign-in?redirect_url=%2F, script follows and exits 0
+  ---
+  duration_ms: 84.865042
+  ...
+# Subtest: 6b NEG: redirect loop (>5 hops) -> exit 1
+ok 9 - 6b NEG: redirect loop (>5 hops) -> exit 1
+  ---
+  duration_ms: 99.853875
+  ...
+# Subtest: 7 --no-require-parrot downgrades the parrot check only
+ok 10 - 7 --no-require-parrot downgrades the parrot check only
+  ---
+  duration_ms: 160.925833
+  ...
+# Subtest: require-move-control: served ops.safety chunk without the control is RED
+ok 11 - require-move-control: served ops.safety chunk without the control is RED
+  ---
+  duration_ms: 19.852
+  ...
+# Subtest: require-move-control: label present but endpoint missing is RED (each marker checked)
+ok 12 - require-move-control: label present but endpoint missing is RED (each marker checked)
+  ---
+  duration_ms: 10.440167
+  ...
+# Subtest: require-move-control: served ops.safety chunk with the control is GREEN
+ok 13 - require-move-control: served ops.safety chunk with the control is GREEN
+  ---
+  duration_ms: 4.697959
+  ...
+# Subtest: require-move-control: control in a static import of the ops.safety module is GREEN
+ok 14 - require-move-control: control in a static import of the ops.safety module is GREEN
+  ---
+  duration_ms: 9.016833
+  ...
+# Subtest: require-move-control: control only in an unreachable chunk is RED
+ok 15 - require-move-control: control only in an unreachable chunk is RED
+  ---
+  duration_ms: 5.811166
+  ...
+# Subtest: require-move-control: manifest with no ops.safety route is RED when the flag is on
+ok 16 - require-move-control: manifest with no ops.safety route is RED when the flag is on
+  ---
+  duration_ms: 2.639625
+  ...
+# Subtest: flag off: bundle lacking the control (and lacking the route) stays GREEN (v1.5.1 meaning)
+ok 17 - flag off: bundle lacking the control (and lacking the route) stays GREEN (v1.5.1 meaning)
+  ---
+  duration_ms: 9.656208
+  ...
+# Subtest: CLI: --require-move-control exits 1 without the control and 0 with it
+ok 18 - CLI: --require-move-control exits 1 without the control and 0 with it
+  ---
+  duration_ms: 306.164708
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1335.95725
+exit=0
+# Mutation M1: new check disabled (if (false && requireMoveControl))
+ok 1 - 1 NEG: no 'Trust sender' anywhere -> exit 1 naming the marker
+ok 2 - 2 POSITIVE: all three markers in an imported chunk -> exit 0
+ok 3 - 3 NEG: markers only in a chunk unreachable from manifest/inbox -> exit 1
+ok 4 - 4 NEG: markers present but parrot-token absent -> exit 1
+ok 5 - 5a NEG: terminal 500 on index -> exit 1
+ok 6 - 5b NEG: index lacks manifest URL -> exit 1
+ok 7 - 5c NEG: manifest 404 -> exit 1
+ok 8 - 6 REDIRECT: / -> 302 /sign-in?redirect_url=%2F, script follows and exits 0
+ok 9 - 6b NEG: redirect loop (>5 hops) -> exit 1
+ok 10 - 7 --no-require-parrot downgrades the parrot check only
+not ok 11 - require-move-control: served ops.safety chunk without the control is RED
+not ok 12 - require-move-control: label present but endpoint missing is RED (each marker checked)
+ok 13 - require-move-control: served ops.safety chunk with the control is GREEN
+ok 14 - require-move-control: control in a static import of the ops.safety module is GREEN
+not ok 15 - require-move-control: control only in an unreachable chunk is RED
+not ok 16 - require-move-control: manifest with no ops.safety route is RED when the flag is on
+ok 17 - flag off: bundle lacking the control (and lacking the route) stays GREEN (v1.5.1 meaning)
+not ok 18 - CLI: --require-move-control exits 1 without the control and 0 with it
+# pass 13
+# fail 5

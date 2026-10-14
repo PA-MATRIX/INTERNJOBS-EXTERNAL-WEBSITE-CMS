@@ -1,0 +1,57 @@
+# 43-04 PR + CI (2026-10-14T04:03:39Z)
+PR: #29 https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/pull/29 (base main, state OPEN, NOT merged)
+head: fix/v1.7-43-safety-move-to-inbox 7f3b948c073ebc8a20c52c7913a77bac0898d05f
+body carries: DO NOT MERGE until Raj records the D10 exception (Phase 43 plan 05)
+CI run: 38509278169
+
+$ gh pr checks 29 --watch --interval 20  -> exit 0; final state re-read with gh pr checks 29:
+email timeout invariant (cross-package)	pass	6s
+email worker (tests)	pass	9s
+startups worker (typecheck · tests)	pass	33s
+student app tests	pass	1m18s
+submission gate (rrr)	pass	6s
+workspace worker (parrot)	pass	1m9s
+workspaces (marketing · app · employers)	pass	1m18s
+exit=0
+
+$ gh run view 38509278169 --job 115673803985 --log   (student app tests = app-tests job; test lines)
+ok 1 - requireOperatorAuth: dev session with userType=student → 403
+ok 2 - requireOperatorAuth: dev session with userType=startup → 403
+ok 3 - requireOperatorAuth: dev session with userType=operator → returns auth
+ok 4 - requireOperatorAuth: real Clerk session with publicMetadata.userType=student → 403 (Backend API path)
+ok 5 - deriveLinkedIn: returns URL from external_account.username
+ok 6 - deriveLinkedIn: returns URL from public_metadata.profile_url when present
+ok 7 - deriveLinkedIn: prefers public_metadata.profile_url over username
+ok 8 - deriveLinkedIn: returns '' when LinkedIn returned no slug
+ok 9 - deriveLinkedIn: returns '' when no LinkedIn external_account
+ok 10 - deriveLinkedIn: returns '' on missing/empty external_accounts
+ok 11 - deriveLinkedIn: rejects username with invalid characters
+ok 12 - deriveLinkedIn: rejects non-LinkedIn URL in public_metadata.profile_url
+ok 13 - tryDeriveLinkedInProfileUrl: returns '' (never throws) when Clerk API errors
+ok 14 - tryDeriveLinkedInProfileUrl: returns derived URL via injected mock client
+ok 15 - setDevSessionCookie: operator overrides produce an operator session
+ok 16 - safety-events handler (unit)
+ok 17 - safety-events handler (real Postgres)
+ok 18 - VERIFY-03a: missing API key returns fail-open immediately
+ok 19 - VERIFY-03b: dead Lakera endpoint returns fail-open (network error)
+ok 20 - VERIFY-03c: screenMessage never throws regardless of input
+ok 21 - VERIFY-01/02: SKIPPED — set LAKERA_GUARD_API_KEY to run live API tests
+ok 22 - VERIFY-04: parser handles legacy v1 results[] shape (parser-resilience contract)
+# tests 34
+# pass 34
+# fail 0
+# skipped 0
+
+$ gh run view 38509278169 --job 115673804495 --log   (workspace worker (parrot); vitest totals)
+ Test Files  28 passed (28)
+      Tests  211 passed (211)
+
+# Negative control for the app-tests job: origin/main (d1658aa) ci.yml has no app-tests job
+$ git show origin/main:.github/workflows/ci.yml | grep -c app-tests  -> 0
+$ gh pr checks 27   (last PR into main, before 43-01 added the job): no "student app tests" row
+email timeout invariant (cross-package)	pass
+email worker (tests)	pass
+startups worker (typecheck · tests)	pass
+submission gate (rrr)	pass
+workspace worker (parrot)	pass
+workspaces (marketing · app · employers)	pass

@@ -1,0 +1,35 @@
+## 43-04 preflight 2026-10-14T04:00:53Z worktree HEAD 7f3b948
+## Note: whole-suite runs (npm test in apps/app, apps/parrot) are blocked locally by ~/.claude/hooks/local-suite-guard.js (Raj: run suites on CI). They run on the PR's CI jobs app-tests and parrot; results in 43-04-pr.txt.
+
+$ npm run build:app
+exit=0
+> internjobs-ai@0.1.0 build:app
+> npm --workspace @internjobs/app run build
+
+
+> @internjobs/app@0.1.0 build
+> node scripts/verify-app.mjs
+
+internjobs-app: waitlist smoke checks passed
+
+$ (apps/parrot) npm run typecheck
+exit=0
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+(node:38183) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+$ (apps/parrot) npm run build
+exit=0
+build/client/.vite/manifest.json                   7.21 kB │ gzip:   0.99 kB
+build/client/assets/ops.safety-B_eB2QFc.js         6.74 kB │ gzip:   2.68 kB
+✓ built in 2.07s
+build/server/.vite/manifest.json                     1.05 kB
+✓ built in 2.12s
+
+$ node --test scripts/verify-workspace-quarantine-live.test.mjs
+exit=0
+# tests 18
+# pass 18
+# fail 0

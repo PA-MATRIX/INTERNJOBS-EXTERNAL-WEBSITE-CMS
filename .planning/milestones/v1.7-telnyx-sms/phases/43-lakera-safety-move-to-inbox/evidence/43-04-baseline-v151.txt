@@ -1,0 +1,8 @@
+# 2026-10-14T04:02:02Z node scripts/verify-workspace-quarantine-live.mjs  (GET only, no credentials; worktree 7f3b948)
+inbox closure: 9 files; root closure: 7 files
+present: Trust sender
+present: trust-sender
+present: Spam-folder reference (folder=spam)
+present: parrot-token (Phase 32)
+GREEN https://workspace.internjobs.ai
+exit=0
