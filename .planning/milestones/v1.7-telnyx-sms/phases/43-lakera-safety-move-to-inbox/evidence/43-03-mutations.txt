@@ -1,0 +1,42 @@
+== M1: drop can_move_to_inbox condition in SafetyMoveCell ==
+   × SafetyMoveCell > renders a Move to Inbox button only for movable rows 6ms
+   ✓ SafetyMoveCell > moving state disables the button and a moved row shows Moved instead of the button 1ms
+   ✓ moveToInbox > posts to the move-to-inbox endpoint for the event id 8ms
+   ✓ moveToInbox > moveToInbox maps every server outcome to a distinct message 1ms
+   ✓ moveToInbox > failures never read as success (negative control) 1ms
+   ✓ moveToInbox > outcomeMessage covers each outcome 0ms
+   ✓ markAllReviewed > markAllReviewed only clears local rows when the server confirmed 0ms
+   ✓ safetyLogReducer > safetyLogReducer drives the page state 0ms
+   ✓ safetyLogReducer > a refetch (loaded) replaces events but keeps finished row statuses 0ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  workers/tests/lib/safety-log.test.ts > SafetyMoveCell > renders a Move to Inbox button only for movable rows
+      Tests  1 failed | 8 passed (9)
+== M2: optimistic mark-all (flip rows regardless of ok) ==
+   ✓ SafetyMoveCell > renders a Move to Inbox button only for movable rows 3ms
+   ✓ SafetyMoveCell > moving state disables the button and a moved row shows Moved instead of the button 1ms
+   ✓ moveToInbox > posts to the move-to-inbox endpoint for the event id 8ms
+   ✓ moveToInbox > moveToInbox maps every server outcome to a distinct message 1ms
+   ✓ moveToInbox > failures never read as success (negative control) 1ms
+   ✓ moveToInbox > outcomeMessage covers each outcome 0ms
+   × markAllReviewed > markAllReviewed only clears local rows when the server confirmed 3ms
+   × safetyLogReducer > safetyLogReducer drives the page state 1ms
+   ✓ safetyLogReducer > a refetch (loaded) replaces events but keeps finished row statuses 0ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  workers/tests/lib/safety-log.test.ts > markAllReviewed > markAllReviewed only clears local rows when the server confirmed
+ FAIL  workers/tests/lib/safety-log.test.ts > safetyLogReducer > safetyLogReducer drives the page state
+      Tests  2 failed | 7 passed (9)
+== M3: ignore HTTP status (body outcome alone decides success) ==
+   ✓ SafetyMoveCell > renders a Move to Inbox button only for movable rows 4ms
+   ✓ SafetyMoveCell > moving state disables the button and a moved row shows Moved instead of the button 1ms
+   ✓ moveToInbox > posts to the move-to-inbox endpoint for the event id 8ms
+   ✓ moveToInbox > moveToInbox maps every server outcome to a distinct message 1ms
+   × moveToInbox > failures never read as success (negative control) 4ms
+   ✓ moveToInbox > outcomeMessage covers each outcome 0ms
+   ✓ markAllReviewed > markAllReviewed only clears local rows when the server confirmed 0ms
+   ✓ safetyLogReducer > safetyLogReducer drives the page state 0ms
+   ✓ safetyLogReducer > a refetch (loaded) replaces events but keeps finished row statuses 0ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  workers/tests/lib/safety-log.test.ts > moveToInbox > failures never read as success (negative control)
+      Tests  1 failed | 8 passed (9)
+== restored ==
+      Tests  9 passed (9)

@@ -1,0 +1,27 @@
+
+ RUN  v3.2.6 /Users/rajren/internjobs-cms-wt-43/apps/parrot
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  workers/tests/lib/safety-log.test.ts [ workers/tests/lib/safety-log.test.ts ]
+Error: Cannot find module '../../../app/lib/safety-log' imported from '/Users/rajren/internjobs-cms-wt-43/apps/parrot/workers/tests/lib/safety-log.test.ts'
+ ❯ workers/tests/lib/safety-log.test.ts:9:1
+      7| import { createElement } from "react";
+      8| import { renderToStaticMarkup } from "react-dom/server";
+      9| import {
+       | ^
+     10|  moveToInbox,
+     11|  markAllReviewed,
+
+Caused by: Error: Failed to load url ../../../app/lib/safety-log (resolved id: ../../../app/lib/safety-log) in /Users/rajren/internjobs-cms-wt-43/apps/parrot/workers/tests/lib/safety-log.test.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:35730:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  22:53:42
+   Duration  289ms (transform 47ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 73ms)
+
