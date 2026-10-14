@@ -121,3 +121,90 @@ test("7 --no-require-parrot downgrades the parrot check only", async () => {
   const r = await runAsync(base({ root: "nothing" }), ["--no-require-parrot"]);
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
+
+// ---- Phase 43 (LAK-05): opt-in --require-move-control ----------------------------------------
+// The ops.safety route is resolved through the manifest key `routes/ops.safety` (43-03 build:
+// manifest-f2082f7c.js -> routes/ops.safety -> /assets/ops.safety-<hash>.js; hashes change per build).
+import { checkBundle } from "./verify-workspace-quarantine-live.mjs";
+
+const MOVE_OK = 'const l="Move to Inbox";const u=`/api/ops/safety/${encodeURIComponent(i)}/move-to-inbox`;';
+const MOVE_NONE = 'const h="Safety log";const r="Mark all reviewed";';
+
+const manifestWithSafety = (safety) =>
+  "window.__reactRouterManifest=" + JSON.stringify({
+    entry: { module: "/assets/entry.js", imports: [] },
+    routes: {
+      root: { id: "root", module: "/assets/root-r.js", imports: [] },
+      "routes/inbox": { id: "routes/inbox", parentId: "root", path: "inbox", module: "/assets/inbox-x.js", imports: ["/assets/imp-i.js"] },
+      ...(safety ? { "routes/ops.safety": { id: "routes/ops.safety", parentId: "root", path: "ops/safety", module: "/assets/ops.safety-s.js", imports: ["/assets/safety-imp.js"] } } : {}),
+    },
+  }) + ";";
+
+function safetySite({ safety = MOVE_OK, safetyImp = "export const x=1;", withRoute = true } = {}) {
+  return base({
+    extra: {
+      "/assets/manifest-abc.js": js(manifestWithSafety(withRoute)),
+      "/assets/ops.safety-s.js": js(safety),
+      "/assets/safety-imp.js": js(safetyImp),
+    },
+  });
+}
+
+async function check(routes, opts) {
+  const s = await serve(routes);
+  try { return await checkBundle(s.base, opts); } finally { await s.close(); }
+}
+
+test("require-move-control: served ops.safety chunk without the control is RED", async () => {
+  const r = await check(safetySite({ safety: MOVE_NONE }), { requireMoveControl: true });
+  assert.equal(r.ok, false, JSON.stringify(r));
+  assert.ok(r.problems.some((p) => /Move to Inbox label/.test(p)), JSON.stringify(r.problems));
+  assert.ok(r.problems.some((p) => /move-to-inbox endpoint/.test(p)), JSON.stringify(r.problems));
+});
+
+test("require-move-control: label present but endpoint missing is RED (each marker checked)", async () => {
+  const r = await check(safetySite({ safety: 'const l="Move to Inbox";' }), { requireMoveControl: true });
+  assert.equal(r.ok, false, JSON.stringify(r));
+  assert.ok(r.problems.some((p) => /move-to-inbox endpoint/.test(p)), JSON.stringify(r.problems));
+  assert.ok(!r.problems.some((p) => /Move to Inbox label/.test(p)), JSON.stringify(r.problems));
+});
+
+test("require-move-control: served ops.safety chunk with the control is GREEN", async () => {
+  const r = await check(safetySite(), { requireMoveControl: true });
+  assert.equal(r.ok, true, JSON.stringify(r));
+});
+
+test("require-move-control: control in a static import of the ops.safety module is GREEN", async () => {
+  const r = await check(safetySite({ safety: MOVE_NONE, safetyImp: MOVE_OK }), { requireMoveControl: true });
+  assert.equal(r.ok, true, JSON.stringify(r));
+});
+
+test("require-move-control: control only in an unreachable chunk is RED", async () => {
+  const routes = safetySite({ safety: MOVE_NONE });
+  routes["/assets/orphan-move.js"] = js(MOVE_OK);
+  const r = await check(routes, { requireMoveControl: true });
+  assert.equal(r.ok, false, JSON.stringify(r));
+});
+
+test("require-move-control: manifest with no ops.safety route is RED when the flag is on", async () => {
+  const r = await check(safetySite({ withRoute: false }), { requireMoveControl: true });
+  assert.equal(r.ok, false, JSON.stringify(r));
+  assert.ok(r.problems.some((p) => /routes\/ops\.safety/.test(p)), JSON.stringify(r.problems));
+});
+
+test("flag off: bundle lacking the control (and lacking the route) stays GREEN (v1.5.1 meaning)", async () => {
+  const a = await check(safetySite({ safety: MOVE_NONE }), {});
+  assert.equal(a.ok, true, JSON.stringify(a));
+  const b = await check(safetySite({ withRoute: false }), {});
+  assert.equal(b.ok, true, JSON.stringify(b));
+});
+
+test("CLI: --require-move-control exits 1 without the control and 0 with it", async () => {
+  const red = await runAsync(safetySite({ safety: MOVE_NONE }), ["--require-move-control"]);
+  assert.equal(red.status, 1, red.stdout + red.stderr);
+  assert.match(red.stdout, /RED/);
+  const green = await runAsync(safetySite(), ["--require-move-control"]);
+  assert.equal(green.status, 0, green.stdout + green.stderr);
+  const off = await runAsync(safetySite({ safety: MOVE_NONE }));
+  assert.equal(off.status, 0, off.stdout + off.stderr);
+});
