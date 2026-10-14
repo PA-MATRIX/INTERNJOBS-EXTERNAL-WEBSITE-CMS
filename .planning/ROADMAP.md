@@ -32,7 +32,13 @@ Spec: `.planning/milestones/v1.7-telnyx-sms/REQUIREMENTS.md`. Context: `.plannin
   1. Pressing "Move to Inbox" on a blocked email row moves that email from the employee's Spam to their Inbox and writes an audit entry; SMS rows have no button.
   2. New safety events carry `source_id` through to the API; old rows match uniquely or report "not found".
   3. After deploy (student app first, then the Worker from main-based code), the quarantine readback is GREEN and the production UAT is recorded.
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 43-01-PLAN.md — student app: source_id migration 0015 + insert/read, Mark-all 7-day window, apps/app tests in CI
+- [ ] 43-02-PLAN.md — Worker: mailbox lookup + operator-only move-to-inbox route (audit, D32 matching), lakera_flagged label
+- [ ] 43-03-PLAN.md — UI: Move to Inbox button, toasts, honest Mark-all
+- [ ] 43-04-PLAN.md — readback --require-move-control, pre-flight, PR + green CI, rollback targets
+- [ ] 43-05-PLAN.md — approvals (D10 exception), Fly + migration then Worker deploy, readbacks, UAT, Lakera tier
 
 ### Phase 44: Telnyx SMS provider (code)
 **Goal**: The student app can run on Telnyx SMS behind `SMS_PROVIDER=telnyx`, with signed inbound, outbound, dedupe, Lakera parity, STOP/HELP and SMS pairing, all proven by tests without network.
