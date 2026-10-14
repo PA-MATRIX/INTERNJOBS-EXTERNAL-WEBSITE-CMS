@@ -9,7 +9,67 @@
 - ✅ **v1.4 Pilot Readiness** — Phases 22–31 (first team-mode milestone: `team-cms` + `team-workspace`; core shipped 2026-06-16, tail phases 30–31 + CH-01 shipped through 2026-06-24)
 - ✅ **v1.5 Workspace Integration Finish + Startup Pilot Go-Live** — Phases 32, 33, 36 shipped 2026-10-08 (PR #28, merge commit `4c182d3`); Phases 34/35 DEFERRED (D8); closed PARTIAL; archive `.planning/milestones/v1.5/` (**whole milestone assigned to team-workspace / Nithin**; started 2026-06-30, on `integration/v1.5`)
 - ⏸ **v1.6 Repo Split + Code Mapping** — PAUSED 2026-10-13 at Phase 39 (D29) — Phase 0 = merge Nithin's `integration/v1.5` -> main, then map 3 repos + split (opened 2026-10-08; map 3 repos, cms = website only, private platform repo; see `.planning/milestones/v1.6-repo-split/CONTEXT.md`)
-- 📋 **v1.7 Students on Telnyx SMS (no Mac)** — ACTIVE 2026-10-13 (D26–D29): replace HostMyApple iMessage/mac-bridge with Telnyx SMS, port +14063210019; phases from 43 (to be defined); see `.planning/milestones/v1.7-telnyx-sms/CONTEXT.md`
+- 📋 **v1.7 Students on Telnyx SMS (no Mac)** — ACTIVE 2026-10-13 (D26–D29): replace HostMyApple iMessage/mac-bridge with Telnyx SMS, port +14063210019; phases 43–49 (Lakera first, D30); see `.planning/milestones/v1.7-telnyx-sms/CONTEXT.md`
+
+## v1.7 Phases — Students on Telnyx SMS (no Mac) (ACTIVE)
+
+Spec: `.planning/milestones/v1.7-telnyx-sms/REQUIREMENTS.md`. Context: `.planning/milestones/v1.7-telnyx-sms/CONTEXT.md` (D26–D32). Carry-overs: `CARRYOVER.md`. Every phase is TDD-first. Live steps are approval-gated executor tasks. Merging or deploying from main needs Raj's D10 exception.
+
+- [ ] **Phase 43: Lakera Safety log — Move to Inbox** — LAK-01..05 (first, D30)
+- [ ] **Phase 44: Telnyx SMS provider (code)** — SMS-01..04, OPT-01, PAIR-01
+- [ ] **Phase 45: Number port + 10DLC + iMessage-era students** — NUM-01, NUM-02, PAIR-02 (Raj actions)
+- [ ] **Phase 46: Production cutover to Telnyx** — CUT-01, NUM-03 (approval-gated)
+- [ ] **Phase 47: Decommission the Mac path** — DECOM-01
+- [ ] **Phase 48: Carried security rotation** — SECO-01, SECO-02 (approval-gated)
+- [ ] **Phase 49: Records and repo hygiene** — HYG-01
+
+### Phase 43: Lakera Safety log — Move to Inbox
+**Goal**: An operator can recover a Lakera-quarantined email from the Safety Screening Log into the owning employee's Inbox, with the Message-ID link repaired end to end.
+**Depends on**: nothing (first)
+**Requirements**: LAK-01, LAK-02, LAK-03, LAK-04, LAK-05
+**Research**: `research/LAKERA-SAFETY-AUDIT.md`
+**Success Criteria**:
+  1. Pressing "Move to Inbox" on a blocked email row moves that email from the employee's Spam to their Inbox and writes an audit entry; SMS rows have no button.
+  2. New safety events carry `source_id` through to the API; old rows match uniquely or report "not found".
+  3. After deploy (student app first, then the Worker from main-based code), the quarantine readback is GREEN and the production UAT is recorded.
+**Plans**: TBD
+
+### Phase 44: Telnyx SMS provider (code)
+**Goal**: The student app can run on Telnyx SMS behind `SMS_PROVIDER=telnyx`, with signed inbound, outbound, dedupe, Lakera parity, STOP/HELP and SMS pairing, all proven by tests without network.
+**Depends on**: Phase 43 (order only)
+**Requirements**: SMS-01, SMS-02, SMS-03, SMS-04, OPT-01, PAIR-01
+**Research**: `research/TELNYX-SMS-RESEARCH.md`
+**Plans**: TBD
+
+### Phase 45: Number port + 10DLC + iMessage-era students
+**Goal**: +14063210019 is in Telnyx on an approved 10DLC campaign, and iMessage-era student addresses have a defined path.
+**Depends on**: Raj supplying carrier/account/LOA; can run alongside Phase 44
+**Requirements**: NUM-01, NUM-02, PAIR-02
+**Plans**: TBD
+
+### Phase 46: Production cutover to Telnyx
+**Goal**: Production student messaging runs on Telnyx with a real round-trip observed, and the number is deregistered from iMessage.
+**Depends on**: Phases 44, 45; D10 exception
+**Requirements**: CUT-01, NUM-03
+**Plans**: TBD
+
+### Phase 47: Decommission the Mac path
+**Goal**: Nothing in the product depends on a Mac: mac-bridge, `/webhooks/mac-bridge`, canary-monitor, the bridge/canary hostnames and the HostMyApple subscription are retired.
+**Depends on**: Phase 46
+**Requirements**: DECOM-01
+**Plans**: TBD
+
+### Phase 48: Carried security rotation
+**Goal**: The leaked live Neon password and the probably-live webhook key are rotated or revoked, with readbacks, and the literals are removed from Parrot.
+**Depends on**: Raj's approval; independent of 43–47 (can be pulled earlier)
+**Requirements**: SECO-01, SECO-02
+**Plans**: TBD
+
+### Phase 49: Records and repo hygiene
+**Goal**: Planning records match reality, and stale branches/worktrees are cleaned per an approved list.
+**Depends on**: Phase 47
+**Requirements**: HYG-01
+**Plans**: TBD
 
 ## v1.5 Phases (assigned to team-workspace — Nithin owns the whole milestone)
 

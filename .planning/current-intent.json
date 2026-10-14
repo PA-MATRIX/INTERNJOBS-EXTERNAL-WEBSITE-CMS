@@ -1,10 +1,13 @@
 {
   "milestone_id": "v1.7 Students on Telnyx SMS (no Mac)",
-  "phase_id": "none (defining requirements)",
-  "plan_id": "none",
-  "intent": "Start v1.7: define requirements and roadmap for Telnyx SMS replacing HostMyApple iMessage (D26-D29)",
+  "phase_id": "43 Lakera Safety log \u2014 Move to Inbox",
+  "plan_id": "none yet",
+  "intent": "Plan Phase 43 (LAK-01..05) TDD-first; then Telnyx phases 44-49",
   "allowed_paths": [
-    ".planning/"
+    ".planning/",
+    "apps/parrot/",
+    "apps/app/",
+    "scripts/"
   ],
   "constraints": [
     "TDD-first (RED before GREEN)",
@@ -13,13 +16,13 @@
     "D10 main freeze: merge/deploy needs recorded exception"
   ],
   "start_time": "2026-10-14T02:59:20.443296+00:00",
-  "saved_at": "2026-10-14T02:59:20.443296+00:00",
-  "updated_at": "2026-10-14T02:59:20.443296+00:00",
+  "saved_at": "2026-10-14T03:24:40.094085+00:00",
+  "updated_at": "2026-10-14T03:24:40.094085+00:00",
   "active_plan": "none",
   "next": [
-    "/rrr:define-requirements",
-    "/rrr:create-roadmap (phases from 43)",
-    "/rrr:plan-phase 43"
+    "/rrr:plan-phase 43",
+    "/rrr:execute-phase 43",
+    "rrr-verifier"
   ],
   "handoff": ".planning/milestones/v1.7-telnyx-sms/",
   "paused": {

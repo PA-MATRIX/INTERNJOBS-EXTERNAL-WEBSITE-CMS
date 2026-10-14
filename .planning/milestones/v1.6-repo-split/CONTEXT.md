@@ -187,3 +187,16 @@ Raj: Ridhi sees the flagged emails in the Safety Screening Log (/ops/safety). Re
 
 Raj (AskUserQuestion): "Pause v1.6, v1.7 active". v1.6 pauses at Phase 39 (39-04 blocked on rotation D22/D24; 39-10 not started; D10 main freeze still stands) and resumes after v1.7. The inserted Phase 39.1 is removed from the v1.6 roadmap. Its research moved to `.planning/milestones/v1.7-telnyx-sms/research/TELNYX-SMS-RESEARCH.md` and its context to `.planning/milestones/v1.7-telnyx-sms/CONTEXT.md`.
 Open conflict for v1.7: D10 freezes main to non-v1.6 changes. Shipping v1.7 needs Raj's explicit exception to D10, recorded before any merge/deploy.
+
+## D30 (2026-10-13): Lakera fix first; carry earlier milestones' pending items into v1.7
+
+Raj: "fix the lakera first" (after the Ridhi finding: she sees Lakera-flagged mail in the Workspace Safety Screening Log `/ops/safety` and has no way to move it to the Inbox), and "also check on what was pending from previous milestones ... that is carried over here".
+Decision: OPS-SAFETY-MOVE (move a Lakera-flagged email to the Inbox from the Safety log) is IN v1.7 and is the FIRST phase (43), ahead of the Telnyx work. Pending items from earlier milestones are inventoried and carried into v1.7 requirements.
+
+## D31 (2026-10-13): operators may move any employee's flagged email to that employee's Inbox (logged)
+
+Raj (AskUserQuestion): "Yes, operators, logged". An operator (Ridhi, Raj) can move a Lakera-quarantined email out of Spam into the owning employee's Inbox from `/ops/safety`. Every move is audit-logged (actor, target employee, event). It does NOT auto-trust the sender.
+
+## D32 (2026-10-13): best-effort match for Safety-log rows written before the fix
+
+Raj (AskUserQuestion): "Best-effort match". Rows without `source_id` (logged before the fix deploys) are matched to a Spam email by preview prefix and time window, and moved only on exactly one match; otherwise "not found, check Spam". New rows use the exact Message-ID link (`source_id`).

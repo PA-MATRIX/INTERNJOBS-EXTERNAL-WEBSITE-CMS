@@ -1,0 +1,19 @@
+{
+  "name": "@internjobs/canary-monitor",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cloudflare Worker — external watcher for the Mac mini's iMessage canary. Polls canary.internjobs.ai on a cron and emails when the pipeline stops delivering. Runs off-box so it still alerts when the Mac itself is dead.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail internjobs-canary-monitor",
+    "check": "node --check src/index.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

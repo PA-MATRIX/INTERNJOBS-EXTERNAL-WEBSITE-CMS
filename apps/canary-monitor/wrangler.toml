@@ -1,0 +1,47 @@
+name = "internjobs-canary-monitor"
+main = "src/index.js"
+compatibility_date = "2026-05-16"
+
+# ─── Why this Worker exists ──────────────────────────────────────────────────
+#
+# The Mac mini's iMessage pipeline already HAS a working canary
+# (`~/bin/canary.sh` on the Mac → https://canary.internjobs.ai/, 200 healthy /
+# 503 not). Detection was never the problem. During the 2026-08-11 → 08-15
+# outage it correctly reported `fail` roughly 1,700 times over six days and
+# NOBODY WAS LISTENING — nothing polled the endpoint.
+#
+# This Worker is the listener. It deliberately runs OFF the Mac: an on-box
+# alerter cannot tell you the box is dead, which is the exact failure mode that
+# cost four days of candidate messaging. A fetch timeout or DNS failure here is
+# treated as an outage, not as an inconclusive result.
+#
+# It also must not alert over iMessage — the thing it is watching. Alerts go by
+# email, which is an independent path.
+[triggers]
+crons = ["*/10 * * * *"]
+
+[vars]
+CANARY_URL = "https://canary.internjobs.ai/"
+# Apex `*@internjobs.ai` is a CF Email Routing catch-all forwarding to
+# rentalaraj@gmail.com, so the From: domain is one we own and the To: is an
+# already-verified Email Routing destination.
+ALERT_FROM = "canary@internjobs.ai"
+ALERT_TO = "rentalaraj@gmail.com"
+# While still failing, re-send a reminder at most this often. Without this the
+# */10 cron would deliver 144 identical emails a day and get muted by the user
+# (or by Gmail), recreating the "nobody was listening" bug in a new form.
+REMINDER_HOURS = "6"
+# Seconds to wait on the canary endpoint before calling it unreachable.
+FETCH_TIMEOUT_S = "20"
+
+[[kv_namespaces]]
+binding = "CANARY_MONITOR_STATE"
+id = "d299159e57e2415aaf5c85742e2eb798"
+
+[[send_email]]
+name = "ALERT_EMAIL"
+destination_address = "rentalaraj@gmail.com"
+
+# MONITOR_TEST_TOKEN is set as an encrypted secret via:
+#   cd apps/canary-monitor && npx wrangler secret put MONITOR_TEST_TOKEN
+# Never put it in this file — wrangler.toml is committed to git.
