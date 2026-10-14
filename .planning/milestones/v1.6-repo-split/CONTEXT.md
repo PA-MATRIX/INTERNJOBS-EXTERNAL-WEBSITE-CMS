@@ -200,3 +200,7 @@ Raj (AskUserQuestion): "Yes, operators, logged". An operator (Ridhi, Raj) can mo
 ## D32 (2026-10-13): best-effort match for Safety-log rows written before the fix
 
 Raj (AskUserQuestion): "Best-effort match". Rows without `source_id` (logged before the fix deploys) are matched to a Spam email by preview prefix and time window, and moved only on exactly one match; otherwise "not found, check Spam". New rows use the exact Message-ID link (`source_id`).
+
+## D33 (2026-10-14T04:32:56Z): Phase 43 production sequence approved, including the D10 exception
+
+Raj: "approve all" (answer to the 43-05 approval list A1–A6). A1 D10 exception (merge PR #29, head 7f3b948, into main), A2 prod migration 0015 (plus 0013/0014 if pending), A3 Fly deploy of the student app (rollback v57), A4 Workspace Worker deploy from the merge commit (rollback 77f32645), A5 prod UAT + synthetic readback row: YES. A6 not mentioned, so auto-rollback is NO for both units (stop and report). Recorded verbatim in phases/43-lakera-safety-move-to-inbox/evidence/APPROVAL-43.md.
