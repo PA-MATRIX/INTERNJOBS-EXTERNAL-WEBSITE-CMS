@@ -1,0 +1,4 @@
+# negative control: npm test file list WITHOUT src/safety/screen.test.mjs
+VERIFY-03a lines: 0
+# with the real npm test script:
+VERIFY-03a lines: 1

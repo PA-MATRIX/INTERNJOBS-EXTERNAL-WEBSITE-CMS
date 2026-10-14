@@ -1,0 +1,154 @@
+TAP version 13
+# {"level":"warn","event":"safety_events_source_id_column_missing","op":"insert"}
+# {"level":"error","event":"safety_events_write_failed","error":"check violation"}
+# {"level":"warn","event":"safety_events_source_id_column_missing","op":"select"}
+# {"level":"error","event":"ops_safety_query_failed","error":"admin shutdown"}
+# Subtest: safety-events handler (unit)
+    # Subtest: POST stores source_id
+    ok 1 - POST stores source_id
+      ---
+      duration_ms: 1.984083
+      ...
+    # Subtest: POST normalises bad source_id
+    ok 2 - POST normalises bad source_id
+      ---
+      duration_ms: 1.536209
+      ...
+    # Subtest: GET returns source_id
+    ok 3 - GET returns source_id
+      ---
+      duration_ms: 0.241541
+      ...
+    # Subtest: rejects missing or wrong bearer
+    ok 4 - rejects missing or wrong bearer
+      ---
+      duration_ms: 0.250334
+      ...
+    # Subtest: INSERT falls back when source_id column is missing
+    ok 5 - INSERT falls back when source_id column is missing
+      ---
+      duration_ms: 0.618875
+      ...
+    # Subtest: GET falls back when source_id column is missing
+    ok 6 - GET falls back when source_id column is missing
+      ---
+      duration_ms: 0.251208
+      ...
+    # Subtest: GET non-42703 error still returns query_failed
+    ok 7 - GET non-42703 error still returns query_failed
+      ---
+      duration_ms: 0.087
+      ...
+    # Subtest: unreviewed-count keeps the 24 h flagged/blocked rule
+    ok 8 - unreviewed-count keeps the 24 h flagged/blocked rule
+      ---
+      duration_ms: 0.410542
+      ...
+    # Subtest: mark-reviewed with ids touches only those ids
+    ok 9 - mark-reviewed with ids touches only those ids
+      ---
+      duration_ms: 0.42125
+      ...
+    # Subtest: mark-reviewed with empty body uses the same 7-day window as the list
+    not ok 10 - mark-reviewed with empty body uses the same 7-day window as the list
+      ---
+      duration_ms: 1.054959
+      location: '/Users/rajren/internjobs-cms-wt-43/apps/app/src/safety/events-api.test.mjs:287:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        mark-all must cover every row the log shows
+        + actual - expected
+        
+        + '24 hours'
+        - '7 days'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: '7 days'
+      actual: '24 hours'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-43/apps/app/src/safety/events-api.test.mjs:300:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    # Subtest: no_database skip responses are unchanged
+    ok 11 - no_database skip responses are unchanged
+      ---
+      duration_ms: 0.117542
+      ...
+    # Subtest: bad JSON -> 400, unknown subpath -> 404, other paths not handled
+    ok 12 - bad JSON -> 400, unknown subpath -> 404, other paths not handled
+      ---
+      duration_ms: 0.716834
+      ...
+    1..12
+not ok 1 - safety-events handler (unit)
+  ---
+  duration_ms: 8.266583
+  type: 'suite'
+  location: '/Users/rajren/internjobs-cms-wt-43/apps/app/src/safety/events-api.test.mjs:137:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: safety-events handler (real Postgres)
+    # Subtest: real Postgres round trip
+    ok 1 - real Postgres round trip
+      ---
+      duration_ms: 12.750459
+      ...
+    # Subtest: mark-reviewed with empty body covers the whole visible window
+    not ok 2 - mark-reviewed with empty body covers the whole visible window
+      ---
+      duration_ms: 4.689708
+      location: '/Users/rajren/internjobs-cms-wt-43/apps/app/src/safety/events-api.test.mjs:390:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+          {
+            'aged 1 hour': true,
+        +   'aged 3 days': false,
+        -   'aged 3 days': true,
+            'aged 8 days': false
+          }
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        aged 1 hour: true
+        aged 3 days: true
+        aged 8 days: false
+      actual:
+        aged 1 hour: true
+        aged 3 days: false
+        aged 8 days: false
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-43/apps/app/src/safety/events-api.test.mjs:409:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    1..2
+not ok 2 - safety-events handler (real Postgres)
+  ---
+  duration_ms: 126.177834
+  type: 'suite'
+  location: '/Users/rajren/internjobs-cms-wt-43/apps/app/src/safety/events-api.test.mjs:333:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..2
+# tests 14
+# suites 2
+# pass 12
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 191.758208

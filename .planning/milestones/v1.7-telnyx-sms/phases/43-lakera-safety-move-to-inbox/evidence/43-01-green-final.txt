@@ -1,0 +1,98 @@
+TAP version 13
+# {"level":"warn","event":"safety_events_source_id_column_missing","op":"insert"}
+# {"level":"error","event":"safety_events_write_failed","error":"check violation"}
+# {"level":"warn","event":"safety_events_source_id_column_missing","op":"select"}
+# {"level":"error","event":"ops_safety_query_failed","error":"admin shutdown"}
+# Subtest: safety-events handler (unit)
+    # Subtest: POST stores source_id
+    ok 1 - POST stores source_id
+      ---
+      duration_ms: 1.959292
+      ...
+    # Subtest: POST normalises bad source_id
+    ok 2 - POST normalises bad source_id
+      ---
+      duration_ms: 1.926167
+      ...
+    # Subtest: GET returns source_id
+    ok 3 - GET returns source_id
+      ---
+      duration_ms: 0.293292
+      ...
+    # Subtest: rejects missing or wrong bearer
+    ok 4 - rejects missing or wrong bearer
+      ---
+      duration_ms: 0.274458
+      ...
+    # Subtest: INSERT falls back when source_id column is missing
+    ok 5 - INSERT falls back when source_id column is missing
+      ---
+      duration_ms: 0.632875
+      ...
+    # Subtest: GET falls back when source_id column is missing
+    ok 6 - GET falls back when source_id column is missing
+      ---
+      duration_ms: 0.244375
+      ...
+    # Subtest: GET non-42703 error still returns query_failed
+    ok 7 - GET non-42703 error still returns query_failed
+      ---
+      duration_ms: 0.082708
+      ...
+    # Subtest: unreviewed-count keeps the 24 h flagged/blocked rule
+    ok 8 - unreviewed-count keeps the 24 h flagged/blocked rule
+      ---
+      duration_ms: 0.20975
+      ...
+    # Subtest: mark-reviewed with ids touches only those ids
+    ok 9 - mark-reviewed with ids touches only those ids
+      ---
+      duration_ms: 0.319125
+      ...
+    # Subtest: mark-reviewed with empty body uses the same 7-day window as the list
+    ok 10 - mark-reviewed with empty body uses the same 7-day window as the list
+      ---
+      duration_ms: 0.633
+      ...
+    # Subtest: no_database skip responses are unchanged
+    ok 11 - no_database skip responses are unchanged
+      ---
+      duration_ms: 0.091166
+      ...
+    # Subtest: bad JSON -> 400, unknown subpath -> 404, other paths not handled
+    ok 12 - bad JSON -> 400, unknown subpath -> 404, other paths not handled
+      ---
+      duration_ms: 0.489375
+      ...
+    1..12
+ok 1 - safety-events handler (unit)
+  ---
+  duration_ms: 7.689417
+  type: 'suite'
+  ...
+# Subtest: safety-events handler (real Postgres)
+    # Subtest: real Postgres round trip
+    ok 1 - real Postgres round trip
+      ---
+      duration_ms: 8.129542
+      ...
+    # Subtest: mark-reviewed with empty body covers the whole visible window
+    ok 2 - mark-reviewed with empty body covers the whole visible window
+      ---
+      duration_ms: 4.930875
+      ...
+    1..2
+ok 2 - safety-events handler (real Postgres)
+  ---
+  duration_ms: 107.216
+  type: 'suite'
+  ...
+1..2
+# tests 14
+# suites 2
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 167.747125

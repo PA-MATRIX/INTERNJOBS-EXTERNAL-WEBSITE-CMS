@@ -1,0 +1,205 @@
+
+> @internjobs/app@0.1.0 test
+> node --test src/auth.test.mjs src/safety/screen.test.mjs src/safety/events-api.test.mjs
+
+TAP version 13
+# Subtest: requireOperatorAuth: dev session with userType=student → 403
+ok 1 - requireOperatorAuth: dev session with userType=student → 403
+  ---
+  duration_ms: 0.973291
+  ...
+# Subtest: requireOperatorAuth: dev session with userType=startup → 403
+ok 2 - requireOperatorAuth: dev session with userType=startup → 403
+  ---
+  duration_ms: 0.125334
+  ...
+# Subtest: requireOperatorAuth: dev session with userType=operator → returns auth
+ok 3 - requireOperatorAuth: dev session with userType=operator → returns auth
+  ---
+  duration_ms: 0.145833
+  ...
+# Subtest: requireOperatorAuth: real Clerk session with publicMetadata.userType=student → 403 (Backend API path)
+ok 4 - requireOperatorAuth: real Clerk session with publicMetadata.userType=student → 403 (Backend API path)
+  ---
+  duration_ms: 0.073458
+  ...
+# Subtest: deriveLinkedIn: returns URL from external_account.username
+ok 5 - deriveLinkedIn: returns URL from external_account.username
+  ---
+  duration_ms: 0.101583
+  ...
+# Subtest: deriveLinkedIn: returns URL from public_metadata.profile_url when present
+ok 6 - deriveLinkedIn: returns URL from public_metadata.profile_url when present
+  ---
+  duration_ms: 0.065875
+  ...
+# Subtest: deriveLinkedIn: prefers public_metadata.profile_url over username
+ok 7 - deriveLinkedIn: prefers public_metadata.profile_url over username
+  ---
+  duration_ms: 0.035625
+  ...
+# Subtest: deriveLinkedIn: returns '' when LinkedIn returned no slug
+ok 8 - deriveLinkedIn: returns '' when LinkedIn returned no slug
+  ---
+  duration_ms: 0.0455
+  ...
+# Subtest: deriveLinkedIn: returns '' when no LinkedIn external_account
+ok 9 - deriveLinkedIn: returns '' when no LinkedIn external_account
+  ---
+  duration_ms: 0.234375
+  ...
+# Subtest: deriveLinkedIn: returns '' on missing/empty external_accounts
+ok 10 - deriveLinkedIn: returns '' on missing/empty external_accounts
+  ---
+  duration_ms: 0.257959
+  ...
+# Subtest: deriveLinkedIn: rejects username with invalid characters
+ok 11 - deriveLinkedIn: rejects username with invalid characters
+  ---
+  duration_ms: 0.100834
+  ...
+# Subtest: deriveLinkedIn: rejects non-LinkedIn URL in public_metadata.profile_url
+ok 12 - deriveLinkedIn: rejects non-LinkedIn URL in public_metadata.profile_url
+  ---
+  duration_ms: 0.034875
+  ...
+# Subtest: tryDeriveLinkedInProfileUrl: returns '' (never throws) when Clerk API errors
+ok 13 - tryDeriveLinkedInProfileUrl: returns '' (never throws) when Clerk API errors
+  ---
+  duration_ms: 0.081042
+  ...
+# Subtest: tryDeriveLinkedInProfileUrl: returns derived URL via injected mock client
+ok 14 - tryDeriveLinkedInProfileUrl: returns derived URL via injected mock client
+  ---
+  duration_ms: 0.043708
+  ...
+# Subtest: setDevSessionCookie: operator overrides produce an operator session
+ok 15 - setDevSessionCookie: operator overrides produce an operator session
+  ---
+  duration_ms: 0.092667
+  ...
+# {"level":"warn","event":"safety_events_source_id_column_missing","op":"insert"}
+# {"level":"error","event":"safety_events_write_failed","error":"check violation"}
+# {"level":"warn","event":"safety_events_source_id_column_missing","op":"select"}
+# {"level":"error","event":"ops_safety_query_failed","error":"admin shutdown"}
+# Subtest: safety-events handler (unit)
+    # Subtest: POST stores source_id
+    ok 1 - POST stores source_id
+      ---
+      duration_ms: 2.773042
+      ...
+    # Subtest: POST normalises bad source_id
+    ok 2 - POST normalises bad source_id
+      ---
+      duration_ms: 1.835917
+      ...
+    # Subtest: GET returns source_id
+    ok 3 - GET returns source_id
+      ---
+      duration_ms: 0.253875
+      ...
+    # Subtest: rejects missing or wrong bearer
+    ok 4 - rejects missing or wrong bearer
+      ---
+      duration_ms: 0.258666
+      ...
+    # Subtest: INSERT falls back when source_id column is missing
+    ok 5 - INSERT falls back when source_id column is missing
+      ---
+      duration_ms: 0.607917
+      ...
+    # Subtest: GET falls back when source_id column is missing
+    ok 6 - GET falls back when source_id column is missing
+      ---
+      duration_ms: 0.238334
+      ...
+    # Subtest: GET non-42703 error still returns query_failed
+    ok 7 - GET non-42703 error still returns query_failed
+      ---
+      duration_ms: 0.080708
+      ...
+    # Subtest: unreviewed-count keeps the 24 h flagged/blocked rule
+    ok 8 - unreviewed-count keeps the 24 h flagged/blocked rule
+      ---
+      duration_ms: 0.20475
+      ...
+    # Subtest: mark-reviewed with ids touches only those ids
+    ok 9 - mark-reviewed with ids touches only those ids
+      ---
+      duration_ms: 0.31725
+      ...
+    # Subtest: mark-reviewed with empty body uses the same 7-day window as the list
+    ok 10 - mark-reviewed with empty body uses the same 7-day window as the list
+      ---
+      duration_ms: 0.634
+      ...
+    # Subtest: no_database skip responses are unchanged
+    ok 11 - no_database skip responses are unchanged
+      ---
+      duration_ms: 0.091166
+      ...
+    # Subtest: bad JSON -> 400, unknown subpath -> 404, other paths not handled
+    ok 12 - bad JSON -> 400, unknown subpath -> 404, other paths not handled
+      ---
+      duration_ms: 0.171666
+      ...
+    1..12
+ok 16 - safety-events handler (unit)
+  ---
+  duration_ms: 8.135959
+  type: 'suite'
+  ...
+# Subtest: safety-events handler (real Postgres)
+    # Subtest: real Postgres round trip
+    ok 1 - real Postgres round trip
+      ---
+      duration_ms: 8.601833
+      ...
+    # Subtest: mark-reviewed with empty body covers the whole visible window
+    ok 2 - mark-reviewed with empty body covers the whole visible window
+      ---
+      duration_ms: 5.259875
+      ...
+    1..2
+ok 17 - safety-events handler (real Postgres)
+  ---
+  duration_ms: 118.454417
+  type: 'suite'
+  ...
+# Subtest: VERIFY-03a: missing API key returns fail-open immediately
+ok 18 - VERIFY-03a: missing API key returns fail-open immediately
+  ---
+  duration_ms: 0.362417
+  ...
+# {"level":"warn","event":"lakera_screen_non2xx","status":401}
+# Subtest: VERIFY-03b: dead Lakera endpoint returns fail-open (network error)
+ok 19 - VERIFY-03b: dead Lakera endpoint returns fail-open (network error)
+  ---
+  duration_ms: 461.958542
+  ...
+# {"level":"warn","event":"lakera_screen_non2xx","status":401}
+# Skipping live Lakera tests — LAKERA_GUARD_API_KEY not set
+# Subtest: VERIFY-03c: screenMessage never throws regardless of input
+ok 20 - VERIFY-03c: screenMessage never throws regardless of input
+  ---
+  duration_ms: 252.352458
+  ...
+# Subtest: VERIFY-01/02: SKIPPED — set LAKERA_GUARD_API_KEY to run live API tests
+ok 21 - VERIFY-01/02: SKIPPED — set LAKERA_GUARD_API_KEY to run live API tests
+  ---
+  duration_ms: 0.339625
+  ...
+# Subtest: VERIFY-04: parser handles legacy v1 results[] shape (parser-resilience contract)
+ok 22 - VERIFY-04: parser handles legacy v1 results[] shape (parser-resilience contract)
+  ---
+  duration_ms: 0.25075
+  ...
+1..22
+# tests 34
+# suites 2
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 812.397667
