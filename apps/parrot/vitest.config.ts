@@ -22,5 +22,12 @@ export default defineConfig({
 		include: ["workers/tests/**/*.test.ts"],
 		environment: "node",
 		globals: false,
+		// v1.7 Phase 43-02: mailbox-lookup tests run real SQL in node:sqlite.
+		// Node 22.12 (local) needs --experimental-sqlite; on later 22.x the
+		// flag is accepted as a no-op.
+		poolOptions: {
+			forks: { execArgv: ["--experimental-sqlite"] },
+			threads: { execArgv: ["--experimental-sqlite"] },
+		},
 	},
 });
