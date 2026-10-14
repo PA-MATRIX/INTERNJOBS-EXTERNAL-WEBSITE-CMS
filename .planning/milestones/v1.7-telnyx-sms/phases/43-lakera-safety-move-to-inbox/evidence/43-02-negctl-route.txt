@@ -1,0 +1,17 @@
+=== NC1: requireOperator removed from move-to-inbox route ===
+   × POST /api/ops/safety/:eventId/move-to-inbox > non-operator gets 403 and nothing is touched 17ms
+   × POST /api/ops/safety/:eventId/move-to-inbox > unauthenticated gets 401 1ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 14 passed (16)
+=== NC3: lakera_flagged label entry dropped ===
+   × GET /api/ops/safety > list adds can_move_to_inbox and label, hides source_id 4ms
+     → expected 'lakera_flagged' to be 'Flagged by Lakera Guard' // Object.is equality
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+AssertionError: expected 'lakera_flagged' to be 'Flagged by Lakera Guard' // Object.is equality
+      Tests  1 failed | 15 passed (16)
+=== NC2: audit console.log call replaced with a no-op ===
+   × POST /api/ops/safety/:eventId/move-to-inbox > writes an audit line for every outcome 4ms
+   × POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, exactly one Spam candidate -> moved (heuristic) 1ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+AssertionError: moved: expected [] to have a length of 1 but got +0
+      Tests  2 failed | 14 passed (16)

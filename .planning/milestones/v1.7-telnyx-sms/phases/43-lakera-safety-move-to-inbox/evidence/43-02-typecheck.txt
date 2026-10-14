@@ -1,0 +1,9 @@
+# npm run typecheck (wrangler types + react-router typegen + tsc -b) in /Users/rajren/internjobs-cms-wt-43/apps/parrot
+# exit code: 0; error TS count: 0
+# (generated env-type dump omitted)
+📖 Read about runtime types
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+(node:16522) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

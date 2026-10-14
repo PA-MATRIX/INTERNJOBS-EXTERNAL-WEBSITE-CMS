@@ -1,0 +1,57 @@
+
+ RUN  v3.2.6 /Users/rajren/internjobs-cms-wt-43/apps/parrot
+
+(node:6300) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ workers/tests/lib/mailbox-lookup.test.ts (13 tests | 1 failed) 11ms
+   ✓ findEmailBySourceId > matches message_id 2ms
+   ✓ findEmailBySourceId > falls back to id when no Message-ID was stored 0ms
+   ✓ findEmailBySourceId > returns null when nothing matches 0ms
+   ✓ findEmailBySourceId > newest wins if two rows share a message_id 1ms
+   ✓ findSpamCandidatesByPreview > one Spam row inside the window 0ms
+   × findSpamCandidatesByPreview > Inbox copy is not a candidate 4ms
+     → expected [ …(2) ] to deeply equal []
+   ✓ findSpamCandidatesByPreview > outside +/-5 min is excluded 0ms
+   ✓ findSpamCandidatesByPreview > body longer than preview still matches on prefix 0ms
+   ✓ findSpamCandidatesByPreview > '%' and '_' in the preview are literal 0ms
+   ✓ findSpamCandidatesByPreview > emoji (surrogate pair) straddling position 80 still matches 0ms
+   ✓ findSpamCandidatesByPreview > empty or whitespace preview returns [] 0ms
+   ✓ findSpamCandidatesByPreview > invalid createdAt returns [] 0ms
+   ✓ findSpamCandidatesByPreview > returns at most 3 candidates 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  workers/tests/lib/mailbox-lookup.test.ts > findSpamCandidatesByPreview > Inbox copy is not a candidate
+AssertionError: expected [ …(2) ] to deeply equal []
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- [][39m
+[31m+ [[39m
+[31m+   {[39m
+[31m+     "folder_id": "trash",[39m
+[31m+     "id": "t1",[39m
+[31m+   },[39m
+[31m+   {[39m
+[31m+     "folder_id": "inbox",[39m
+[31m+     "id": "i1",[39m
+[31m+   },[39m
+[31m+ ][39m
+
+ ❯ workers/tests/lib/mailbox-lookup.test.ts:110:58
+    108|   insert({ id: "i1", folder_id: "inbox", date: at(0), body });
+    109|   insert({ id: "t1", folder_id: "trash", date: at(0), body });
+    110|   expect(findSpamCandidatesByPreview(exec, preview, T0)).toEqual([]);
+       |                                                          ^
+    111|  });
+    112| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  22:45:44
+   Duration  309ms (transform 42ms, setup 0ms, collect 37ms, tests 11ms, environment 0ms, prepare 55ms)
+

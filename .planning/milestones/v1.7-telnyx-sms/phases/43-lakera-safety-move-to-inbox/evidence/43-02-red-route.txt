@@ -1,0 +1,384 @@
+
+ RUN  v3.2.6 /Users/rajren/internjobs-cms-wt-43/apps/parrot
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts (16 tests | 16 failed) 27ms
+   × POST /api/ops/safety/:eventId/move-to-inbox > non-operator gets 403 and nothing is touched 15ms
+     → expected 404 to be 403 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > unauthenticated gets 401 1ms
+     → expected 404 to be 401 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > moves a quarantined email from Spam to Inbox (exact source_id match) 1ms
+     → expected 404 to be 200 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > writes an audit line for every outcome 2ms
+     → moved: expected [] to have a length of 1 but got +0
+   × POST /api/ops/safety/:eventId/move-to-inbox > rejects SMS rows and soft flags 1ms
+     → expected 404 to be 400 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > row without employee_id -> 400 no_target_employee 1ms
+     → expected 404 to be 400 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > already in Inbox is a successful no-op 1ms
+     → expected 404 to be 200 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > email in Trash is left alone 1ms
+     → expected 404 to be 200 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, exactly one Spam candidate -> moved (heuristic) 1ms
+     → expected 404 to be 200 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, zero candidates -> 404 not_found 2ms
+     → expected { raw: '404 Not Found' } to match object { ok: false, outcome: 'not_found' }
+(1 matching property omitted from actual)
+   × POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, two candidates -> 409 ambiguous, nothing moved 1ms
+     → expected 404 to be 409 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > source_id present but no match -> not_found, heuristic never consulted 1ms
+     → expected { raw: '404 Not Found' } to match object { outcome: 'not_found' }
+(1 matching property omitted from actual)
+   × POST /api/ops/safety/:eventId/move-to-inbox > unknown event id -> 404 event_not_found 0ms
+     → expected { raw: '404 Not Found' } to match object { outcome: 'event_not_found' }
+(1 matching property omitted from actual)
+   × POST /api/ops/safety/:eventId/move-to-inbox > student API unreachable -> 503 unavailable 0ms
+     → expected 404 to be 503 // Object.is equality
+   × POST /api/ops/safety/:eventId/move-to-inbox > employee missing in workspace -> 404 not_found 0ms
+     → expected { raw: '404 Not Found' } to match object { outcome: 'not_found' }
+(1 matching property omitted from actual)
+   × GET /api/ops/safety > list adds can_move_to_inbox and label, hides source_id 1ms
+     → expected undefined to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  workers/tests/lib/safety-move.test.ts [ workers/tests/lib/safety-move.test.ts ]
+Error: Cannot find module '../../lib/safety-move' imported from '/Users/rajren/internjobs-cms-wt-43/apps/parrot/workers/tests/lib/safety-move.test.ts'
+ ❯ workers/tests/lib/safety-move.test.ts:3:1
+      1| // v1.7 Phase 43-02 (LAK-01/LAK-03, D31, D32): Move-to-Inbox orchestra…
+      2| import { describe, it, expect, vi } from "vitest";
+      3| import {
+       | ^
+      4|  canMoveToInbox,
+      5|  moveQuarantinedToInbox,
+
+Caused by: Error: Failed to load url ../../lib/safety-move (resolved id: ../../lib/safety-move) in /Users/rajren/internjobs-cms-wt-43/apps/parrot/workers/tests/lib/safety-move.test.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:35730:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > non-operator gets 403 and nothing is touched
+AssertionError: expected 404 to be 403 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 403[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:160:20
+    158|   const h = harness({ employee: NON_OPERATOR, exact: { id: "e1", folde…
+    159|   const r = await post(h);
+    160|   expect(r.status).toBe(403);
+       |                    ^
+    161|   expect(h.fetchMock).not.toHaveBeenCalled();
+    162|   expect(h.idFromName).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > unauthenticated gets 401
+AssertionError: expected 404 to be 401 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 401[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:170:20
+    168|   const h = harness({ employee: null });
+    169|   const r = await post(h);
+    170|   expect(r.status).toBe(401);
+       |                    ^
+    171|   expect(h.fetchMock).not.toHaveBeenCalled();
+    172|   expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > moves a quarantined email from Spam to Inbox (exact source_id match)
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:178:20
+    176|   const h = harness({ exact: { id: "email-uuid-1", folder_id: "spam" }…
+    177|   const r = await post(h);
+    178|   expect(r.status).toBe(200);
+       |                    ^
+    179|   expect(r.body).toMatchObject({ ok: true, outcome: "moved", reviewed:…
+    180|   // The TARGET employee's mailbox, not the operator's.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > writes an audit line for every outcome
+AssertionError: moved: expected [] to have a length of 1 but got +0
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:220:29
+    218|    await post(h);
+    219|    const lines = auditLines(logSpy);
+    220|    expect(lines, c.outcome).toHaveLength(1);
+       |                             ^
+    221|    const parsed = JSON.parse(lines[0]);
+    222|    expect(parsed).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > rejects SMS rows and soft flags
+AssertionError: expected 404 to be 400 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:241:21
+    239|   const sms = harness({ rows: [baseRow({ channel: "sms" })], exact: { …
+    240|   const r1 = await post(sms);
+    241|   expect(r1.status).toBe(400);
+       |                     ^
+    242|   expect(r1.body).toMatchObject({ ok: false, outcome: "not_email" });
+    243|   expect(sms.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > row without employee_id -> 400 no_target_employee
+AssertionError: expected 404 to be 400 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:256:20
+    254|   const h = harness({ rows: [baseRow({ employee_id: null })] });
+    255|   const r = await post(h);
+    256|   expect(r.status).toBe(400);
+       |                    ^
+    257|   expect(r.body).toMatchObject({ outcome: "no_target_employee" });
+    258|   expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > already in Inbox is a successful no-op
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:264:20
+    262|   const h = harness({ exact: { id: "e1", folder_id: "inbox" } });
+    263|   const r = await post(h);
+    264|   expect(r.status).toBe(200);
+       |                    ^
+    265|   expect(r.body).toMatchObject({ ok: true, outcome: "already_in_inbox"…
+    266|   expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > email in Trash is left alone
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:273:20
+    271|   const h = harness({ exact: { id: "e1", folder_id: "trash" } });
+    272|   const r = await post(h);
+    273|   expect(r.status).toBe(200);
+       |                    ^
+    274|   expect(r.body).toMatchObject({ outcome: "elsewhere", folder: "trash"…
+    275|   expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, exactly one Spam candidate -> moved (heuristic)
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:286:21
+    284|    });
+    285|    const r = await post(h);
+    286|    expect(r.status).toBe(200);
+       |                     ^
+    287|    expect(r.body).toMatchObject({ outcome: "moved" });
+    288|    expect(h.mailbox.moveEmail).toHaveBeenCalledWith("c1", "inbox");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, zero candidates -> 404 not_found
+AssertionError: expected { raw: '404 Not Found' } to match object { ok: false, outcome: 'not_found' }
+(1 matching property omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": false,[39m
+[32m-   "outcome": "not_found",[39m
+[31m+   "raw": "404 Not Found",[39m
+[2m  }[22m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:297:19
+    295|    const r = await post(h);
+    296|    expect(r.status).toBe(404);
+    297|    expect(r.body).toMatchObject({ ok: false, outcome: "not_found" });
+       |                   ^
+    298|    expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+    299|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > no source_id, two candidates -> 409 ambiguous, nothing moved
+AssertionError: expected 404 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:310:21
+    308|    });
+    309|    const r = await post(h);
+    310|    expect(r.status).toBe(409);
+       |                     ^
+    311|    expect(r.body).toMatchObject({ ok: false, outcome: "ambiguous" });
+    312|    expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > D32 matching > source_id present but no match -> not_found, heuristic never consulted
+AssertionError: expected { raw: '404 Not Found' } to match object { outcome: 'not_found' }
+(1 matching property omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "outcome": "not_found",[39m
+[31m+   "raw": "404 Not Found",[39m
+[2m  }[22m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:320:19
+    318|    const r = await post(h);
+    319|    expect(r.status).toBe(404);
+    320|    expect(r.body).toMatchObject({ outcome: "not_found" });
+       |                   ^
+    321|    expect(h.mailbox.findSpamCandidatesByPreview).not.toHaveBeenCalled(…
+    322|    expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > unknown event id -> 404 event_not_found
+AssertionError: expected { raw: '404 Not Found' } to match object { outcome: 'event_not_found' }
+(1 matching property omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "outcome": "event_not_found",[39m
+[31m+   "raw": "404 Not Found",[39m
+[2m  }[22m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:330:18
+    328|   const r = await post(h, "evt-missing");
+    329|   expect(r.status).toBe(404);
+    330|   expect(r.body).toMatchObject({ outcome: "event_not_found" });
+       |                  ^
+    331|   expect(h.idFromName).not.toHaveBeenCalled();
+    332|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > student API unreachable -> 503 unavailable
+AssertionError: expected 404 to be 503 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 503[39m
+[31m+ 404[39m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:337:21
+    335|   const h1 = harness({ listStatus: "throw" });
+    336|   const r1 = await post(h1);
+    337|   expect(r1.status).toBe(503);
+       |                     ^
+    338|   expect(r1.body).toMatchObject({ ok: false, outcome: "unavailable" });
+    339|   vi.unstubAllGlobals();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > POST /api/ops/safety/:eventId/move-to-inbox > employee missing in workspace -> 404 not_found
+AssertionError: expected { raw: '404 Not Found' } to match object { outcome: 'not_found' }
+(1 matching property omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "outcome": "not_found",[39m
+[31m+   "raw": "404 Not Found",[39m
+[2m  }[22m
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:350:18
+    348|   const r = await post(h);
+    349|   expect(r.status).toBe(404);
+    350|   expect(r.body).toMatchObject({ outcome: "not_found" });
+       |                  ^
+    351|   expect(h.idFromName).not.toHaveBeenCalled();
+    352|   expect(h.mailbox.moveEmail).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/17]⎯
+
+ FAIL  workers/tests/routes/ops-safety-move.test.ts > GET /api/ops/safety > list adds can_move_to_inbox and label, hides source_id
+AssertionError: expected undefined to be true // Object.is equality
+
+[32m- Expected:[39m 
+true
+
+[31m+ Received:[39m 
+undefined
+
+ ❯ workers/tests/routes/ops-safety-move.test.ts:370:36
+    368|   const data = (await res.json()) as { events: Array<Record<string, un…
+    369|   const byId = Object.fromEntries(data.events.map((e) => [e.id, e]));
+    370|   expect(byId.a.can_move_to_inbox).toBe(true);
+       |                                    ^
+    371|   expect(byId.b.can_move_to_inbox).toBe(false);
+    372|   expect(byId.c.can_move_to_inbox).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/17]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  16 failed (16)
+   Start at  22:47:28
+   Duration  338ms (transform 57ms, setup 0ms, collect 47ms, tests 27ms, environment 0ms, prepare 134ms)
+

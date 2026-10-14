@@ -1,0 +1,6 @@
+# npm run build (apps/parrot, worktree HEAD 8c6b66e) exit 0
+build/server/index.js                                0.19 kB
+build/server/assets/confetti.module-CPOfaW5T.js     23.04 kB
+build/server/assets/worker-entry-DMtwL6y7.js     1,031.87 kB
+build/server/assets/server-build-DGCW4Xl4.js     2,027.59 kB
+✓ built in 1.85s

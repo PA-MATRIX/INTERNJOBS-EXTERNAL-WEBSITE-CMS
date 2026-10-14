@@ -1,0 +1,27 @@
+
+ RUN  v3.2.6 /Users/rajren/internjobs-cms-wt-43/apps/parrot
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  workers/tests/lib/mailbox-lookup.test.ts [ workers/tests/lib/mailbox-lookup.test.ts ]
+Error: Cannot find module '../../lib/mailbox-lookup' imported from '/Users/rajren/internjobs-cms-wt-43/apps/parrot/workers/tests/lib/mailbox-lookup.test.ts'
+ ❯ workers/tests/lib/mailbox-lookup.test.ts:11:1
+      9| import { describe, it, expect, beforeEach } from "vitest";
+     10| import { employeeMailboxMigrations } from "../../durableObject/migrati…
+     11| import {
+       | ^
+     12|  findEmailBySourceId,
+     13|  findSpamCandidatesByPreview,
+
+Caused by: Error: Failed to load url ../../lib/mailbox-lookup (resolved id: ../../lib/mailbox-lookup) in /Users/rajren/internjobs-cms-wt-43/apps/parrot/workers/tests/lib/mailbox-lookup.test.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:35730:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  22:45:14
+   Duration  305ms (transform 36ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 41ms)
+
