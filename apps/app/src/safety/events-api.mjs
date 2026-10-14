@@ -12,6 +12,43 @@
 // Returns an async (req, res, url) => boolean; true means the request was
 // handled (a response was sent).
 
+const SOURCE_ID_MAX = 512;
+
+// Message identifier from the Worker (email Message-ID). Anything that is not
+// a 1..512 char string after trimming is stored as NULL; the row is never
+// rejected because of it.
+export function normaliseSourceId(value) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed.length === 0 || trimmed.length > SOURCE_ID_MAX) return null;
+  return trimmed;
+}
+
+// pg 42703 = undefined_column (migration 0015 not applied yet).
+function isUndefinedColumn(err) {
+  return err?.code === "42703";
+}
+
+function logSourceIdColumnMissing(op) {
+  // Never log source_id values or previews.
+  console.warn(JSON.stringify({ level: "warn", event: "safety_events_source_id_column_missing", op }));
+}
+
+const LEGACY_LIST_COLUMNS = `id, channel, action, reason, score, sender_last4, preview,
+                  employee_id, reviewed, reviewed_at, created_at`;
+const LIST_COLUMNS = `${LEGACY_LIST_COLUMNS}, source_id`;
+
+// The visible log window. Shared with "mark all reviewed" (see below).
+const VISIBLE_WINDOW = "7 days";
+
+function listSql(columns) {
+  return `select ${columns}
+             from safety_events
+            where created_at > now() - interval '${VISIBLE_WINDOW}'
+            order by created_at desc
+            limit 100`;
+}
+
 export function createSafetyEventsHandler({ store, config, readBody, sendJson, safeStringEqual }) {
   return async function handleSafetyEvents(req, res, url) {
     if (!(url.pathname === "/internal/safety-events" || url.pathname.startsWith("/internal/safety-events/"))) {
@@ -40,21 +77,35 @@ export function createSafetyEventsHandler({ store, config, readBody, sendJson, s
         sendJson(res, 400, { error: "bad_json" });
         return true;
       }
+      const legacyParams = [
+        body.channel ?? "unknown",
+        body.action ?? "flagged",
+        body.reason ?? null,
+        body.score ?? null,
+        body.sender_last4 ?? null,
+        body.preview ?? null,
+        body.employee_id ?? null,
+      ];
       try {
-        await store.pool.query(
-          `insert into safety_events
-             (channel, action, reason, score, sender_last4, preview, employee_id, reviewed)
-           values ($1, $2, $3, $4, $5, $6, $7, false)`,
-          [
-            body.channel ?? "unknown",
-            body.action ?? "flagged",
-            body.reason ?? null,
-            body.score ?? null,
-            body.sender_last4 ?? null,
-            body.preview ?? null,
-            body.employee_id ?? null,
-          ],
-        );
+        try {
+          await store.pool.query(
+            `insert into safety_events
+               (channel, action, reason, score, sender_last4, preview, employee_id, reviewed, source_id)
+             values ($1, $2, $3, $4, $5, $6, $7, false, $8)`,
+            [...legacyParams, normaliseSourceId(body.source_id)],
+          );
+        } catch (err) {
+          // Fly deploy can land before migration 0015 (or a rollback after it):
+          // keep the row, just without source_id.
+          if (!isUndefinedColumn(err)) throw err;
+          logSourceIdColumnMissing("insert");
+          await store.pool.query(
+            `insert into safety_events
+               (channel, action, reason, score, sender_last4, preview, employee_id, reviewed)
+             values ($1, $2, $3, $4, $5, $6, $7, false)`,
+            legacyParams,
+          );
+        }
         sendJson(res, 200, { ok: true });
       } catch (err) {
         console.error(JSON.stringify({ level: "error", event: "safety_events_write_failed", error: err?.message ?? String(err) }));
@@ -66,14 +117,15 @@ export function createSafetyEventsHandler({ store, config, readBody, sendJson, s
     // GET /internal/safety-events — paginated flag log (last 100, 7 days).
     if (req.method === "GET" && url.pathname === "/internal/safety-events") {
       try {
-        const { rows } = await store.pool.query(
-          `select id, channel, action, reason, score, sender_last4, preview,
-                  employee_id, reviewed, reviewed_at, created_at
-             from safety_events
-            where created_at > now() - interval '7 days'
-            order by created_at desc
-            limit 100`,
-        );
+        let rows;
+        try {
+          ({ rows } = await store.pool.query(listSql(LIST_COLUMNS)));
+        } catch (err) {
+          // Same deploy-before-migration window as the insert above.
+          if (!isUndefinedColumn(err)) throw err;
+          logSourceIdColumnMissing("select");
+          ({ rows } = await store.pool.query(listSql(LEGACY_LIST_COLUMNS)));
+        }
         sendJson(res, 200, { events: rows, total: rows.length });
       } catch (err) {
         console.error(JSON.stringify({ level: "error", event: "ops_safety_query_failed", error: err?.message ?? String(err) }));
