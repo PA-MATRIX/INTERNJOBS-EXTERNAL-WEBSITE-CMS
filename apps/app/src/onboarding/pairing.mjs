@@ -7,8 +7,9 @@
 //      stores it in `pairing_sessions` (migration 0008).
 //   3. Code is encoded into an sms:// URI ("sms:+14063210019&body=START-AB12CD")
 //      and rendered as a QR (desktop) or a button (mobile).
-//   4. Student texts the code from their iPhone; the Mac bridge forwards the
-//      iMessage to /webhooks/mac-bridge.
+//   4. Student texts the code from their phone by SMS; Telnyx POSTs the
+//      message to /webhooks/telnyx/sms (v1.7 Phase 44). Until the Phase 46
+//      cutover the live number still arrives via /webhooks/mac-bridge.
 //   5. The webhook calls parsePairingCode() on the body; if it matches, it
 //      calls claimPairingCode(code, phone) which atomically:
 //         - SELECT ... FOR UPDATE the pairing_sessions row
@@ -22,7 +23,7 @@
 // Code format: `START-` prefix + 6 chars from a 32-char alphabet that
 // excludes the visually ambiguous I/L/0/1/O. 6 chars × 32 alphabet =
 // ~1 billion codes, plenty given 24h TTL + claim-once + ~hundreds of
-// students/day. Reading the code aloud or typing it on an iPhone keyboard
+// students/day. Reading the code aloud or typing it on a phone keyboard
 // is the main UX constraint.
 //
 // The `pairing_sessions` table is keyed by code (text PK) — no UUID
@@ -85,7 +86,7 @@ export async function generatePairingCode(pool, studentId, opts = {}) {
 /**
  * Parse a pairing code from an inbound message body.
  *
- * @param {string} text  Inbound iMessage / SMS body.
+ * @param {string} text  Inbound SMS body.
  * @returns {string | null}  The matched code (uppercased) or null.
  */
 export function parsePairingCode(text) {
@@ -105,16 +106,18 @@ export function parsePairingCode(text) {
  *
  * @param {import('pg').Pool} pool
  * @param {string} code   The full pairing code (e.g. 'START-AB12CD').
- * @param {string} phone  The phone that sent the iMessage.
+ * @param {string} phone  The phone that sent the text (E.164 on the Telnyx path).
  * @param {object} [opts]
- * @param {string} [opts.channelType='imessage']  Recorded on the student row.
+ * @param {string} [opts.channelType='sms']  Recorded on the student row. Both
+ *   inbound routes pass it explicitly (inbound.channelType); the default only
+ *   applies to callers that omit it.
  * @returns {Promise<{ok: true, studentId: string} | {ok: false, reason: string}>}
  */
 export async function claimPairingCode(pool, code, phone, opts = {}) {
   if (!pool) throw new Error("claimPairingCode: pool is required");
   if (!code || !phone) return { ok: false, reason: "missing_args" };
 
-  const channelType = opts.channelType || "imessage";
+  const channelType = opts.channelType || "sms";
   const client = await pool.connect();
   try {
     await client.query("begin");
