@@ -29,3 +29,4 @@
 ## D34 (2026-10-15): route gate
 - `/webhooks/telnyx/sms` is active when `TELNYX_WEBHOOK_PUBLIC_KEY` is configured (fail closed without it); NOT gated on `SMS_PROVIDER`. This enables a signed canary in Phase 45/46 before the outbound flip. Phase 46 still flips `SMS_PROVIDER` for outbound.
 - The 44-05 pairing-page visual check is deferred to the Phase 46 UAT (recorded decision, not just plan text).
+- D34 clarification (2026-10-15, orchestrator reading of Raj's choice; revisit if Raj objects): replies to messages that ARRIVE on the Telnyx route go out through the Telnyx provider (reply on the channel the student used), even while `SMS_PROVIDER=mac-bridge`. Every other outbound path (mac-bridge/spectrum routes, agent-initiated sends) follows `SMS_PROVIDER`. This is what makes the signed canary a true round trip.
