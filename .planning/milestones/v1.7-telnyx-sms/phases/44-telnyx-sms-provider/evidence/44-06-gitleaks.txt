@@ -1,0 +1,20 @@
+# 44-06 gitleaks 8.30.1, worktree HEAD f842749, 2026-10-15T05:30:28Z
+## NEGATIVE CONTROL: planted freshly generated live-key-shaped string in apps/app/src/zz-scratch-secret.txt (scratch, never committed)
+12:30AM INF scanned ~736146 bytes (736.15 KB) in 432ms
+12:30AM WRN leaks found: 1
+negctl exit: 1
+scratch file removed: yes
+
+## REAL SCAN 1: gitleaks detect --source . --log-opts "origin/main..HEAD" --redact --no-banner (23 commits)
+12:30AM INF 23 commits scanned.
+12:30AM INF scanned ~182778 bytes (182.78 KB) in 134ms
+12:30AM INF no leaks found
+scan1 exit: 0
+
+## REAL SCAN 2: gitleaks detect --no-git --source apps/app --redact --no-banner
+12:30AM INF scanned ~736091 bytes (736.09 KB) in 159ms
+12:30AM INF no leaks found
+scan2 exit: 0
+
+## git status --short after scans:
+(end status)

@@ -1,0 +1,91 @@
+# 44-06 preflight: per-file loop, worktree HEAD f842749, 2026-10-15T05:29:47Z
+# TEST_DATABASE_URL=postgres://postgres@127.0.0.1:54339/postgres?sslmode=disable (throwaway PG16)
+files: 20; TEST_DATABASE_URL set: true
+PASS src/auth.test.mjs # tests 15 # pass 15 # fail 0 # skipped 0
+PASS src/safety/screen.test.mjs # tests 5 # pass 5 # fail 0 # skipped 0
+PASS src/safety/events-api.test.mjs # tests 14 # pass 14 # fail 0 # skipped 0
+PASS src/config.test.mjs # tests 9 # pass 9 # fail 0 # skipped 0
+PASS src/sms/shared.test.mjs # tests 7 # pass 7 # fail 0 # skipped 0
+PASS src/sms/mac-bridge.test.mjs # tests 14 # pass 14 # fail 0 # skipped 0
+PASS src/sms/telnyx.test.mjs # tests 14 # pass 14 # fail 0 # skipped 0
+PASS src/sms/opt-out-store.test.mjs # tests 17 # pass 17 # fail 0 # skipped 0
+PASS src/sms/telnyx-optout.test.mjs # tests 6 # pass 6 # fail 0 # skipped 0
+PASS src/sms/inbound-handler.test.mjs # tests 31 # pass 31 # fail 0 # skipped 0
+PASS src/sms/mac-bridge-route.e2e.test.mjs # tests 5 # pass 5 # fail 0 # skipped 0
+PASS src/sms/mac-bridge-route-pg.e2e.test.mjs # tests 4 # pass 4 # fail 0 # skipped 0
+PASS src/store.test.mjs # tests 4 # pass 4 # fail 0 # skipped 0
+PASS src/sms/inbound-handler-telnyx.test.mjs # tests 22 # pass 22 # fail 0 # skipped 0
+PASS src/sms/registry.test.mjs # tests 5 # pass 5 # fail 0 # skipped 0
+PASS src/sms/telnyx-route.e2e.test.mjs # tests 6 # pass 6 # fail 0 # skipped 0
+PASS src/views.test.mjs # tests 2 # pass 2 # fail 0 # skipped 0
+PASS src/onboarding/pairing.test.mjs # tests 4 # pass 4 # fail 0 # skipped 0
+PASS src/sms/pairing-chain.test.mjs # tests 4 # pass 4 # fail 0 # skipped 0
+PASS src/config-env-example.test.mjs # tests 2 # pass 2 # fail 0 # skipped 0
+ALL PASS
+loop exit: 0
+
+## registration check (:(glob) pathspec, per 44-01 amendment), HEAD f842749
+branch-added test files: 17; unregistered: 0
+exit 0
+
+## smoke build: npm run build --workspace apps/app
+
+> @internjobs/app@0.1.0 build
+> node scripts/verify-app.mjs
+
+internjobs-app: waitlist smoke checks passed
+build exit: 0
+
+## local Postgres stopped and data dir deleted
+
+## diff scope: git diff origin/main --stat (origin/main 951e103; left/right 0	23)
+ apps/app/.env.example                             |  18 +-
+ apps/app/db/migrations/0016_v1_7_sms_opt_outs.sql |  23 +
+ apps/app/package.json                             |   2 +-
+ apps/app/src/config-env-example.test.mjs          |  66 +++
+ apps/app/src/config.mjs                           |  30 +-
+ apps/app/src/config.test.mjs                      | 100 ++++
+ apps/app/src/onboarding/pairing.mjs               |  17 +-
+ apps/app/src/onboarding/pairing.test.mjs          | 101 ++++
+ apps/app/src/server.mjs                           | 411 +++------------
+ apps/app/src/sms/inbound-handler-telnyx.test.mjs  | 377 ++++++++++++++
+ apps/app/src/sms/inbound-handler.mjs              | 419 +++++++++++++++
+ apps/app/src/sms/inbound-handler.test.mjs         | 588 ++++++++++++++++++++++
+ apps/app/src/sms/mac-bridge-route-pg.e2e.test.mjs | 301 +++++++++++
+ apps/app/src/sms/mac-bridge-route.e2e.test.mjs    | 110 ++++
+ apps/app/src/sms/mac-bridge.mjs                   |   9 +-
+ apps/app/src/sms/mac-bridge.test.mjs              | 105 ++++
+ apps/app/src/sms/opt-out-store.mjs                |  97 ++++
+ apps/app/src/sms/opt-out-store.test.mjs           | 159 ++++++
+ apps/app/src/sms/pairing-chain.test.mjs           | 254 ++++++++++
+ apps/app/src/sms/registry.mjs                     |  50 ++
+ apps/app/src/sms/registry.test.mjs                |  83 +++
+ apps/app/src/sms/shared.mjs                       |  67 +++
+ apps/app/src/sms/shared.test.mjs                  |  83 +++
+ apps/app/src/sms/telnyx-optout.test.mjs           | 138 +++++
+ apps/app/src/sms/telnyx-route.e2e.test.mjs        | 376 ++++++++++++++
+ apps/app/src/sms/telnyx.mjs                       | 199 ++++++++
+ apps/app/src/sms/telnyx.test.mjs                  | 331 ++++++++++++
+ apps/app/src/store.mjs                            |  19 +
+ apps/app/src/store.test.mjs                       |  73 +++
+ apps/app/src/views.mjs                            |  20 +-
+ apps/app/src/views.test.mjs                       |  57 +++
+ 31 files changed, 4318 insertions(+), 365 deletions(-)
+
+## paths outside apps/app/:
+(none)
+
+## git diff origin/main --stat -- package-lock.json apps/app/fly.toml .github (must be empty)
+(end; lines: 0)
+
+## webhooks/telnyx/sms route in server.mjs
+apps/app/src/server.mjs:900:    if (req.method === "POST" && url.pathname === "/webhooks/telnyx/sms") {
+
+## api.telnyx.com outside tests
+apps/app/src/config.mjs:108:      apiBase: env.TELNYX_API_BASE || "https://api.telnyx.com",
+
+## console.log in telnyx.mjs shared.mjs opt-out-store.mjs (must be empty)
+(grep exit 1)
+
+## SMS_PROVIDER in fly.toml (unchanged)
+11:  SMS_PROVIDER = "mac-bridge"

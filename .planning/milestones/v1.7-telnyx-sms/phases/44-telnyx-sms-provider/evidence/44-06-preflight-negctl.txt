@@ -1,0 +1,122 @@
+# 44-06 negative control: OPT-01 guard call replaced with if(false) in apps/app/src/sms/telnyx.mjs
+diff --git a/apps/app/src/sms/telnyx.mjs b/apps/app/src/sms/telnyx.mjs
+index 8ebc0fe..fad04fc 100644
+--- a/apps/app/src/sms/telnyx.mjs
++++ b/apps/app/src/sms/telnyx.mjs
+@@ -167,7 +167,7 @@ async function sendViaTelnyx(to, body, telnyx, fetchImpl, isOptedOut) {
+   // cannot be read, do not send. The caught error is dropped on purpose (its
+   // text may carry the phone number).
+   try {
+-    if (await isOptedOut(destination)) {
++    if (false /* 44-06 negctl: guard removed */) {
+       return {
+         providerMessageId: null,
+         status: "provider_error",
+files: 20; TEST_DATABASE_URL set: true
+PASS src/auth.test.mjs # tests 15 # pass 15 # fail 0 # skipped 0
+PASS src/safety/screen.test.mjs # tests 5 # pass 5 # fail 0 # skipped 0
+PASS src/safety/events-api.test.mjs # tests 14 # pass 14 # fail 0 # skipped 0
+PASS src/config.test.mjs # tests 9 # pass 9 # fail 0 # skipped 0
+PASS src/sms/shared.test.mjs # tests 7 # pass 7 # fail 0 # skipped 0
+PASS src/sms/mac-bridge.test.mjs # tests 14 # pass 14 # fail 0 # skipped 0
+PASS src/sms/telnyx.test.mjs # tests 14 # pass 14 # fail 0 # skipped 0
+PASS src/sms/opt-out-store.test.mjs # tests 17 # pass 17 # fail 0 # skipped 0
+FAIL src/sms/telnyx-optout.test.mjs (exit 1) # tests 6 # pass 2 # fail 4 # skipped 0
+not ok 1 - never sends to an opted-out number
+not ok 2 - guard receives the normalised E.164 and runs before fetch
+not ok 3 - guard failure fails closed
+not ok 6 - routeAndSend surfaces an opted-out recipient as a failed draft
+code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'provider_error'
+  actual: 'sent'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:52:10)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: guard receives the normalised E.164 and runs before fetch
+not ok 2 - guard receives the normalised E.164 and runs before fetch
+  ---
+  duration_ms: 0.494
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:65:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   '+15555550123'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '+15555550123'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:68:10)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: guard failure fails closed
+not ok 3 - guard failure fails closed
+  ---
+  duration_ms: 0.213375
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:72:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'sent'
+    - 'provider_error'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'provider_error'
+  actual: 'sent'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:79:10)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: guard cannot be omitted
+ok 4 - guard cannot be omitted
+  ---
+  duration_ms: 0.206708
+  ...
+# Subtest: Telnyx 40300 is recorded as opted out, not retried
+ok 5 - Telnyx 40300 is recorded as opted out, not retried
+  ---
+  duration_ms: 0.846375
+  ...
+# Subtest: routeAndSend surfaces an opted-out recipient as a failed draft
+not ok 6 - routeAndSend surfaces an opted-out recipient as a failed draft
+  ---
+  duration_ms: 0.309833
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:118:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-optout.test.mjs:121:3)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 2
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 79.740875
+
+loop exit: 1
