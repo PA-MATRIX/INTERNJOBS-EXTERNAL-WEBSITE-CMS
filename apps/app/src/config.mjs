@@ -1,3 +1,5 @@
+import { toE164 } from "./sms/shared.mjs";
+
 export function getConfig(env = process.env) {
   const isProduction = env.NODE_ENV === "production";
 
@@ -95,9 +97,20 @@ export function getConfig(env = process.env) {
       url: env.BRIDGE_URL || env.MAC_BRIDGE_URL || "",
       hmacSecret: env.BRIDGE_HMAC_SECRET || "",
     },
+    // v1.7 Phase 44: Telnyx SMS (D26/D27). Webhook verification fails closed
+    // when publicKey is empty. apiBase is overridable so tests can point at
+    // a local stub; production uses the default.
+    telnyx: {
+      apiKey: env.TELNYX_API_KEY || "",
+      fromNumber: env.TELNYX_FROM_NUMBER || "",
+      messagingProfileId: env.TELNYX_MESSAGING_PROFILE_ID || "",
+      publicKey: env.TELNYX_WEBHOOK_PUBLIC_KEY || "",
+      apiBase: env.TELNYX_API_BASE || "https://api.telnyx.com",
+    },
     // SMS provider selector. Production uses 'mac-bridge' (BlueBubbles on
     // the self-hosted Mac). The legacy Spectrum/Photon webhook remains
     // wired only for old callbacks/tests and should not drive QR numbers.
+    // 'telnyx' (v1.7 Phase 44) selects the Telnyx Messages API provider.
     smsProviderName: (env.SMS_PROVIDER || "spectrum").toLowerCase(),
     // v1.2 Phase 09 — Standout-style LinkedIn enrichment.
     // Bright Data is the URL→profile provider. Empty token means QR still
@@ -106,9 +119,10 @@ export function getConfig(env = process.env) {
       apiToken: env.BRIGHTDATA_API_TOKEN || "",
       linkedinProfileDatasetId: env.BRIGHTDATA_LINKEDIN_PROFILE_DATASET_ID || "gd_l1viktl72bvl7bjuj0",
     },
-    // onboarding.agentNumber — the iMessage number students text the
+    // onboarding.agentNumber — the number students text the
     //   START-XXXXXX pairing code to. Defaults to the prod number
-    //   +14063210019 (Mac mini bridge). Override per environment via
+    //   +14063210019 (to be ported to Telnyx, D27; TELNYX_FROM_NUMBER must
+    //   equal it when SMS_PROVIDER=telnyx). Override per environment via
     //   AGENT_NUMBER. Used by views.renderOnboardingQR /
     //   renderOnboardingMobile to build the sms:// URI + the human-
     //   readable copy.
@@ -131,6 +145,18 @@ export function getMissingProviderConfig(config) {
   if (config.smsProviderName === "mac-bridge") {
     if (!config.macBridge.url) missing.push("BRIDGE_URL or MAC_BRIDGE_URL");
     if (!config.macBridge.hmacSecret) missing.push("BRIDGE_HMAC_SECRET");
+  }
+  if (config.smsProviderName === "telnyx") {
+    const telnyx = config.telnyx || {};
+    if (!telnyx.apiKey) missing.push("TELNYX_API_KEY");
+    if (!telnyx.fromNumber) missing.push("TELNYX_FROM_NUMBER");
+    if (!telnyx.publicKey) missing.push("TELNYX_WEBHOOK_PUBLIC_KEY");
+    // D27: the ported student number is the only number; the QR/deep link
+    // (AGENT_NUMBER) and the Telnyx sender must be the same line.
+    const agent = config.onboarding.agentNumber;
+    if (telnyx.fromNumber && agent && toE164(telnyx.fromNumber) !== toE164(agent)) {
+      missing.push("TELNYX_FROM_NUMBER must equal AGENT_NUMBER");
+    }
   }
   const spectrumActive =
     config.smsProviderName === "spectrum" || config.enableSpectrumListener;

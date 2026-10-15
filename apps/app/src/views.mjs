@@ -292,15 +292,17 @@ export function renderSavedProfile() {
 // ─── v1.2 Phase 09 — Standout-style onboarding (QR + sms deep-link) ─────────
 //
 // renderOnboardingQR is the desktop landing rendered after Clerk LinkedIn
-// OAuth + Bright Data enrichment. The QR encodes an sms:// URI that, when
-// scanned by an iPhone camera, prompts the user to open Messages.app
-// prefilled with the agent's number + the pairing code as the body. The
-// student taps send; the Mac bridge picks up the iMessage and POSTs to
-// /webhooks/mac-bridge, which calls claimPairingCode and binds the phone.
+// OAuth + Bright Data enrichment. The QR encodes an sms: URI that, when
+// scanned by a phone camera, opens the phone's text messages app prefilled
+// with the agent's number + the pairing code as the body. The student taps
+// send; the text arrives as an SMS at Telnyx, which POSTs it to
+// /webhooks/telnyx/sms, which calls claimPairingCode and binds the phone
+// (v1.7 Phase 44, PAIR-01). Until the Phase 46 cutover the live number is
+// still served by /webhooks/mac-bridge, which runs the same claim.
 //
 // renderOnboardingMobile is the mobile-UA variant — no QR (the phone IS
-// the QR-scanning device), just a big button whose href IS the sms:// URI.
-// On iOS this opens Messages.app prefilled.
+// the QR-scanning device), just a big button whose href IS the sms: URI.
+// It opens the text messages app prefilled (iOS and Android).
 //
 // Both pages poll /onboard/status every 3s and redirect to /onboard/success
 // once paired. The polling JS is inlined here (no separate static asset)
@@ -317,7 +319,7 @@ export async function renderOnboardingQR({ pairingCode, smsUri, agentNumber }) {
       <div class="panel">
         <p class="eyebrow">Step 2 of 2</p>
         <h1>Scan it. Send the text.</h1>
-        <p class="lede">Scan with your iPhone camera. It opens Messages with the right number + code already filled in. Tap send.</p>
+        <p class="lede">Scan with your phone camera. It opens your text messages with the number and code already filled in. Tap send.</p>
         <div class="qr-wrap"><img src="${qrDataUrl}" alt="QR code for pairing InternJobs.ai messages" /></div>
         <p class="fine">We've already pulled your LinkedIn — your first agent message will be contextual.</p>
       </div>
@@ -374,7 +376,7 @@ export function renderOnboardingMobile({ pairingCode, smsUri, agentNumber }) {
     <section class="panel narrow">
       <p class="eyebrow">Almost done</p>
       <h1>Open Messages to confirm.</h1>
-      <p class="lede">We'll send the code through iMessage so your number is bound to your profile. Your first agent message will reference your LinkedIn.</p>
+      <p class="lede">We'll send the code by text message so your number is bound to your profile. Your first agent message will reference your LinkedIn.</p>
       <a class="button primary" href="${escapeHtml(smsUri)}">Open Messages to confirm</a>
       <p class="fine">Or text <strong>${escapeHtml(pairingCode)}</strong> to <strong>${escapeHtml(agentNumber)}</strong>.</p>
       <p class="fine" id="pair-status">Waiting for your text…</p>

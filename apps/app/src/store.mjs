@@ -1,6 +1,7 @@
 import { randomUUID, createHash, randomBytes } from "node:crypto";
 import pg from "pg";
 import { writeStudentEmbedding, logEmbedErr } from "./embeddings.mjs";
+import { createMemoryOptOutStore, createPgOptOutStore } from "./sms/opt-out-store.mjs";
 
 const { Pool } = pg;
 
@@ -56,6 +57,8 @@ export function eventIdFromPayload(payload) {
 
 class MemoryStore {
   constructor() {
+    // v1.7 Phase 44-02 (OPT-01): per-number SMS opt-out state.
+    this.optOuts = createMemoryOptOutStore();
     this.students = new Map();
     this.pairingCodes = new Map();
     this.messagingEvents = new Set();
@@ -284,6 +287,11 @@ class MemoryStore {
 
   async writeMessagingEvent(event) {
     this.messagingEvents.add(event.providerEventId);
+  }
+
+  // v1.7 Phase 44-04 (SMS-03): early-dedupe lookup for the Telnyx handler.
+  async hasMessagingEvent(provider, providerEventId) {
+    return this.messagingEvents.has(providerEventId) || this.messagingEvents.has(`${provider}:${providerEventId}`);
   }
 
   async markWelcomeSent(studentId, deliveryStatus, metadata = {}) {
@@ -583,6 +591,8 @@ class PostgresStore {
       connectionString: databaseUrl,
       ssl: databaseUrl.includes("sslmode=disable") ? false : { rejectUnauthorized: false },
     });
+    // v1.7 Phase 44-02 (OPT-01): per-number SMS opt-out state (sms_opt_outs).
+    this.optOuts = createPgOptOutStore(this.pool);
   }
 
   async upsertStudentFromAuth(auth) {
@@ -892,6 +902,15 @@ class PostgresStore {
       await this.writeAuditEvent(student.id, "student_reply_received", "provider", { channelType });
     }
     return { duplicate: false, student, welcomeNeeded: false, eventType };
+  }
+
+  // v1.7 Phase 44-04 (SMS-03): early-dedupe lookup for the Telnyx handler.
+  async hasMessagingEvent(provider, providerEventId) {
+    const { rows } = await this.pool.query(
+      "select 1 from messaging_events where provider = $1 and provider_event_id = $2 limit 1",
+      [provider, providerEventId],
+    );
+    return rows.length > 0;
   }
 
   async writeMessagingEvent(event) {

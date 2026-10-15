@@ -5,8 +5,8 @@ import { getAuth, getSignInUrl, getStartupSignInUrl, requireStartupAuth, require
 import { readBody, readForm, redirect, sendHtml, sendJson, getClientIp } from "./http.mjs";
 import { createStore, hasLinkedInProfileUrl } from "./store.mjs";
 import { createWelcomeText } from "./messaging.mjs";
-import { createSpectrumSmsProvider } from "./sms/spectrum.mjs";
-import { createMacBridgeSmsProvider } from "./sms/mac-bridge.mjs";
+import { createSmsProviders, isTelnyxRouteEnabled, buildTelnyxInboundOptions } from "./sms/registry.mjs";
+import { createInboundSmsHandler, LEGACY_HARD_BLOCK_REPLY } from "./sms/inbound-handler.mjs";
 import { startSpectrumWaitlistListener } from "./spectrum-listener.mjs";
 import { initMastra, isMastraReady } from "./mastra.mjs";
 import { runStudentInboundWorkflow } from "./workflows/student-inbound.mjs";
@@ -61,8 +61,52 @@ const safetyEventsHandler = createSafetyEventsHandler({ store, config, readBody,
 // SMS_PROVIDER=mac-bridge: BlueBubbles on the self-hosted Mac mini is the
 // active path. Legacy Photon/Spectrum routes stay wired for old callbacks
 // and tests, but they do not define the visible pairing number.
-const spectrumProvider = createSpectrumSmsProvider(config);
-const macBridgeProvider = createMacBridgeSmsProvider(config);
+// v1.7 Phase 44-04: providers come from the registry, which gives the Telnyx
+// provider the store's opt-out table (OPT-01).
+const smsProviders = createSmsProviders(config, { store });
+const spectrumProvider = smsProviders.spectrum;
+const macBridgeProvider = smsProviders["mac-bridge"];
+const telnyxProvider = smsProviders.telnyx;
+
+// v1.7 Phase 44-03: shared inbound SMS handler, mac-bridge profile.
+// ensureLinkedInProfileForFirstContact and createUnknownSenderText are hoisted
+// function declarations further down this file.
+const macBridgeInbound = createInboundSmsHandler({
+  providerName: "mac-bridge",
+  provider: macBridgeProvider,
+  store,
+  config,
+  screenMessage,
+  runStudentInboundWorkflow,
+  claimPairingCode,
+  parsePairingCode,
+  ensureLinkedInProfileForFirstContact,
+  createUnknownSenderText,
+  createWelcomeText,
+  hardBlockReply: LEGACY_HARD_BLOCK_REPLY,
+  readBody,
+  sendJson,
+  ackEarly: false,
+});
+
+// v1.7 Phase 44-04: shared inbound SMS handler, Telnyx profile. The option set
+// comes from buildTelnyxInboundOptions (registry.mjs) so the 44-05 chain test
+// uses exactly what the server uses. Replies go out through telnyxProvider.
+const telnyxInbound = createInboundSmsHandler({
+  ...buildTelnyxInboundOptions(),
+  provider: telnyxProvider,
+  store,
+  config,
+  screenMessage,
+  runStudentInboundWorkflow,
+  claimPairingCode,
+  parsePairingCode,
+  ensureLinkedInProfileForFirstContact,
+  createUnknownSenderText,
+  createWelcomeText,
+  readBody,
+  sendJson,
+});
 
 // v1.2 Phase 04: initialize Mastra in-process. Idempotent + side-effect-light
 // (Mastra defers actual schema creation until first memory/workflow API call).
@@ -147,7 +191,12 @@ const server = createServer(async (req, res) => {
             config.cloudflareEmailAccountId && config.cloudflareEmailApiToken,
           ),
           brightdata: Boolean(config.brightdata?.apiToken),
+          // v1.7 Phase 44-04: Telnyx readiness, booleans only (no secrets).
+          telnyx: Boolean(config.telnyx.apiKey && config.telnyx.fromNumber && config.telnyx.publicKey),
+          telnyxWebhookKey: Boolean(config.telnyx.publicKey),
         },
+        // v1.7 Phase 44-04: the configured SMS_PROVIDER name (outbound default).
+        smsProvider: config.smsProviderName,
         // v1.2 Phase 04 (AGENT-01..03): Mastra readiness surface.
         // mastraReady     — Mastra in-process instance constructed.
         // pgvectorReady   — vector extension actually installed in Postgres.
@@ -829,343 +878,31 @@ const server = createServer(async (req, res) => {
     //   { providerEventId, platform: 'imessage'|'sms', from, spaceId,
     //     messageId, text, ts }
     //
-    // Mirrors /webhooks/photon: pairing-code path runs first when the body
-    // matches, otherwise we recordInboundMessage + fire the agent workflow
-    // fire-and-forget. Outbound replies go back through BlueBubbles via
-    // macBridgeProvider.
+    // v1.7 Phase 44-03: the flow (verify, START-code claim, legacy code,
+    // unknown-sender reply, welcome, Lakera screen, workflow) lives in the
+    // shared handler src/sms/inbound-handler.mjs, wired above as
+    // macBridgeInbound (providerName "mac-bridge", ackEarly false, so the
+    // behaviour and ordering are unchanged). Outbound replies go back through
+    // BlueBubbles via macBridgeProvider.
     if (req.method === "POST" && url.pathname === "/webhooks/mac-bridge") {
-      const rawBody = await readBody(req);
-      const verified = macBridgeProvider.verifyWebhook(req, rawBody);
-      if (!verified.ok) {
-        sendJson(res, 401, { error: "unauthorized", reason: verified.reason });
+      await macBridgeInbound(req, res);
+      return;
+    }
+
+    // ─── Inbound Telnyx SMS webhook (v1.7 Phase 44-04) ──────────────────────
+    //
+    // Telnyx webhook model: one URL per messaging profile, Ed25519-signed
+    // (verified in the handler via telnyxProvider.verifyWebhook), retried
+    // unless it gets a 2xx within 2 s, so the handler acks before Lakera and
+    // the agent. D34: the route is gated on TELNYX_WEBHOOK_PUBLIC_KEY, NOT on
+    // SMS_PROVIDER. Without the key it fails closed without reading the body.
+    // A store failure throws to the outer catch below (500), so Telnyx retries.
+    if (req.method === "POST" && url.pathname === "/webhooks/telnyx/sms") {
+      if (!isTelnyxRouteEnabled(config)) {
+        sendJson(res, 401, { error: "unauthorized", reason: "public_key_missing" });
         return;
       }
-
-      const payload = JSON.parse(rawBody || "{}");
-      const inbound = macBridgeProvider.parseInbound(payload);
-
-      // v1.2 Phase 09 — START- pairing-code branch. Runs BEFORE the legacy
-      // hex/IJ-XXXXXX confirmPairingCode path so a Standout-style code
-      // matches even if parseInbound's legacy regex happened to also pick
-      // something up. claimPairingCode binds the phone atomically; on
-      // success we fire the FIRST-CONTACT workflow with the LinkedIn
-      // context already in place.
-      const startCode = parsePairingCode(inbound.text);
-      if (startCode && store?.pool) {
-        const claim = await claimPairingCode(store.pool, startCode, inbound.channelAddress, {
-          channelType: inbound.channelType,
-        });
-        if (claim.ok) {
-          await ensureLinkedInProfileForFirstContact(claim.studentId);
-
-          // Record the inbound for messaging_events observability and
-          // write an inbound_messages row so the workflow has something
-          // to consume. providerEventId from the bridge is reused so
-          // dedup still works on a retry.
-          await store.writeMessagingEvent({
-            provider: "mac-bridge",
-            providerEventId: inbound.providerEventId,
-            studentId: claim.studentId,
-            direction: "inbound",
-            channelType: inbound.channelType,
-            channelAddress: inbound.channelAddress,
-            eventType: "pairing_started",
-            deliveryStatus: "received",
-            metadata: { ...inbound.metadata, pairingCode: startCode, source: "phase-09" },
-          });
-          await store.writeAuditEvent(claim.studentId, "pairing_started", "provider", {
-            code: startCode,
-            channelType: inbound.channelType,
-          });
-
-          if (typeof store.writeInboundMessage === "function") {
-            try {
-              const messageId = await store.writeInboundMessage({
-                provider: "mac-bridge",
-                providerEventId: inbound.providerEventId,
-                channelType: inbound.channelType,
-                channelAddress: inbound.channelAddress,
-                studentId: claim.studentId,
-                body: inbound.text,
-                metadata: { ...inbound.metadata, firstContact: true, pairingCode: startCode },
-              });
-              if (messageId && store?.pool) {
-                // v1.3 SAFETY-01: Pre-LLM screen on mac-bridge pairing first-contact path.
-                // Same hard-block rule (>=0.8) and fail-open semantics as photon.
-                const _screenStart = Date.now();
-                const screenResult = await screenMessage(
-                  inbound.text || "",
-                  process.env.LAKERA_GUARD_API_KEY || "",
-                );
-                const _screenMs = Date.now() - _screenStart;
-                console.log(JSON.stringify({ level: "info", event: "lakera_latency_ms", ms: _screenMs, channel: "sms", source: "mac-bridge-pairing" }));
-                const injectionScore = screenResult.score ?? 0;
-                // Lakera v2 returns a binary flag (no per-category score) — `flagged: true`
-                // alone is sufficient to hard-block. The `>= 0.8` clause is the forward-compat
-                // shim for if Lakera ever re-introduces a per-category numeric score.
-                const isHardBlock = screenResult.flagged === true || injectionScore >= 0.8;
-
-                if (screenResult.action !== "passed") {
-                  console.log(JSON.stringify({
-                    level: "info",
-                    event: "lakera_screen",
-                    action: screenResult.action,
-                    reason: screenResult.reason,
-                    score: screenResult.score,
-                    channel: "sms",
-                    hard_block: isHardBlock,
-                    sender_last4: (inbound.channelAddress || "").slice(-4),
-                    message_id: messageId,
-                    source: "mac-bridge-pairing",
-                    preview: (inbound.text || "").slice(0, 80),
-                  }));
-
-                  store.pool.query(
-                    `insert into safety_events
-                       (channel, action, reason, score, sender_last4, preview, reviewed)
-                     values ($1, $2, $3, $4, $5, $6, false)`,
-                    [
-                      "sms",
-                      isHardBlock ? "blocked" : screenResult.action,
-                      screenResult.reason,
-                      screenResult.score,
-                      (inbound.channelAddress || "").slice(-4),
-                      (inbound.text || "").slice(0, 80),
-                    ],
-                  ).catch((err) => {
-                    console.error(JSON.stringify({ level: "error", event: "safety_events_write_failed", error: err?.message ?? String(err) }));
-                  });
-                }
-
-                if (isHardBlock) {
-                  try {
-                    await macBridgeProvider.sendSms(
-                      inbound.channelAddress,
-                      "hey — couldn't process that one. try rephrasing?",
-                    );
-                  } catch (sendErr) {
-                    console.error(JSON.stringify({
-                      level: "error",
-                      event: "safety_block_reply_failed",
-                      source: "mac-bridge-pairing",
-                      error: sendErr?.message ?? String(sendErr),
-                    }));
-                  }
-                  // Agent never sees the text. Pairing audit row preserved.
-                } else {
-                  runStudentInboundWorkflow({
-                    pool: store.pool,
-                    messageId,
-                    smsProvider: macBridgeProvider,
-                    config,
-                  }).catch((err) => {
-                    console.error(
-                      JSON.stringify({
-                        level: "error",
-                        message: "student_inbound_workflow_failed",
-                        source: "mac-bridge-pairing",
-                        messageId,
-                        error: err?.message ?? String(err),
-                      }),
-                    );
-                  });
-                }
-              }
-            } catch (err) {
-              console.error(
-                JSON.stringify({
-                  level: "error",
-                  message: "write_inbound_message_failed",
-                  source: "mac-bridge-pairing",
-                  error: err?.message ?? String(err),
-                }),
-              );
-            }
-          }
-
-          sendJson(res, 200, { ok: true, eventType: "pairing_started", studentId: claim.studentId });
-          return;
-        }
-
-        // Code matched the START-XXXXXX format but the claim failed
-        // (expired, already used, or phone already tied to this LinkedIn
-        // profile). Record the attempt for ops review but don't fire any
-        // workflow.
-        const rejectedEventType =
-          claim.reason === "phone_already_bound" || claim.reason === "linkedin_profile_required_for_pairing"
-            ? "pairing_rejected"
-            : "pairing_expired";
-        await store.writeMessagingEvent({
-          provider: "mac-bridge",
-          providerEventId: inbound.providerEventId,
-          studentId: null,
-          direction: "inbound",
-          channelType: inbound.channelType,
-          channelAddress: inbound.channelAddress,
-          eventType: rejectedEventType,
-          deliveryStatus: "received",
-          metadata: { ...inbound.metadata, pairingCode: startCode, reason: claim.reason },
-        });
-        sendJson(res, 200, { ok: false, eventType: rejectedEventType, reason: claim.reason });
-        return;
-      }
-
-      const confirmation = inbound.code
-        ? await store.confirmPairingCode({ ...inbound, provider: "mac-bridge" })
-        : await store.recordInboundMessage(inbound);
-
-      if (!confirmation.error && confirmation.eventType === "unmatched_inbound" && !confirmation.duplicate) {
-        const reply = createUnknownSenderText(config, inbound.text);
-        try {
-          const sent = await macBridgeProvider.sendSms(inbound.channelAddress, reply);
-          await store.writeMessagingEvent({
-            provider: "mac-bridge",
-            providerEventId: `${inbound.providerEventId}:unknown-reply`,
-            studentId: null,
-            direction: "outbound",
-            channelType: inbound.channelType,
-            channelAddress: inbound.channelAddress,
-            eventType: "unknown_sender_registration_reply",
-            deliveryStatus: sent?.status || "sent",
-            metadata: {
-              source: "unknown_sender",
-              providerMessageId: sent?.providerMessageId || sent?.metadata?.providerMessageId || null,
-            },
-          });
-        } catch (sendErr) {
-          console.error(JSON.stringify({
-            level: "error",
-            event: "unknown_sender_reply_failed",
-            source: "mac-bridge",
-            error: sendErr?.message ?? String(sendErr),
-          }));
-        }
-      }
-
-      if (confirmation.student && confirmation.welcomeNeeded) {
-        const welcome = await macBridgeProvider.sendSms(
-          confirmation.student.channelAddress,
-          createWelcomeText(confirmation.student),
-        );
-        await store.markWelcomeSent(confirmation.student.id, welcome.status, welcome.metadata);
-      }
-
-      if (
-        !confirmation.error &&
-        confirmation.eventType === "student_reply" &&
-        confirmation.student &&
-        typeof store.writeInboundMessage === "function"
-      ) {
-        try {
-          const messageId = await store.writeInboundMessage({
-            provider: "mac-bridge",
-            providerEventId: inbound.providerEventId,
-            channelType: inbound.channelType,
-            channelAddress: inbound.channelAddress,
-            studentId: confirmation.student.id,
-            body: inbound.text,
-            metadata: inbound.metadata || {},
-          });
-          if (messageId && store?.pool) {
-            // v1.3 SAFETY-01: Pre-LLM screen on mac-bridge student_reply path.
-            // Same hard-block rule (>=0.8) and fail-open semantics as photon.
-            const _screenStart = Date.now();
-            const screenResult = await screenMessage(
-              inbound.text || "",
-              process.env.LAKERA_GUARD_API_KEY || "",
-            );
-            const _screenMs = Date.now() - _screenStart;
-            console.log(JSON.stringify({ level: "info", event: "lakera_latency_ms", ms: _screenMs, channel: "sms", source: "mac-bridge" }));
-            const injectionScore = screenResult.score ?? 0;
-            // Lakera v2 returns a binary flag (no per-category score) — `flagged: true`
-            // alone is sufficient to hard-block. The `>= 0.8` clause is the forward-compat
-            // shim for if Lakera ever re-introduces a per-category numeric score.
-            const isHardBlock = screenResult.flagged === true || injectionScore >= 0.8;
-
-            if (screenResult.action !== "passed") {
-              console.log(JSON.stringify({
-                level: "info",
-                event: "lakera_screen",
-                action: screenResult.action,
-                reason: screenResult.reason,
-                score: screenResult.score,
-                channel: "sms",
-                hard_block: isHardBlock,
-                sender_last4: (inbound.channelAddress || "").slice(-4),
-                message_id: messageId,
-                source: "mac-bridge",
-                preview: (inbound.text || "").slice(0, 80),
-              }));
-
-              store.pool.query(
-                `insert into safety_events
-                   (channel, action, reason, score, sender_last4, preview, reviewed)
-                 values ($1, $2, $3, $4, $5, $6, false)`,
-                [
-                  "sms",
-                  isHardBlock ? "blocked" : screenResult.action,
-                  screenResult.reason,
-                  screenResult.score,
-                  (inbound.channelAddress || "").slice(-4),
-                  (inbound.text || "").slice(0, 80),
-                ],
-              ).catch((err) => {
-                console.error(JSON.stringify({ level: "error", event: "safety_events_write_failed", error: err?.message ?? String(err) }));
-              });
-            }
-
-            if (isHardBlock) {
-              try {
-                await macBridgeProvider.sendSms(
-                  inbound.channelAddress,
-                  "hey — couldn't process that one. try rephrasing?",
-                );
-              } catch (sendErr) {
-                console.error(JSON.stringify({
-                  level: "error",
-                  event: "safety_block_reply_failed",
-                  source: "mac-bridge",
-                  error: sendErr?.message ?? String(sendErr),
-                }));
-              }
-              // Agent never sees the text. Audit row preserved.
-            } else {
-              runStudentInboundWorkflow({
-                pool: store.pool,
-                messageId,
-                smsProvider: macBridgeProvider,
-                config,
-              }).catch((err) => {
-                console.error(
-                  JSON.stringify({
-                    level: "error",
-                    message: "student_inbound_workflow_failed",
-                    source: "mac-bridge",
-                    messageId,
-                    error: err?.message ?? String(err),
-                  }),
-                );
-              });
-            }
-          }
-        } catch (err) {
-          console.error(
-            JSON.stringify({
-              level: "error",
-              message: "write_inbound_message_failed",
-              source: "mac-bridge",
-              error: err?.message ?? String(err),
-            }),
-          );
-        }
-      }
-
-      sendJson(res, confirmation.error ? 422 : 200, {
-        ok: !confirmation.error,
-        duplicate: confirmation.duplicate,
-        error: confirmation.error,
-        eventType: confirmation.eventType,
-      });
+      await telnyxInbound(req, res);
       return;
     }
 
