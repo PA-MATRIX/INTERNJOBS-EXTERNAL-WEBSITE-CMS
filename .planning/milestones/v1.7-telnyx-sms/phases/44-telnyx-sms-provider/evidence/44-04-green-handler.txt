@@ -1,0 +1,127 @@
+TAP version 13
+# Subtest: telnyx profile
+    # Subtest: SMS_HARD_BLOCK_REPLY is pure ASCII and differs from the legacy em-dash string
+    ok 1 - SMS_HARD_BLOCK_REPLY is pure ASCII and differs from the legacy em-dash string
+      ---
+      duration_ms: 0.394875
+      ...
+    # Subtest: event filter: message.finalized is ignored before any store call
+    ok 2 - event filter: message.finalized is ignored before any store call
+      ---
+      duration_ms: 1.932208
+      ...
+    # Subtest: early dedupe: a seen event id is a 200 duplicate no-op
+    ok 3 - early dedupe: a seen event id is a 200 duplicate no-op
+      ---
+      duration_ms: 0.747
+      ...
+    # Subtest: keyword STOP ("STOP") records the opt-out before the event row; nothing else runs
+    ok 4 - keyword STOP ("STOP") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.464
+      ...
+    # Subtest: keyword STOP ("stop") records the opt-out before the event row; nothing else runs
+    ok 5 - keyword STOP ("stop") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.257791
+      ...
+    # Subtest: keyword STOP (" Stop ") records the opt-out before the event row; nothing else runs
+    ok 6 - keyword STOP (" Stop ") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.289792
+      ...
+    # Subtest: keyword STOP ("STOPALL") records the opt-out before the event row; nothing else runs
+    ok 7 - keyword STOP ("STOPALL") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.272833
+      ...
+    # Subtest: keyword STOP ("unsubscribe") records the opt-out before the event row; nothing else runs
+    ok 8 - keyword STOP ("unsubscribe") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.452917
+      ...
+    # Subtest: keyword STOP ("CANCEL") records the opt-out before the event row; nothing else runs
+    ok 9 - keyword STOP ("CANCEL") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.275917
+      ...
+    # Subtest: keyword STOP ("end") records the opt-out before the event row; nothing else runs
+    ok 10 - keyword STOP ("end") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.322416
+      ...
+    # Subtest: keyword STOP ("quit") records the opt-out before the event row; nothing else runs
+    ok 11 - keyword STOP ("quit") records the opt-out before the event row; nothing else runs
+      ---
+      duration_ms: 0.135125
+      ...
+    # Subtest: keyword START (START) clears the opt-out
+    ok 12 - keyword START (START) clears the opt-out
+      ---
+      duration_ms: 0.1995
+      ...
+    # Subtest: keyword START (unstop) clears the opt-out
+    ok 13 - keyword START (unstop) clears the opt-out
+      ---
+      duration_ms: 0.178666
+      ...
+    # Subtest: keyword HELP: no opt-out change; help reply is sent AFTER the 200
+    ok 14 - keyword HELP: no opt-out change; help reply is sent AFTER the 200
+      ---
+      duration_ms: 0.271083
+      ...
+    # Subtest: START-AB12CD and 'stop texting me' are NOT keywords
+    ok 15 - START-AB12CD and 'stop texting me' are NOT keywords
+      ---
+      duration_ms: 0.256916
+      ...
+    # Subtest: STOP from an unparseable sender is 200 ignored invalid_phone, no throw
+    ok 16 - STOP from an unparseable sender is 200 ignored invalid_phone, no throw
+      ---
+      duration_ms: 0.116
+      ...
+    # Subtest: STOP whose recordOptOut rejects propagates (5xx upstream), no event row, no 200
+    ok 17 - STOP whose recordOptOut rejects propagates (5xx upstream), no event row, no 200
+      ---
+      duration_ms: 0.257375
+      ...
+    # Subtest: short-code sender gets no reply; a long-code sender does
+    ok 18 - short-code sender gets no reply; a long-code sender does
+      ---
+      duration_ms: 0.384083
+      ...
+    # Subtest: ack-first: 200 precedes screen and workflow on the pairing and student_reply paths
+    ok 19 - ack-first: 200 precedes screen and workflow on the pairing and student_reply paths
+      ---
+      duration_ms: 0.259291
+      ...
+    # Subtest: Lakera hard-block: safety_events row, ASCII reply, no workflow, telnyx source labels
+    ok 20 - Lakera hard-block: safety_events row, ASCII reply, no workflow, telnyx source labels
+      ---
+      duration_ms: 0.411916
+      ...
+    # Subtest: pairing (PAIR-01): claim with channelType sms and E.164 sender; provider telnyx; retry does not re-claim
+    ok 21 - pairing (PAIR-01): claim with channelType sms and E.164 sender; provider telnyx; retry does not re-claim
+      ---
+      duration_ms: 0.270583
+      ...
+    # Subtest: no unhandled rejections
+    ok 22 - no unhandled rejections
+      ---
+      duration_ms: 0.028125
+      ...
+    1..22
+ok 1 - telnyx profile
+  ---
+  duration_ms: 9.075625
+  type: 'suite'
+  ...
+1..1
+# tests 22
+# suites 1
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70.191958

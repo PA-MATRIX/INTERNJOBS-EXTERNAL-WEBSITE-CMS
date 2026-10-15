@@ -1,0 +1,5 @@
+# 44-04 characterization diff vs 44-03 baseline (after). HEAD 14f0976 (Task 1 handler options). Empty diff = identical ok/not-ok lines.
+## DB-less e2e: diff 44-03-baseline-e2e-after.txt vs 44-04-characterization-e2e.txt
+(empty)
+## real-PG e2e: diff 44-03-baseline-pg-after.txt vs 44-04-characterization-pg.txt
+(empty)

@@ -1,0 +1,28 @@
+== negctl A: SMS_HARD_BLOCK_REPLY reuses the em-dash string ==
+    not ok 1 - SMS_HARD_BLOCK_REPLY is pure ASCII and differs from the legacy em-dash string
+    not ok 20 - Lakera hard-block: safety_events row, ASCII reply, no workflow, telnyx source labels
+not ok 1 - telnyx profile
+# pass 20
+# fail 2
+== negctl B: keywordHandling branch disabled (if (false && keywordHandling)) ==
+    not ok 4 - keyword STOP ("STOP") records the opt-out before the event row; nothing else runs
+    not ok 5 - keyword STOP ("stop") records the opt-out before the event row; nothing else runs
+    not ok 6 - keyword STOP (" Stop ") records the opt-out before the event row; nothing else runs
+    not ok 7 - keyword STOP ("STOPALL") records the opt-out before the event row; nothing else runs
+    not ok 8 - keyword STOP ("unsubscribe") records the opt-out before the event row; nothing else runs
+    not ok 9 - keyword STOP ("CANCEL") records the opt-out before the event row; nothing else runs
+    not ok 10 - keyword STOP ("end") records the opt-out before the event row; nothing else runs
+    not ok 11 - keyword STOP ("quit") records the opt-out before the event row; nothing else runs
+    not ok 12 - keyword START (START) clears the opt-out
+    not ok 13 - keyword START (unstop) clears the opt-out
+    not ok 14 - keyword HELP: no opt-out change; help reply is sent AFTER the 200
+    not ok 16 - STOP from an unparseable sender is 200 ignored invalid_phone, no throw
+    not ok 17 - STOP whose recordOptOut rejects propagates (5xx upstream), no event row, no 200
+# pass 9
+# fail 13
+== negctl C: hasMessagingEvent returns false unconditionally (both stores) ==
+    not ok 1 - memory store: true after writeMessagingEvent for the same id, false for another
+    not ok 2 - memory store: true after recordInboundMessage for the same id
+    not ok 3 - postgres store: exact query and params; true iff a row exists
+# pass 0
+# fail 4

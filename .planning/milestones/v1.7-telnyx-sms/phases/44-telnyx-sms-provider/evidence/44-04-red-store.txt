@@ -1,0 +1,91 @@
+TAP version 13
+# Subtest: hasMessagingEvent
+    # Subtest: memory store: true after writeMessagingEvent for the same id, false for another
+    not ok 1 - memory store: true after writeMessagingEvent for the same id, false for another
+      ---
+      duration_ms: 0.645916
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:16:11'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'undefined'
+        - 'function'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'function'
+      actual: 'undefined'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:18:12)
+        Test.runInAsyncScope (node:async_hooks:211:14)
+        Test.run (node:internal/test_runner/test:934:25)
+        Test.start (node:internal/test_runner/test:833:17)
+        TestContext.test (node:internal/test_runner/test:317:20)
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:16:11)
+        Test.runInAsyncScope (node:async_hooks:211:14)
+        Test.run (node:internal/test_runner/test:934:25)
+        Test.start (node:internal/test_runner/test:833:17)
+        startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+      ...
+    # Subtest: memory store: true after recordInboundMessage for the same id
+    not ok 2 - memory store: true after recordInboundMessage for the same id
+      ---
+      duration_ms: 0.137583
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:36:11'
+      failureType: 'testCodeFailure'
+      error: 'store.hasMessagingEvent is not a function'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TypeError'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:45:30)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:36:3)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: postgres store: exact query and params; true iff a row exists
+    not ok 3 - postgres store: exact query and params; true iff a row exists
+      ---
+      duration_ms: 0.262167
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:49:11'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'undefined'
+        - 'function'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'function'
+      actual: 'undefined'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:60:12)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:49:3)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..3
+not ok 1 - hasMessagingEvent
+  ---
+  duration_ms: 1.42475
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/store.test.mjs:15:1'
+  failureType: 'subtestsFailed'
+  error: '3 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 4
+# suites 0
+# pass 0
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 74.109125
