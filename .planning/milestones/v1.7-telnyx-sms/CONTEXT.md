@@ -44,3 +44,6 @@
 - D34: the Telnyx route goes live once `TELNYX_WEBHOOK_PUBLIC_KEY` is set (signed canary possible before the outbound flip). Check for double HELP replies (Telnyx auto-response vs ours).
 - Phase 44 merge needs its own recorded D10 exception (D33 covered Phase 43 only).
 - From 44-04 verification: on the Telnyx route a pairing `confirmation.error` still returns 422 (inherited handler behaviour), which makes Telnyx retry a message that can never succeed. Review in Phase 46 (prefer 200 + logged error for non-retryable outcomes).
+
+## Push of docs/v1.7-telnyx-sms (2026-10-15)
+Pushed to the public repo by the orchestrator, with the secret scan run right after the push rather than before (a process slip, disclosed). gitleaks over origin/main..branch (117 commits) found 10 hits, all in Phase 38 commits already public on `docs/phase-38-code-map`: fake fixtures in `scripts/verify-code-maps.test.mjs` (the secret detector's own test strings, e.g. `sk-live-abcdefghijklmnop1234`) and placeholder `KEY=` examples in Phase 38 docs, the same class D25 recorded. The 53 v1.7-only commits (7d7721a..branch): no leaks. Rule going forward: scan before every push of a planning branch too.
