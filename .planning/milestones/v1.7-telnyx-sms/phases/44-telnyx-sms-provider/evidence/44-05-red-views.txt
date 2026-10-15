@@ -1,0 +1,62 @@
+TAP version 13
+# Subtest: pairing views use SMS wording
+not ok 1 - pairing views use SMS wording
+  ---
+  duration_ms: 25.674583
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/views.test.mjs:26:1'
+  failureType: 'testCodeFailure'
+  error: 'mobile page must not mention iMessage'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    
+        <section class="panel narrow">
+          <p class="eyebrow">Almost done</p>
+          <h1>Open Messages to confirm.</h1>
+          <p class="lede">We'll send the code through iMessage so your number is bound to your profile. Your first agent message will reference your LinkedIn.</p>
+          <a class="button primary" href="sms:+14063210019&amp;body=START-AB12CD">Open Messages to confirm</a>
+          <p class="fine">Or text <strong>START-AB12CD</strong> to <strong>+14063210019</strong>.</p>
+          <p class="fine" id="pair-status">Waiting for your text…</p>
+        </section>
+        <script>
+          (function () {
+            var statusEl = document.getElementById('pair-status');
+            var stopped = false;
+            function tick() {
+              if (stopped) return;
+              fetch('/onboard/status', { credentials: 'same-origin' })
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (j) {
+                  if (j && j.paired) {
+                    stopped = true;
+                    window.location.href = '/onboard/success';
+                  }
+                })
+                .catch(function () {})
+                .finally(function () { if (!stopped) setTimeout(tick, 3000); });
+            }
+            setTimeout(tick, 3000);
+          })();
+        </script>
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/views.test.mjs:30:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: pairing views escape the pairing code
+ok 2 - pairing views escape the pairing code
+  ---
+  duration_ms: 9.786583
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 204.431

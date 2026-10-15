@@ -1,0 +1,26 @@
+## 44-05 Task 1 negative controls on the GREEN working tree (each reverted)
+## views: restore 'through iMessage' sentence in renderOnboardingMobile
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+not ok 1 - pairing views use SMS wording
+  error: 'mobile page must not mention iMessage'
+ok 2 - pairing views escape the pairing code
+# pass 1
+# fail 1
+## views: restore 'iPhone camera' on the QR page (mobile restored first)
+not ok 1 - pairing views use SMS wording
+  error: "QR page must not say 'iPhone camera'"
+ok 2 - pairing views escape the pairing code
+# pass 1
+# fail 1
+## pairing: default back to imessage
+not ok 1 - default channel type is sms
+ok 2 - explicit channelType imessage is still recorded (mac-bridge route behaviour)
+ok 3 - expired session is code_expired and binds nothing
+not ok 4 - a different confirmed phone is still phone_already_bound
+# pass 2
+# fail 2
+## restored: re-run both files
+# pass 2
+# fail 0
+# pass 4
+# fail 0

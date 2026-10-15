@@ -1,0 +1,15 @@
+# 44-05 final verify, each file alone on committed HEAD f842749
+src/views.test.mjs exit=0 # pass 2 # fail 0
+src/onboarding/pairing.test.mjs exit=0 # pass 4 # fail 0
+src/sms/pairing-chain.test.mjs exit=0 # pass 4 # fail 0
+src/config-env-example.test.mjs exit=0 # pass 2 # fail 0
+src/config.test.mjs exit=0 # pass 9 # fail 0
+src/sms/inbound-handler.test.mjs exit=0 # pass 31 # fail 0
+src/sms/mac-bridge-route.e2e.test.mjs exit=0 # pass 5 # fail 0 # skipped 0
+src/sms/mac-bridge-route-pg.e2e.test.mjs exit=0 # pass 4 # fail 0 # skipped 0
+src/sms/inbound-handler-telnyx.test.mjs exit=0 # pass 22 # fail 0 # skipped 0
+src/sms/telnyx-route.e2e.test.mjs exit=0 # pass 6 # fail 0 # skipped 0
+src/sms/registry.test.mjs exit=0 # pass 5 # fail 0 # skipped 0
+npm run build --workspace apps/app (verify-app.mjs) exit=0
+grep -ni imessage apps/app/src/views.mjs: 0 matches
+listeners on 3931-3937 after runs: 0

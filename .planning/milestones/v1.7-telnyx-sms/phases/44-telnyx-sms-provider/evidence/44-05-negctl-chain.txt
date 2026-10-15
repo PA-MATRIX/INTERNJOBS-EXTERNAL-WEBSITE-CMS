@@ -1,0 +1,38 @@
+## 44-05 chain-test negative controls (working tree only, each reverted; HEAD efe4729)
+## control 1: claimPairingCode skips the students update (claim broken)
+ apps/app/src/onboarding/pairing.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+    not ok 1 - valid signed START code binds the E.164 sender with channel type sms
+      error: |-
+    ok 2 - a webhook signed with the wrong key is 401 and touches no database
+    ok 3 - an expired session row is pairing_expired and binds nothing
+not ok 1 - a texted START code claims the student through the Telnyx path
+  error: '1 subtest failed'
+# pass 2
+# fail 2
+## control 2: handler skips provider.verifyWebhook
+ apps/app/src/sms/inbound-handler.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+    ok 1 - valid signed START code binds the E.164 sender with channel type sms
+    not ok 2 - a webhook signed with the wrong key is 401 and touches no database
+      error: |-
+    ok 3 - an expired session row is pairing_expired and binds nothing
+not ok 1 - a texted START code claims the student through the Telnyx path
+  error: '1 subtest failed'
+# pass 2
+# fail 2
+## control 3: early dedupe disabled in the shared option set (buildTelnyxInboundOptions earlyDedupe:false)
+ apps/app/src/sms/registry.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+    not ok 1 - valid signed START code binds the E.164 sender with channel type sms
+      error: |-
+            ok: true,
+        ok: true
+        ok: true
+    ok 2 - a webhook signed with the wrong key is 401 and touches no database
+    ok 3 - an expired session row is pairing_expired and binds nothing
+not ok 1 - a texted START code claims the student through the Telnyx path
+  error: '1 subtest failed'
+# pass 2
+# fail 2
+## restored: git diff on src (tracked) below, empty = restored

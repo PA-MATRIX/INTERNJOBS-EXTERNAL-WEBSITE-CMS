@@ -1,0 +1,20 @@
+TAP version 13
+# Subtest: pairing views use SMS wording
+ok 1 - pairing views use SMS wording
+  ---
+  duration_ms: 14.151834
+  ...
+# Subtest: pairing views escape the pairing code
+ok 2 - pairing views escape the pairing code
+  ---
+  duration_ms: 5.676542
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 104.815584

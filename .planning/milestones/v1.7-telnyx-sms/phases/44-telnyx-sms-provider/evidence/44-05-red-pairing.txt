@@ -1,0 +1,83 @@
+TAP version 13
+# Subtest: default channel type is sms
+not ok 1 - default channel type is sms
+  ---
+  duration_ms: 2.31525
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/onboarding/pairing.test.mjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        '11111111-1111-4111-8111-111111111111',
+    +   'imessage',
+    -   'sms',
+        '+15555550123'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '11111111-1111-4111-8111-111111111111'
+    1: 'sms'
+    2: '+15555550123'
+  actual:
+    0: '11111111-1111-4111-8111-111111111111'
+    1: 'imessage'
+    2: '+15555550123'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/onboarding/pairing.test.mjs:69:10)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: explicit channelType imessage is still recorded (mac-bridge route behaviour)
+ok 2 - explicit channelType imessage is still recorded (mac-bridge route behaviour)
+  ---
+  duration_ms: 0.192917
+  ...
+# Subtest: expired session is code_expired and binds nothing
+ok 3 - expired session is code_expired and binds nothing
+  ---
+  duration_ms: 0.120291
+  ...
+# Subtest: a different confirmed phone is still phone_already_bound
+not ok 4 - a different confirmed phone is still phone_already_bound
+  ---
+  duration_ms: 0.3945
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/onboarding/pairing.test.mjs:90:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   channelType: 'imessage',
+    -   channelType: 'sms',
+        reason: 'phone_already_bound'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    channelType: 'sms'
+    reason: 'phone_already_bound'
+  actual:
+    channelType: 'imessage'
+    reason: 'phone_already_bound'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/onboarding/pairing.test.mjs:100:10)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 2
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 93.155542

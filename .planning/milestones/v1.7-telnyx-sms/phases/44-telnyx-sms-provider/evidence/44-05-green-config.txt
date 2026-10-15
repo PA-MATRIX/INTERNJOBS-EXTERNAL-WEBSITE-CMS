@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: SMS_PROVIDER=telnyx, fully configured: no TELNYX entries
+ok 1 - SMS_PROVIDER=telnyx, fully configured: no TELNYX entries
+  ---
+  duration_ms: 0.88
+  ...
+# Subtest: SMS_PROVIDER=telnyx: each missing key is named
+ok 2 - SMS_PROVIDER=telnyx: each missing key is named
+  ---
+  duration_ms: 0.694459
+  ...
+# Subtest: SMS_PROVIDER=telnyx: provider name is case-insensitive
+ok 3 - SMS_PROVIDER=telnyx: provider name is case-insensitive
+  ---
+  duration_ms: 0.058792
+  ...
+# Subtest: SMS_PROVIDER=telnyx: from number must equal AGENT_NUMBER (D27)
+ok 4 - SMS_PROVIDER=telnyx: from number must equal AGENT_NUMBER (D27)
+  ---
+  duration_ms: 0.092167
+  ...
+# Subtest: SMS_PROVIDER=telnyx: formatting differences are not a mismatch
+ok 5 - SMS_PROVIDER=telnyx: formatting differences are not a mismatch
+  ---
+  duration_ms: 0.184875
+  ...
+# Subtest: SMS_PROVIDER=mac-bridge: no TELNYX entries (negative control)
+ok 6 - SMS_PROVIDER=mac-bridge: no TELNYX entries (negative control)
+  ---
+  duration_ms: 0.140416
+  ...
+# Subtest: SMS_PROVIDER=mac-bridge: bridge requirements unchanged
+ok 7 - SMS_PROVIDER=mac-bridge: bridge requirements unchanged
+  ---
+  duration_ms: 0.088458
+  ...
+# Subtest: telnyx config block: defaults and overrides
+ok 8 - telnyx config block: defaults and overrides
+  ---
+  duration_ms: 0.125375
+  ...
+# Subtest: telnyx secrets land only in config.telnyx
+ok 9 - telnyx secrets land only in config.telnyx
+  ---
+  duration_ms: 0.723917
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 91.359083

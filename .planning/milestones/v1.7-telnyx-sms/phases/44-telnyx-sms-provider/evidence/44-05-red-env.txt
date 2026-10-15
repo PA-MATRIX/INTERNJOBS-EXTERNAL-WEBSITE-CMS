@@ -1,0 +1,67 @@
+TAP version 13
+# Subtest: every TELNYX_* variable getConfig reads is documented in .env.example
+not ok 1 - every TELNYX_* variable getConfig reads is documented in .env.example
+  ---
+  duration_ms: 4.338125
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config-env-example.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    undocumented TELNYX_* variables: TELNYX_API_BASE, TELNYX_API_KEY, TELNYX_FROM_NUMBER, TELNYX_MESSAGING_PROFILE_ID, TELNYX_WEBHOOK_PUBLIC_KEY
+    + actual - expected
+    
+    + [
+    +   'TELNYX_API_BASE',
+    +   'TELNYX_API_KEY',
+    +   'TELNYX_FROM_NUMBER',
+    +   'TELNYX_MESSAGING_PROFILE_ID',
+    +   'TELNYX_WEBHOOK_PUBLIC_KEY'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'TELNYX_API_BASE'
+    1: 'TELNYX_API_KEY'
+    2: 'TELNYX_FROM_NUMBER'
+    3: 'TELNYX_MESSAGING_PROFILE_ID'
+    4: 'TELNYX_WEBHOOK_PUBLIC_KEY'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config-env-example.test.mjs:51:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.start (node:internal/test_runner/test:833:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: SMS_PROVIDER=telnyx is a documented option and BRIDGE_* stay until Phase 47
+not ok 2 - SMS_PROVIDER=telnyx is a documented option and BRIDGE_* stay until Phase 47
+  ---
+  duration_ms: 0.939584
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config-env-example.test.mjs:57:1'
+  failureType: 'testCodeFailure'
+  error: "a line documents SMS_PROVIDER=telnyx (or a 'mac-bridge | telnyx' option comment)"
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config-env-example.test.mjs:63:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 97.160666

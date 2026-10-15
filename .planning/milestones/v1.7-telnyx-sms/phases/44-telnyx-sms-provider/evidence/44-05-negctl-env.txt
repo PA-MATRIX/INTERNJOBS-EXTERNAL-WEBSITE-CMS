@@ -1,0 +1,21 @@
+## 44-05 Task 2 negative controls on the GREEN working tree (each reverted)
+## control 1: config.mjs reads a new TELNYX_WEBHOOK_TOLERANCE_SEC that .env.example does not document
++      toleranceSec: env.TELNYX_WEBHOOK_TOLERANCE_SEC || "",
+not ok 1 - every TELNYX_* variable getConfig reads is documented in .env.example
+    undocumented TELNYX_* variables: TELNYX_WEBHOOK_TOLERANCE_SEC
+ok 2 - SMS_PROVIDER=telnyx is a documented option and BRIDGE_* stay until Phase 47
+# pass 1
+# fail 1
+## control 2: drop the 'mac-bridge ... | telnyx' option comment
+ok 1 - every TELNYX_* variable getConfig reads is documented in .env.example
+not ok 2 - SMS_PROVIDER=telnyx is a documented option and BRIDGE_* stay until Phase 47
+# pass 1
+# fail 1
+## control 3: a real-looking value on TELNYX_API_KEY
+not ok 1 - every TELNYX_* variable getConfig reads is documented in .env.example
+ok 2 - SMS_PROVIDER=telnyx is a documented option and BRIDGE_* stay until Phase 47
+# pass 1
+# fail 1
+## restored: re-run
+# pass 2
+# fail 0

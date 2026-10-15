@@ -1,0 +1,5 @@
+
+> @internjobs/app@0.1.0 build
+> node scripts/verify-app.mjs
+
+internjobs-app: waitlist smoke checks passed

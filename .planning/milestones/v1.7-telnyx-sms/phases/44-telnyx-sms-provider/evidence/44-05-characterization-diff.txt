@@ -1,0 +1,7 @@
+# 44-05 characterization diff vs 44-03 baseline (after). Working tree = Task 1 GREEN (default sms + copy) on b0b0d76. Empty diff = identical ok/not-ok lines.
+## DB-less e2e: diff 44-03-baseline-e2e-after.txt vs 44-05-characterization-e2e.txt
+(empty)
+## real-PG e2e: diff 44-03-baseline-pg-after.txt vs 44-05-characterization-pg.txt
+(empty)
+## characterization test files unchanged since 44-03 (git diff 30e4ffa..HEAD + working tree):
+(no output above = unchanged)
