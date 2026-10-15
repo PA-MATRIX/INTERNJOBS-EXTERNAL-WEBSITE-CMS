@@ -1,0 +1,12 @@
+## registration check, :(glob) pathspec, branch-added test files (committed state, HEAD efe4729)
+registered: src/config.test.mjs src/sms/inbound-handler-telnyx.test.mjs src/sms/inbound-handler.test.mjs src/sms/mac-bridge-route-pg.e2e.test.mjs src/sms/mac-bridge-route.e2e.test.mjs src/sms/mac-bridge.test.mjs src/sms/opt-out-store.test.mjs src/sms/registry.test.mjs src/sms/shared.test.mjs src/sms/telnyx-optout.test.mjs src/sms/telnyx-route.e2e.test.mjs src/sms/telnyx.test.mjs src/store.test.mjs
+exit 0
+## negative control: drop src/sms/telnyx-route.e2e.test.mjs (working tree only)
+NOT REGISTERED src/sms/telnyx-route.e2e.test.mjs
+registered: src/config.test.mjs src/sms/inbound-handler-telnyx.test.mjs src/sms/inbound-handler.test.mjs src/sms/mac-bridge-route-pg.e2e.test.mjs src/sms/mac-bridge-route.e2e.test.mjs src/sms/mac-bridge.test.mjs src/sms/opt-out-store.test.mjs src/sms/registry.test.mjs src/sms/shared.test.mjs src/sms/telnyx-optout.test.mjs src/sms/telnyx.test.mjs src/store.test.mjs
+exit 1
+## negative control: drop src/sms/registry.test.mjs
+NOT REGISTERED src/sms/registry.test.mjs
+registered: src/config.test.mjs src/sms/inbound-handler-telnyx.test.mjs src/sms/inbound-handler.test.mjs src/sms/mac-bridge-route-pg.e2e.test.mjs src/sms/mac-bridge-route.e2e.test.mjs src/sms/mac-bridge.test.mjs src/sms/opt-out-store.test.mjs src/sms/shared.test.mjs src/sms/telnyx-optout.test.mjs src/sms/telnyx-route.e2e.test.mjs src/sms/telnyx.test.mjs src/store.test.mjs
+exit 1
+## restored (git diff empty)

@@ -1,0 +1,5 @@
+# 44-04 Task 2 characterization diff vs 44-03 baseline (after). Server/registry change uncommitted on top of b022044. Empty diff = identical ok/not-ok lines.
+## DB-less e2e: diff 44-03-baseline-e2e-after.txt vs 44-04-task2-characterization-e2e.txt
+(empty)
+## real-PG e2e: diff 44-03-baseline-pg-after.txt vs 44-04-task2-characterization-pg.txt
+(empty)

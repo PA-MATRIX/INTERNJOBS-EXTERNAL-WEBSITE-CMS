@@ -1,0 +1,71 @@
+# 44-04 sabotage (e-gate): route gate depends on SMS_PROVIDER again
+sabotaged src/server.mjs: 1 site(s)
+TAP version 13
+# Subtest: POST /webhooks/telnyx/sms (real server)
+    # Subtest: signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+    ok 1 - signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+      ---
+      duration_ms: 344.873709
+      ...
+    # Subtest: retry of the same event id is a no-op
+    ok 2 - retry of the same event id is a no-op
+      ---
+      duration_ms: 662.284083
+      ...
+    # Subtest: STOP, guard, START round trip; HELP answers with opt-out instructions
+    ok 3 - STOP, guard, START round trip; HELP answers with opt-out instructions
+      ---
+      duration_ms: 963.160083
+      ...
+    # Subtest: delivery events and short codes are not answered
+    ok 4 - delivery events and short codes are not answered
+      ---
+      duration_ms: 303.36075
+      ...
+    # Subtest: D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+    not ok 5 - D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+      ---
+      duration_ms: 4.190959
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:328:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        
+        401 !== 200
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 401
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:335:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    # Subtest: a failing store returns 5xx so Telnyx retries
+    ok 6 - a failing store returns 5xx so Telnyx retries
+      ---
+      duration_ms: 308.510917
+      ...
+    1..6
+not ok 1 - POST /webhooks/telnyx/sms (real server)
+  ---
+  duration_ms: 5736.240833
+  type: 'suite'
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:222:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5897.398875
+exit=1

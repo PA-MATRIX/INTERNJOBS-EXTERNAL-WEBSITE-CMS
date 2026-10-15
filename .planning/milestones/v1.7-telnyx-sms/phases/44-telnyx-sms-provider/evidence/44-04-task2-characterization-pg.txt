@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: mac-bridge pairing path (real Postgres)
+    # Subtest: valid START code binds the sender (pairing_started)
+    ok 1 - valid START code binds the sender (pairing_started)
+      ---
+      duration_ms: 50.215334
+      ...
+    # Subtest: same code again from another event is pairing_expired code_already_claimed
+    ok 2 - same code again from another event is pairing_expired code_already_claimed
+      ---
+      duration_ms: 9.377208
+      ...
+    # Subtest: expired code is pairing_expired code_expired and binds nothing
+    ok 3 - expired code is pairing_expired code_expired and binds nothing
+      ---
+      duration_ms: 3.298625
+      ...
+    # Subtest: code for a student with another confirmed phone is pairing_rejected phone_already_bound
+    ok 4 - code for a student with another confirmed phone is pairing_rejected phone_already_bound
+      ---
+      duration_ms: 6.482042
+      ...
+    1..4
+ok 1 - mac-bridge pairing path (real Postgres)
+  ---
+  duration_ms: 881.086209
+  type: 'suite'
+  ...
+1..1
+# tests 4
+# suites 1
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 934.121292

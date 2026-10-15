@@ -1,0 +1,109 @@
+# 44-04 sabotage (c): keyword branch removed
+sabotaged src/sms/inbound-handler.mjs: 1 site(s)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+TAP version 13
+# Subtest: POST /webhooks/telnyx/sms (real server)
+    # Subtest: signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+    ok 1 - signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+      ---
+      duration_ms: 340.413125
+      ...
+    # Subtest: retry of the same event id is a no-op
+    not ok 2 - retry of the same event id is a no-op
+      ---
+      duration_ms: 333.207542
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:251:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'unmatched_inbound'
+        - 'help_request'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'help_request'
+      actual: 'unmatched_inbound'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:268:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    # Subtest: STOP, guard, START round trip; HELP answers with opt-out instructions
+    not ok 3 - STOP, guard, START round trip; HELP answers with opt-out instructions
+      ---
+      duration_ms: 4.710333
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:276:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+        
+        + 'unmatched_inbound'
+        - 'opt_out'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'opt_out'
+      actual: 'unmatched_inbound'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:280:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    # Subtest: delivery events and short codes are not answered
+    not ok 4 - delivery events and short codes are not answered
+      ---
+      duration_ms: 303.655958
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:309:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        no outbound for a delivery event or a short-code sender
+        
+        4 !== 3
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 3
+      actual: 4
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:325:12)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    # Subtest: D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+    ok 5 - D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+      ---
+      duration_ms: 335.0525
+      ...
+    # Subtest: a failing store returns 5xx so Telnyx retries
+    ok 6 - a failing store returns 5xx so Telnyx retries
+      ---
+      duration_ms: 310.163833
+      ...
+    1..6
+not ok 1 - POST /webhooks/telnyx/sms (real server)
+  ---
+  duration_ms: 3739.454917
+  type: 'suite'
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:222:1'
+  failureType: 'subtestsFailed'
+  error: '3 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 3
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3843.001916
+exit=1

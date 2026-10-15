@@ -1,0 +1,39 @@
+# 44-04 Task 2 hunk-range check: git diff -U0 origin/main -- apps/app/src/server.mjs (working tree, Task 2 change)
+# origin/main = 951e103
+@@ -8,2 +8,2 @@ import { createWelcomeText } from "./messaging.mjs";
+@@ -64,2 +64,46 @@ const safetyEventsHandler = createSafetyEventsHandler({ store, config, readBody,
+@@ -149,0 +194,3 @@ const server = createServer(async (req, res) => {
+@@ -150,0 +198,2 @@ const server = createServer(async (req, res) => {
+@@ -832,4 +881,6 @@ const server = createServer(async (req, res) => {
+@@ -837,152 +888,3 @@ const server = createServer(async (req, res) => {
+@@ -990,20 +892,11 @@ const server = createServer(async (req, res) => {
+@@ -1012,157 +905 @@ const server = createServer(async (req, res) => {
+
+photon route (origin/main): lines 660-823
+hunk old 8,2 -> lines 8-9: outside photon route
+hunk old 64,2 -> lines 64-65: outside photon route
+hunk old 149,0 -> insert after 149: outside photon route
+hunk old 150,0 -> insert after 150: outside photon route
+hunk old 832,4 -> lines 832-835: outside photon route
+hunk old 837,152 -> lines 837-988: outside photon route
+hunk old 990,20 -> lines 990-1009: outside photon route
+hunk old 1012,157 -> lines 1012-1168: outside photon route
+PASS: no hunk touches the photon route
+exit=0
+# routes on the branch:
+709:    if (req.method === "POST" && url.pathname === "/webhooks/photon") {
+887:    if (req.method === "POST" && url.pathname === "/webhooks/mac-bridge") {
+900:    if (req.method === "POST" && url.pathname === "/webhooks/telnyx/sms") {
+927:    if (req.method === "POST" && url.pathname === "/webhooks/email") {
+
+# Task 2 own hunks: git diff -U0 HEAD(b022044) -- apps/app/src/server.mjs (only the provider swap is a removal; everything else is pure insertion)
+@@ -8,2 +8 @@ import { createWelcomeText } from "./messaging.mjs";
+-import { createSpectrumSmsProvider } from "./sms/spectrum.mjs";
+-import { createMacBridgeSmsProvider } from "./sms/mac-bridge.mjs";
+@@ -65,2 +64,6 @@ const safetyEventsHandler = createSafetyEventsHandler({ store, config, readBody,
+-const spectrumProvider = createSpectrumSmsProvider(config);
+-const macBridgeProvider = createMacBridgeSmsProvider(config);
+@@ -88,0 +92,19 @@ const macBridgeInbound = createInboundSmsHandler({
+@@ -171,0 +194,3 @@ const server = createServer(async (req, res) => {
+@@ -172,0 +198,2 @@ const server = createServer(async (req, res) => {
+@@ -864,0 +892,17 @@ const server = createServer(async (req, res) => {

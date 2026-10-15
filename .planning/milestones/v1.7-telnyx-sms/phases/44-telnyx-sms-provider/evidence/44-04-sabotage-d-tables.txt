@@ -1,0 +1,68 @@
+# 44-04 sabotage (d-tables): Amendment 2 control: create messaging_events (0001) and sms_opt_outs (0016) in the fresh DB after the absence probe, so the store no longer fails
+sabotaged src/sms/telnyx-route.e2e.test.mjs: 1 site(s)
+TAP version 13
+# SABOTAGE d tables now: {"me":"messaging_events","oo":"sms_opt_outs"}
+# Subtest: POST /webhooks/telnyx/sms (real server)
+    # Subtest: signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+    ok 1 - signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+      ---
+      duration_ms: 355.665834
+      ...
+    # Subtest: retry of the same event id is a no-op
+    ok 2 - retry of the same event id is a no-op
+      ---
+      duration_ms: 678.936333
+      ...
+    # Subtest: STOP, guard, START round trip; HELP answers with opt-out instructions
+    ok 3 - STOP, guard, START round trip; HELP answers with opt-out instructions
+      ---
+      duration_ms: 978.986375
+      ...
+    # Subtest: delivery events and short codes are not answered
+    ok 4 - delivery events and short codes are not answered
+      ---
+      duration_ms: 305.661
+      ...
+    # Subtest: D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+    ok 5 - D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+      ---
+      duration_ms: 375.85475
+      ...
+    # Subtest: a failing store returns 5xx so Telnyx retries
+    not ok 6 - a failing store returns 5xx so Telnyx retries
+      ---
+      duration_ms: 48.294459
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:368:3'
+      failureType: 'testCodeFailure'
+      error: 'STOP got 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: true
+      actual: false
+      operator: '=='
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:376:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    1..6
+not ok 1 - POST /webhooks/telnyx/sms (real server)
+  ---
+  duration_ms: 8894.080583
+  type: 'suite'
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:228:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9278.015041
+exit=1

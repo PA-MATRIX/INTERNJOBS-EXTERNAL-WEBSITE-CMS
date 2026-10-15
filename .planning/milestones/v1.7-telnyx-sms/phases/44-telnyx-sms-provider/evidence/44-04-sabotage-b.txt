@@ -1,0 +1,81 @@
+# 44-04 sabotage (b): hasMessagingEvent returns false (both stores)
+sabotaged src/store.mjs: 2 site(s)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+TAP version 13
+# Subtest: POST /webhooks/telnyx/sms (real server)
+    # Subtest: signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+    ok 1 - signature: forged requests are 401 and nothing is sent; a valid unknown sender gets one reply via Telnyx
+      ---
+      duration_ms: 345.155917
+      ...
+    # Subtest: retry of the same event id is a no-op
+    not ok 2 - retry of the same event id is a no-op
+      ---
+      duration_ms: 366.151584
+      location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:251:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+          {
+        +   eventType: 'help_request',
+        -   duplicate: true,
+            ok: true
+          }
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        ok: true
+        duplicate: true
+      actual:
+        ok: true
+        eventType: 'help_request'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:271:12)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:935:9)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:633:7)
+      ...
+    # Subtest: STOP, guard, START round trip; HELP answers with opt-out instructions
+    ok 3 - STOP, guard, START round trip; HELP answers with opt-out instructions
+      ---
+      duration_ms: 993.810625
+      ...
+    # Subtest: delivery events and short codes are not answered
+    ok 4 - delivery events and short codes are not answered
+      ---
+      duration_ms: 306.603584
+      ...
+    # Subtest: D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+    ok 5 - D34 gate: the route follows TELNYX_WEBHOOK_PUBLIC_KEY, not SMS_PROVIDER
+      ---
+      duration_ms: 343.278416
+      ...
+    # Subtest: a failing store returns 5xx so Telnyx retries
+    ok 6 - a failing store returns 5xx so Telnyx retries
+      ---
+      duration_ms: 315.966958
+      ...
+    1..6
+not ok 1 - POST /webhooks/telnyx/sms (real server)
+  ---
+  duration_ms: 5790.456833
+  type: 'suite'
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/sms/telnyx-route.e2e.test.mjs:222:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5891.420958
+exit=1
