@@ -15,7 +15,7 @@
 
 Spec: `.planning/milestones/v1.7-telnyx-sms/REQUIREMENTS.md`. Context: `.planning/milestones/v1.7-telnyx-sms/CONTEXT.md` (D26–D32). Carry-overs: `CARRYOVER.md`. Every phase is TDD-first. Live steps are approval-gated executor tasks. Merging or deploying from main needs Raj's D10 exception.
 
-- [ ] **Phase 43: Lakera Safety log — Move to Inbox** — LAK-01..05 (first, D30)
+- [~] **Phase 43: Lakera Safety log — Move to Inbox** — LAK-01..05 (first, D30) — LIVE 2026-10-15 (main 951e103, Worker f7f6c851, Fly v58); verifier human_needed: LAK-05 Lakera tier/quota + Trust-sender UAT (Raj)
 - [ ] **Phase 44: Telnyx SMS provider (code)** — SMS-01..04, OPT-01, PAIR-01
 - [ ] **Phase 45: Number port + 10DLC + iMessage-era students** — NUM-01, NUM-02, PAIR-02 (Raj actions)
 - [ ] **Phase 46: Production cutover to Telnyx** — CUT-01, NUM-03 (approval-gated)
