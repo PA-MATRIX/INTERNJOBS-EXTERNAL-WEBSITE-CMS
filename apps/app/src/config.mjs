@@ -119,9 +119,10 @@ export function getConfig(env = process.env) {
       apiToken: env.BRIGHTDATA_API_TOKEN || "",
       linkedinProfileDatasetId: env.BRIGHTDATA_LINKEDIN_PROFILE_DATASET_ID || "gd_l1viktl72bvl7bjuj0",
     },
-    // onboarding.agentNumber — the iMessage number students text the
+    // onboarding.agentNumber — the number students text the
     //   START-XXXXXX pairing code to. Defaults to the prod number
-    //   +14063210019 (Mac mini bridge). Override per environment via
+    //   +14063210019 (to be ported to Telnyx, D27; TELNYX_FROM_NUMBER must
+    //   equal it when SMS_PROVIDER=telnyx). Override per environment via
     //   AGENT_NUMBER. Used by views.renderOnboardingQR /
     //   renderOnboardingMobile to build the sms:// URI + the human-
     //   readable copy.
