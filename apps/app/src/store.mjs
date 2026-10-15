@@ -1,6 +1,7 @@
 import { randomUUID, createHash, randomBytes } from "node:crypto";
 import pg from "pg";
 import { writeStudentEmbedding, logEmbedErr } from "./embeddings.mjs";
+import { createMemoryOptOutStore, createPgOptOutStore } from "./sms/opt-out-store.mjs";
 
 const { Pool } = pg;
 
@@ -56,6 +57,8 @@ export function eventIdFromPayload(payload) {
 
 class MemoryStore {
   constructor() {
+    // v1.7 Phase 44-02 (OPT-01): per-number SMS opt-out state.
+    this.optOuts = createMemoryOptOutStore();
     this.students = new Map();
     this.pairingCodes = new Map();
     this.messagingEvents = new Set();
@@ -583,6 +586,8 @@ class PostgresStore {
       connectionString: databaseUrl,
       ssl: databaseUrl.includes("sslmode=disable") ? false : { rejectUnauthorized: false },
     });
+    // v1.7 Phase 44-02 (OPT-01): per-number SMS opt-out state (sms_opt_outs).
+    this.optOuts = createPgOptOutStore(this.pool);
   }
 
   async upsertStudentFromAuth(auth) {
