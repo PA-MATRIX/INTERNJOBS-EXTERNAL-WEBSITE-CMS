@@ -1,0 +1,1 @@
+# 43-05 filtered wrangler tail (internjobs-parrot, version f7f6c851). Only ops_safety* audit events; fields: event, outcome, actor_id, target_employee_id, safety_event_id, has_actor_email (boolean), preview_like_keys (must be []). Started 2026-10-14T04:50:13Z.
