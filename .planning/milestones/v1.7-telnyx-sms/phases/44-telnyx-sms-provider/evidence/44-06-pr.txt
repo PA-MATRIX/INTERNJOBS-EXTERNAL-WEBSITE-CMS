@@ -1,0 +1,57 @@
+# 44-06 PR evidence, 2026-10-15T05:33:15Z
+PR: #30  https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/pull/30
+head SHA: f842749d474d557be88d204a7956fbdf27479b5c (feat/v1.7-44-telnyx-sms; origin/main 951e103, 0 behind / 23 ahead)
+CI run: 38687206788
+
+## gh pr view 30 --json isDraft,baseRefName,state,title
+{"baseRefName":"main","isDraft":true,"state":"OPEN","title":"DO NOT MERGE: v1.7 Phase 44 Telnyx SMS provider (code, CI only)"}
+
+## gh pr checks 30 (final, after --watch exited 0)
+email timeout invariant (cross-package)	pass	7s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264680138	
+email worker (tests)	pass	8s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264680147	
+startups worker (typecheck · tests)	pass	21s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264680098	
+student app tests	pass	1m27s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264680115	
+submission gate (rrr)	pass	6s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264679831	
+workspace worker (parrot)	pass	1m32s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264680057	
+workspaces (marketing · app · employers)	pass	1m14s	https://github.com/PA-MATRIX/INTERNJOBS-EXTERNAL-WEBSITE-CMS/actions/runs/38687206788/job/116264680254	
+checks exit: 0
+
+## submission gate (rrr): pass as an expected no-op (no phase submission file in the diff); proves nothing about Phase 44
+
+## app-tests job 116264680115 log excerpts (gh run view 38687206788 --log --job 116264680115)
+# TEST_DATABASE_URL in CI: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable (postgres:16 service)
+2026-10-15T05:32:21.4914663Z # Subtest: safety-events handler (real Postgres)
+2026-10-15T05:32:21.5182015Z ok 32 - safety-events handler (real Postgres)
+2026-10-15T05:32:23.4300527Z # Subtest: mac-bridge pairing path (real Postgres)
+2026-10-15T05:32:23.7242143Z ok 41 - mac-bridge pairing path (real Postgres)
+2026-10-15T05:32:23.8213679Z # Subtest: sms_opt_outs (real Postgres)
+2026-10-15T05:32:23.8248404Z ok 62 - sms_opt_outs (real Postgres)
+2026-10-15T05:32:31.2443534Z # tests 190
+2026-10-15T05:32:31.2443876Z # suites 11
+2026-10-15T05:32:31.2444193Z # pass 190
+2026-10-15T05:32:31.2444638Z # fail 0
+2026-10-15T05:32:31.2444975Z # cancelled 0
+2026-10-15T05:32:31.2445475Z # skipped 0
+2026-10-15T05:32:31.2445829Z # todo 0
+
+## sms_opt_outs (real Postgres) subtests (ran, not skipped; '# SKIP' count in whole log: 0)
+2026-10-15T05:32:23.8215374Z     ok 1 - STOP -> isOptedOut true; a different number stays false
+2026-10-15T05:32:23.8218869Z     ok 2 - format variants of the same number hit one row
+2026-10-15T05:32:23.8222628Z     ok 3 - clear -> false; opt out again -> true with restored_at back to null
+2026-10-15T05:32:23.8226378Z     ok 4 - clearOptOut on a never-seen number is a no-op that returns {ok:true}
+2026-10-15T05:32:23.8229693Z     ok 5 - recordOptOut records keyword and source
+2026-10-15T05:32:23.8237516Z     ok 6 - invalid phone: recordOptOut -> {ok:false, reason:'invalid_phone'}, isOptedOut -> false, no throw
+2026-10-15T05:32:23.8241932Z     ok 7 - recordOptOut twice does not throw and refreshes opted_out_at
+2026-10-15T05:32:23.8245495Z     ok 8 - table holds exactly one row per E.164 number overall
+2026-10-15T05:32:23.8248404Z ok 62 - sms_opt_outs (real Postgres)
+
+Note: 'VERIFY-01/02: SKIPPED' is a pre-existing test NAME (live Lakera API test, no key in CI) that passes as ok; the runner's skipped count is 0.
+Local per-file total (44-06-preflight.txt) = 190 tests = CI total 190.
+
+## Detection of a removed postgres service: without TEST_DATABASE_URL the describe is {skip: !DB_URL}; node:test then marks it 'ok N - sms_opt_outs (real Postgres) # SKIP' (note: a skipped DESCRIBE does NOT raise the '# skipped' counter, see below), so the detector is the '# SKIP' marker on the describe line, which is absent in CI above.
+
+## local proof of the detector: node --test src/sms/opt-out-store.test.mjs with TEST_DATABASE_URL unset (= postgres service removed)
+# Subtest: sms_opt_outs (real Postgres)
+ok 2 - sms_opt_outs (real Postgres) # SKIP
+# fail 0
+# skipped 0
