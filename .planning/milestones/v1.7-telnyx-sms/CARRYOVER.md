@@ -64,3 +64,7 @@ v1.4 requirement boxes and traceability still "Pending"; ROADMAP Phase 30/31 row
 ## Closed (verified, excluded above)
 
 v1.0 provider activation (closed v1.1); v1.2 DAILY_API_KEY and `/healthz ok`; v1.3 CLOSETODO/SAFETY-VERIFY/NEONEX (verified v1.4); v1.4 Phase 31 UAT; v1.5 Phase 36 human_needed (passed 2026-07-17); v1.6 39-07 probe (D17a); all 4 `.planning/debug/` sessions resolved or mitigated.
+
+## New findings during v1.7 execution
+- **APP-BOOT-DB (from 44-04, 2026-10-15):** the student app crashes about 2 s after boot when its Postgres is unreachable (`MASTRA_STORAGE_PG_CREATE_TABLE_FAILED`, uncaught in `initMastra`). A DB blip during a deploy/restart = crash loop. Backlog; needs its own plan (resilient init + healthz).
+- **HELP-AFTER-STOP (from 44-04):** the outbound opt-out guard also blocks our HELP reply to an opted-out number. Check against the 10DLC/CTIA HELP rules and Telnyx's own HELP auto-response in Phase 45/46.
