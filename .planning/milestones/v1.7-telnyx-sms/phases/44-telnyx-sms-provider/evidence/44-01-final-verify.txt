@@ -1,0 +1,25 @@
+## src/sms/mac-bridge.test.mjs
+# tests 14
+# pass 14
+# fail 0
+## src/sms/shared.test.mjs
+# tests 7
+# pass 7
+# fail 0
+## src/sms/telnyx.test.mjs
+# tests 14
+# pass 14
+# fail 0
+## src/config.test.mjs
+# tests 9
+# pass 9
+# fail 0
+## src/auth.test.mjs (pre-existing; config.mjs import graph changed)
+# tests 15
+# pass 15
+# fail 0
+## grep api.telnyx.com in new/changed files
+src/config.mjs:108:      apiBase: env.TELNYX_API_BASE || "https://api.telnyx.com",
+## console. in telnyx.mjs/shared.mjs
+src/sms/telnyx.mjs:0
+src/sms/shared.mjs:0

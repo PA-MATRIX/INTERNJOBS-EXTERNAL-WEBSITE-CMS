@@ -1,0 +1,23 @@
+## mutation 1: skip verification when key unset (apps/startup behaviour)
+1
+not ok 2 - verify: forged, tampered, stale and unkeyed requests are all rejected
+not ok 4 - verifyTelnyxSignature: export-level function returns the same results
+# pass 12
+# fail 2
+## mutation 2: remove try/catch around verify
+0
+not ok 3 - verify: malformed key material never throws
+not ok 4 - verifyTelnyxSignature: export-level function returns the same results
+# pass 12
+# fail 2
+## mutation 3: metadata.provider falls back to the default (photon)
+2
+not ok 5 - parseInbound: message.received maps to the shared InboundMessage shape
+not ok 9 - parseInbound: an envelope without data does not throw
+# pass 12
+# fail 2
+## mutation 4: hard-code the from number
+1
+not ok 10 - sendSms: POST /v2/messages from the configured number
+# pass 13
+# fail 1

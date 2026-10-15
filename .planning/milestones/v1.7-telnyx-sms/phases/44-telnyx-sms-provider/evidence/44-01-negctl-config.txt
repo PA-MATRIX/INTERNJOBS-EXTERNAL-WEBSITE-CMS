@@ -1,0 +1,7 @@
+## mutation: remove the telnyx validation branch
+1
+not ok 2 - SMS_PROVIDER=telnyx: each missing key is named
+not ok 3 - SMS_PROVIDER=telnyx: provider name is case-insensitive
+not ok 4 - SMS_PROVIDER=telnyx: from number must equal AGENT_NUMBER (D27)
+# pass 6
+# fail 3

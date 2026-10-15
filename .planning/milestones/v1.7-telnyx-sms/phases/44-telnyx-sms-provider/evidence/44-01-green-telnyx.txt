@@ -1,0 +1,83 @@
+TAP version 13
+# Subtest: verify: correctly signed requests inside the 300 s window are accepted
+ok 1 - verify: correctly signed requests inside the 300 s window are accepted
+  ---
+  duration_ms: 1.881667
+  ...
+# Subtest: verify: forged, tampered, stale and unkeyed requests are all rejected
+ok 2 - verify: forged, tampered, stale and unkeyed requests are all rejected
+  ---
+  duration_ms: 0.875875
+  ...
+# Subtest: verify: malformed key material never throws
+ok 3 - verify: malformed key material never throws
+  ---
+  duration_ms: 0.332875
+  ...
+# Subtest: verifyTelnyxSignature: export-level function returns the same results
+ok 4 - verifyTelnyxSignature: export-level function returns the same results
+  ---
+  duration_ms: 0.418834
+  ...
+# Subtest: parseInbound: message.received maps to the shared InboundMessage shape
+ok 5 - parseInbound: message.received maps to the shared InboundMessage shape
+  ---
+  duration_ms: 1.082209
+  ...
+# Subtest: parseInbound: from number is normalised to E.164
+ok 6 - parseInbound: from number is normalised to E.164
+  ---
+  duration_ms: 0.133292
+  ...
+# Subtest: parseInbound: START- pairing code is extracted
+ok 7 - parseInbound: START- pairing code is extracted
+  ---
+  duration_ms: 0.095792
+  ...
+# Subtest: parseInbound: message.finalized keeps its eventType so the route can ignore it
+ok 8 - parseInbound: message.finalized keeps its eventType so the route can ignore it
+  ---
+  duration_ms: 0.049083
+  ...
+# Subtest: parseInbound: an envelope without data does not throw
+ok 9 - parseInbound: an envelope without data does not throw
+  ---
+  duration_ms: 0.364083
+  ...
+# Subtest: sendSms: POST /v2/messages from the configured number
+ok 10 - sendSms: POST /v2/messages from the configured number
+  ---
+  duration_ms: 14.277792
+  ...
+# Subtest: sendSms: messaging_profile_id is sent only when configured
+ok 11 - sendSms: messaging_profile_id is sent only when configured
+  ---
+  duration_ms: 0.219291
+  ...
+# Subtest: sendSms: failure paths
+ok 12 - sendSms: failure paths
+  ---
+  duration_ms: 0.407959
+  ...
+# Subtest: sendSms: a 2000-character body is sent as at most 1580 ASCII-terminated characters
+ok 13 - sendSms: a 2000-character body is sent as at most 1580 ASCII-terminated characters
+  ---
+  duration_ms: 0.271917
+  ...
+# Subtest: listen is a no-op (webhook-driven provider)
+ok 14 - listen is a no-op (webhook-driven provider)
+  ---
+  duration_ms: 0.035458
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 96.399042
+# tests 14
+# pass 14
+# fail 0

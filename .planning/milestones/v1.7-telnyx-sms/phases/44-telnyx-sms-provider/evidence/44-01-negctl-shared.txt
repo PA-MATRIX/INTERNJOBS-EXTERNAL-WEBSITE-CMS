@@ -1,0 +1,16 @@
+## mutation 1: delete 10-digit branch in toE164
+not ok 1 - toE164
+# pass 6
+# fail 1
+## mutation 2: break moved START- regex (6,8 -> 9,9)
+not ok 1 - parseInbound: START- pairing code, imessage channel, mac-bridge provider
+not ok 2 - parseInbound: lower-case START- code is upper-cased
+not ok 6 - parseInbound: START- wins over an 8-hex code in the same text
+# pass 11
+# fail 3
+## mutation 3: classifyKeyword partial match (drop anchors on STOP_RE)
+44:const STOP_RE = /(stop\s*all|stop|unsubscribe|cancel|end|quit)/i;
+not ok 4 - classifyKeyword: opt-in and help
+not ok 5 - classifyKeyword: full match only (negative controls)
+# pass 5
+# fail 2

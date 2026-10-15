@@ -1,0 +1,19 @@
+## registration check (committed state)
+registered: 3
+exit 0
+## negative control: drop src/sms/telnyx.test.mjs from package.json (working tree only, restored)
+NOT REGISTERED: [ 'src/sms/telnyx.test.mjs' ]
+exit 1
+## pre-existing unregistered files on origin/main (out of scope, left as-is)
+apps/app/src/auth.test.mjs
+apps/app/src/safety/events-api.test.mjs
+apps/app/src/safety/screen.test.mjs
+apps/app/src/storage/r2.test.mjs
+apps/app/src/workflows/reply-to.test.mjs
+
+## CORRECTED check (Rule 1): plan pathspec without :(glob) misses src/config.test.mjs (counted 3); with :(glob) it counts 4
+registered: 4 src/config.test.mjs src/sms/mac-bridge.test.mjs src/sms/shared.test.mjs src/sms/telnyx.test.mjs
+exit 0
+## negative control: drop src/config.test.mjs from package.json (working tree only, restored)
+NOT REGISTERED: [ 'src/config.test.mjs' ]
+exit 1

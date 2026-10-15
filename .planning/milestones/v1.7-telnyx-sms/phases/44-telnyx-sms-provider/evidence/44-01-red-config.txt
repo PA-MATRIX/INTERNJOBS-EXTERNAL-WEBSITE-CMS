@@ -1,0 +1,152 @@
+TAP version 13
+# Subtest: SMS_PROVIDER=telnyx, fully configured: no TELNYX entries
+ok 1 - SMS_PROVIDER=telnyx, fully configured: no TELNYX entries
+  ---
+  duration_ms: 0.613208
+  ...
+# Subtest: SMS_PROVIDER=telnyx: each missing key is named
+not ok 2 - SMS_PROVIDER=telnyx: each missing key is named
+  ---
+  duration_ms: 0.251958
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:25:1'
+  failureType: 'testCodeFailure'
+  error: 'TELNYX_API_KEY not named: []'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:30:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: SMS_PROVIDER=telnyx: provider name is case-insensitive
+not ok 3 - SMS_PROVIDER=telnyx: provider name is case-insensitive
+  ---
+  duration_ms: 4.982791
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(telnyxEntries(env).includes("TELNYX_API_KEY"))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:37:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: SMS_PROVIDER=telnyx: from number must equal AGENT_NUMBER (D27)
+not ok 4 - SMS_PROVIDER=telnyx: from number must equal AGENT_NUMBER (D27)
+  ---
+  duration_ms: 0.090833
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: 'no mismatch entry: []'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:42:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: SMS_PROVIDER=telnyx: formatting differences are not a mismatch
+ok 5 - SMS_PROVIDER=telnyx: formatting differences are not a mismatch
+  ---
+  duration_ms: 0.078334
+  ...
+# Subtest: SMS_PROVIDER=mac-bridge: no TELNYX entries (negative control)
+ok 6 - SMS_PROVIDER=mac-bridge: no TELNYX entries (negative control)
+  ---
+  duration_ms: 0.07275
+  ...
+# Subtest: SMS_PROVIDER=mac-bridge: bridge requirements unchanged
+ok 7 - SMS_PROVIDER=mac-bridge: bridge requirements unchanged
+  ---
+  duration_ms: 0.424083
+  ...
+# Subtest: telnyx config block: defaults and overrides
+not ok 8 - telnyx config block: defaults and overrides
+  ---
+  duration_ms: 0.407166
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:68:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + undefined
+    - {
+    -   apiBase: 'https://api.telnyx.com',
+    -   apiKey: '',
+    -   fromNumber: '',
+    -   messagingProfileId: '',
+    -   publicKey: ''
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    apiKey: ''
+    fromNumber: ''
+    messagingProfileId: ''
+    publicKey: ''
+    apiBase: 'https://api.telnyx.com'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:70:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: telnyx secrets land only in config.telnyx
+not ok 9 - telnyx secrets land only in config.telnyx
+  ---
+  duration_ms: 0.234083
+  location: '/Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:93:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'apiKey')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/rajren/internjobs-cms-wt-44/apps/app/src/config.test.mjs:99:23)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 4
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 64.672833

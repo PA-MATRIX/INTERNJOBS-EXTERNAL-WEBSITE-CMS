@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: parseInbound: START- pairing code, imessage channel, mac-bridge provider
+ok 1 - parseInbound: START- pairing code, imessage channel, mac-bridge provider
+  ---
+  duration_ms: 1.257458
+  ...
+# Subtest: parseInbound: lower-case START- code is upper-cased
+ok 2 - parseInbound: lower-case START- code is upper-cased
+  ---
+  duration_ms: 0.081583
+  ...
+# Subtest: parseInbound: 8-hex code inside a sentence
+ok 3 - parseInbound: 8-hex code inside a sentence
+  ---
+  duration_ms: 0.0985
+  ...
+# Subtest: parseInbound: IJ- code inside a sentence
+ok 4 - parseInbound: IJ- code inside a sentence
+  ---
+  duration_ms: 0.068583
+  ...
+# Subtest: parseInbound: plain text has no code
+ok 5 - parseInbound: plain text has no code
+  ---
+  duration_ms: 0.057708
+  ...
+# Subtest: parseInbound: START- wins over an 8-hex code in the same text
+ok 6 - parseInbound: START- wins over an 8-hex code in the same text
+  ---
+  duration_ms: 0.037
+  ...
+# Subtest: parseInbound: platform sms gives channelType sms
+ok 7 - parseInbound: platform sms gives channelType sms
+  ---
+  duration_ms: 0.036666
+  ...
+# Subtest: parseInbound: missing providerEventId falls back to a sha256 hex
+ok 8 - parseInbound: missing providerEventId falls back to a sha256 hex
+  ---
+  duration_ms: 0.444416
+  ...
+# Subtest: parseInbound: empty text is hasText false
+ok 9 - parseInbound: empty text is hasText false
+  ---
+  duration_ms: 0.201375
+  ...
+# Subtest: verifyWebhook: valid sha256 HMAC over raw body is accepted
+ok 10 - verifyWebhook: valid sha256 HMAC over raw body is accepted
+  ---
+  duration_ms: 0.857917
+  ...
+# Subtest: verifyWebhook: wrong digest is invalid_signature
+ok 11 - verifyWebhook: wrong digest is invalid_signature
+  ---
+  duration_ms: 0.112583
+  ...
+# Subtest: verifyWebhook: absent header is missing_signature
+ok 12 - verifyWebhook: absent header is missing_signature
+  ---
+  duration_ms: 0.034
+  ...
+# Subtest: verifyWebhook: no secret configured is bridge_secret_missing (fails closed)
+ok 13 - verifyWebhook: no secret configured is bridge_secret_missing (fails closed)
+  ---
+  duration_ms: 0.032958
+  ...
+# Subtest: sendSms: unconfigured bridge is skipped_configuration_missing
+ok 14 - sendSms: unconfigured bridge is skipped_configuration_missing
+  ---
+  duration_ms: 0.068208
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75.51075
