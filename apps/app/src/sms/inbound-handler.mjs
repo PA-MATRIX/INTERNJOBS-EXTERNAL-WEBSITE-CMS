@@ -23,8 +23,27 @@
 // store's own dedupe) are never deferred. With ackEarly false (mac-bridge)
 // every step is awaited inline at its original position, so ordering and
 // error propagation are unchanged.
+//
+// v1.7 Phase 44-04, Telnyx-mode options (all default OFF, which is the
+// mac-bridge behaviour). They run in this order right after parseInbound:
+//   acceptEventTypes  -> any other event type (message.sent, .finalized) is a
+//                        200 { ignored } with no store call;
+//   earlyDedupe       -> store.hasMessagingEvent(providerName, eventId) true is a
+//                        200 { duplicate } no-op (SMS-03; covers keywords and
+//                        pairing, not just recordInboundMessage);
+//   keywordHandling   -> exact STOP/START/HELP (classifyKeyword) are consumed
+//                        before the pairing branch, the unknown-sender reply and
+//                        the agent (OPT-01). The opt-out state is written BEFORE
+//                        the messaging_events row, so a failure leaves no dedupe
+//                        row and the provider's retry redoes it;
+//   suppressShortCodeReplies -> no unknown-sender reply to a sender that is not
+//                        an E.164 phone (e.g. Apple's 5-digit code sender).
+
+import { buildHelpReply, classifyKeyword, toE164 } from "./shared.mjs";
 
 export const LEGACY_HARD_BLOCK_REPLY = "hey — couldn't process that one. try rephrasing?";
+// ASCII (GSM-7) variant for plain SMS: an em dash forces UCS-2 encoding.
+export const SMS_HARD_BLOCK_REPLY = "hey - couldn't process that one. try rephrasing?";
 
 export function createInboundSmsHandler({
   providerName,
@@ -42,6 +61,10 @@ export function createInboundSmsHandler({
   readBody,
   sendJson,
   ackEarly = false,
+  acceptEventTypes = null,
+  earlyDedupe = false,
+  keywordHandling = false,
+  suppressShortCodeReplies = false,
   lakeraKey = () => process.env.LAKERA_GUARD_API_KEY || "",
   log = console,
 }) {
@@ -162,6 +185,52 @@ export function createInboundSmsHandler({
     const payload = JSON.parse(rawBody || "{}");
     const inbound = provider.parseInbound(payload);
 
+    if (Array.isArray(acceptEventTypes) && !acceptEventTypes.includes(inbound.eventType)) {
+      sendJson(res, 200, { ok: true, ignored: true, eventType: inbound.eventType });
+      return;
+    }
+
+    if (earlyDedupe && (await store.hasMessagingEvent(providerName, inbound.providerEventId))) {
+      sendJson(res, 200, { ok: true, duplicate: true });
+      return;
+    }
+
+    if (keywordHandling) {
+      const keyword = classifyKeyword(inbound.text);
+      if (keyword) {
+        const phone = toE164(inbound.channelAddress);
+        if (!phone) {
+          sendJson(res, 200, { ok: true, ignored: true, reason: "invalid_phone" });
+          return;
+        }
+        const keywordText = String(inbound.text).trim().toLowerCase();
+        const eventType = keyword === "stop" ? "opt_out" : keyword === "start" ? "opt_in" : "help_request";
+        // State first: if this throws, no messaging_events row exists and the
+        // request fails (5xx upstream), so the provider retries.
+        if (keyword === "stop") {
+          await store.optOuts.recordOptOut({ phone, keyword: keywordText, source: "sms_keyword" });
+        } else if (keyword === "start") {
+          await store.optOuts.clearOptOut({ phone });
+        }
+        await store.writeMessagingEvent({
+          provider: providerName,
+          providerEventId: inbound.providerEventId,
+          studentId: null,
+          direction: "inbound",
+          channelType: inbound.channelType,
+          channelAddress: phone,
+          eventType,
+          deliveryStatus: "received",
+          metadata: { ...inbound.metadata, keyword: keywordText },
+        });
+        if (keyword === "help") {
+          await run(() => provider.sendSms(phone, buildHelpReply(config)));
+        }
+        await respond(200, { ok: true, eventType });
+        return;
+      }
+    }
+
     // v1.2 Phase 09 — START- pairing-code branch. Runs BEFORE the legacy
     // hex/IJ-XXXXXX confirmPairingCode path so a Standout-style code
     // matches even if parseInbound's legacy regex happened to also pick
@@ -253,7 +322,23 @@ export function createInboundSmsHandler({
       ? await store.confirmPairingCode({ ...inbound, provider: providerName })
       : await store.recordInboundMessage(inbound);
 
-    if (!confirmation.error && confirmation.eventType === "unmatched_inbound" && !confirmation.duplicate) {
+    const replySuppressed =
+      suppressShortCodeReplies &&
+      !confirmation.error &&
+      confirmation.eventType === "unmatched_inbound" &&
+      !confirmation.duplicate &&
+      !toE164(inbound.channelAddress);
+    if (replySuppressed) {
+      log.log(JSON.stringify({
+        level: "info",
+        event: "unmatched_inbound_no_reply",
+        source: providerName,
+        sender_last4: String(inbound.channelAddress || "").slice(-4),
+        text_length: String(inbound.text || "").length,
+      }));
+    }
+
+    if (!replySuppressed && !confirmation.error && confirmation.eventType === "unmatched_inbound" && !confirmation.duplicate) {
       const reply = createUnknownSenderText(config, inbound.text);
       await run(async () => {
         try {

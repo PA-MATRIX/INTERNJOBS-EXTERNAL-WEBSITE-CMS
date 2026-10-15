@@ -289,6 +289,11 @@ class MemoryStore {
     this.messagingEvents.add(event.providerEventId);
   }
 
+  // v1.7 Phase 44-04 (SMS-03): early-dedupe lookup for the Telnyx handler.
+  async hasMessagingEvent(provider, providerEventId) {
+    return this.messagingEvents.has(providerEventId) || this.messagingEvents.has(`${provider}:${providerEventId}`);
+  }
+
   async markWelcomeSent(studentId, deliveryStatus, metadata = {}) {
     await this.writeMessagingEvent({
       provider: "photon",
@@ -897,6 +902,15 @@ class PostgresStore {
       await this.writeAuditEvent(student.id, "student_reply_received", "provider", { channelType });
     }
     return { duplicate: false, student, welcomeNeeded: false, eventType };
+  }
+
+  // v1.7 Phase 44-04 (SMS-03): early-dedupe lookup for the Telnyx handler.
+  async hasMessagingEvent(provider, providerEventId) {
+    const { rows } = await this.pool.query(
+      "select 1 from messaging_events where provider = $1 and provider_event_id = $2 limit 1",
+      [provider, providerEventId],
+    );
+    return rows.length > 0;
   }
 
   async writeMessagingEvent(event) {
