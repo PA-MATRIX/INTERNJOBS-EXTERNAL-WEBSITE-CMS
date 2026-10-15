@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { eventIdFromPayload } from "../store.mjs";
+import { extractPairingCode } from "./shared.mjs";
 
 /**
  * MacBridgeSmsProvider — talks to a self-hosted mac-bridge service
@@ -115,12 +116,4 @@ async function sendViaBridge(to, body, config) {
       metadata: { error: err?.message || String(err) },
     };
   }
-}
-
-function extractPairingCode(text) {
-  const start = String(text || "").match(/\bSTART-[A-Z0-9]{6,8}\b/i)?.[0];
-  if (start) return start.toUpperCase();
-  const modern = String(text || "").match(/\b[A-F0-9]{8}\b/i)?.[0];
-  if (modern) return modern.toUpperCase();
-  return String(text || "").match(/\bIJ-[A-Z0-9]{6}\b/i)?.[0]?.toUpperCase() || "";
 }
