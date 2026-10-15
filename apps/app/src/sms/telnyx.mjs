@@ -61,7 +61,13 @@ export function verifyTelnyxSignature({
   }
 }
 
-export function createTelnyxSmsProvider(config, { fetchImpl = globalThis.fetch, now = () => Date.now() } = {}) {
+export function createTelnyxSmsProvider(
+  config,
+  { fetchImpl = globalThis.fetch, now = () => Date.now(), isOptedOut } = {},
+) {
+  // OPT-01 (plan 44-02): the opt-out check is mandatory. A provider built
+  // without it could text a number that replied STOP, so refuse to build one.
+  if (typeof isOptedOut !== "function") throw new Error("telnyx_opt_out_guard_required");
   const telnyx = config?.telnyx || {};
   return {
     verifyWebhook(req, rawBody) {
@@ -78,7 +84,7 @@ export function createTelnyxSmsProvider(config, { fetchImpl = globalThis.fetch, 
       return parseTelnyxInbound(payload, now);
     },
     async sendSms(to, body) {
-      return sendViaTelnyx(to, body, telnyx, fetchImpl);
+      return sendViaTelnyx(to, body, telnyx, fetchImpl, isOptedOut);
     },
     // Webhook-driven: Telnyx pushes inbound to /webhooks/telnyx/sms.
     async listen() {},
@@ -125,21 +131,26 @@ function capBody(body) {
   return text.slice(0, MAX_BODY_CHARS - TRUNCATION_MARKER.length) + TRUNCATION_MARKER;
 }
 
-// Single place where a send result is built. Plan 44-02 maps Telnyx 40300
-// (recipient STOP-blocked) here and wraps sends in the opt-out guard.
+// Telnyx error 40300: the recipient replied STOP (carrier-side block).
+const TELNYX_OPTED_OUT_CODE = "40300";
+
+// Single place where a send result is built. Telnyx 40300 (recipient
+// STOP-blocked) is reported as opted_out; there is no retry on any error.
 function afterSend({ ok, status, json, error }) {
   if (error !== undefined) {
     return { providerMessageId: null, status: "provider_error", metadata: { error } };
   }
   if (!ok) {
     const errorCode = json?.errors?.[0]?.code ?? null;
-    return { providerMessageId: null, status: "provider_error", metadata: { status, errorCode } };
+    const metadata = { status, errorCode };
+    if (errorCode !== null && String(errorCode) === TELNYX_OPTED_OUT_CODE) metadata.opted_out = true;
+    return { providerMessageId: null, status: "provider_error", metadata };
   }
   const providerMessageId = json?.data?.id || null;
   return { providerMessageId, status: "sent", metadata: { providerMessageId, provider: "telnyx" } };
 }
 
-async function sendViaTelnyx(to, body, telnyx, fetchImpl) {
+async function sendViaTelnyx(to, body, telnyx, fetchImpl, isOptedOut) {
   if (!telnyx.apiKey || !telnyx.fromNumber) {
     return {
       providerMessageId: null,
@@ -150,6 +161,21 @@ async function sendViaTelnyx(to, body, telnyx, fetchImpl) {
   const destination = toE164(to);
   if (!destination) {
     return { providerMessageId: null, status: "provider_error", metadata: { reason: "invalid_destination" } };
+  }
+
+  // OPT-01 guard, before any network call. Fails CLOSED: if the opt-out state
+  // cannot be read, do not send. The caught error is dropped on purpose (its
+  // text may carry the phone number).
+  try {
+    if (await isOptedOut(destination)) {
+      return {
+        providerMessageId: null,
+        status: "provider_error",
+        metadata: { opted_out: true, reason: "recipient_opted_out" },
+      };
+    }
+  } catch {
+    return { providerMessageId: null, status: "provider_error", metadata: { reason: "opt_out_check_failed" } };
   }
 
   const request = { from: telnyx.fromNumber, to: destination, text: capBody(body) };
