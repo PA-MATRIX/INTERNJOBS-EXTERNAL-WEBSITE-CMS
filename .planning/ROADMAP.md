@@ -45,7 +45,14 @@ Plans:
 **Depends on**: Phase 43 (order only)
 **Requirements**: SMS-01, SMS-02, SMS-03, SMS-04, OPT-01, PAIR-01
 **Research**: `research/TELNYX-SMS-RESEARCH.md`
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 44-01-PLAN.md — Telnyx provider (Ed25519 verify fail-closed, parse, send), shared helpers, config + SMS_PROVIDER=telnyx validation
+- [ ] 44-02-PLAN.md — sms_opt_outs migration 0016, opt-out store, mandatory fail-closed outbound guard
+- [ ] 44-03-PLAN.md — extract shared inbound handler (mac-bridge identical, e2e baseline), ackEarly mode
+- [ ] 44-04-PLAN.md — Telnyx-mode handler (dedupe, STOP/START/HELP, short codes), registry, gated /webhooks/telnyx/sms, healthz, real-server e2e
+- [ ] 44-05-PLAN.md — SMS pairing copy, sms default channel type, full-chain claim test, .env.example
+- [ ] 44-06-PLAN.md — pre-flight, gitleaks, draft DO-NOT-MERGE PR with green CI
 
 ### Phase 45: Number port + 10DLC + iMessage-era students
 **Goal**: +14063210019 is in Telnyx on an approved 10DLC campaign, and iMessage-era student addresses have a defined path.
