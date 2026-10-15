@@ -10,7 +10,7 @@
     "verify": "node scripts/verify-app.mjs",
     "smoke:ops": "node scripts/smoke-ops.mjs",
     "smoke:graph": "node scripts/smoke-graph.mjs",
-    "test": "node --test src/auth.test.mjs src/safety/screen.test.mjs src/safety/events-api.test.mjs src/config.test.mjs src/sms/shared.test.mjs src/sms/mac-bridge.test.mjs src/sms/telnyx.test.mjs src/sms/opt-out-store.test.mjs src/sms/telnyx-optout.test.mjs src/sms/inbound-handler.test.mjs src/sms/mac-bridge-route.e2e.test.mjs src/sms/mac-bridge-route-pg.e2e.test.mjs src/store.test.mjs src/sms/inbound-handler-telnyx.test.mjs",
+    "test": "node --test src/auth.test.mjs src/safety/screen.test.mjs src/safety/events-api.test.mjs src/config.test.mjs src/sms/shared.test.mjs src/sms/mac-bridge.test.mjs src/sms/telnyx.test.mjs src/sms/opt-out-store.test.mjs src/sms/telnyx-optout.test.mjs src/sms/inbound-handler.test.mjs src/sms/mac-bridge-route.e2e.test.mjs src/sms/mac-bridge-route-pg.e2e.test.mjs src/store.test.mjs src/sms/inbound-handler-telnyx.test.mjs src/sms/registry.test.mjs src/sms/telnyx-route.e2e.test.mjs",
     "test:auth": "node --test src/auth.test.mjs",
     "migrate": "node scripts/migrate.mjs"
   },

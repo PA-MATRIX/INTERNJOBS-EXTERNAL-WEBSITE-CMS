@@ -5,8 +5,7 @@ import { getAuth, getSignInUrl, getStartupSignInUrl, requireStartupAuth, require
 import { readBody, readForm, redirect, sendHtml, sendJson, getClientIp } from "./http.mjs";
 import { createStore, hasLinkedInProfileUrl } from "./store.mjs";
 import { createWelcomeText } from "./messaging.mjs";
-import { createSpectrumSmsProvider } from "./sms/spectrum.mjs";
-import { createMacBridgeSmsProvider } from "./sms/mac-bridge.mjs";
+import { createSmsProviders, isTelnyxRouteEnabled, buildTelnyxInboundOptions } from "./sms/registry.mjs";
 import { createInboundSmsHandler, LEGACY_HARD_BLOCK_REPLY } from "./sms/inbound-handler.mjs";
 import { startSpectrumWaitlistListener } from "./spectrum-listener.mjs";
 import { initMastra, isMastraReady } from "./mastra.mjs";
@@ -62,8 +61,12 @@ const safetyEventsHandler = createSafetyEventsHandler({ store, config, readBody,
 // SMS_PROVIDER=mac-bridge: BlueBubbles on the self-hosted Mac mini is the
 // active path. Legacy Photon/Spectrum routes stay wired for old callbacks
 // and tests, but they do not define the visible pairing number.
-const spectrumProvider = createSpectrumSmsProvider(config);
-const macBridgeProvider = createMacBridgeSmsProvider(config);
+// v1.7 Phase 44-04: providers come from the registry, which gives the Telnyx
+// provider the store's opt-out table (OPT-01).
+const smsProviders = createSmsProviders(config, { store });
+const spectrumProvider = smsProviders.spectrum;
+const macBridgeProvider = smsProviders["mac-bridge"];
+const telnyxProvider = smsProviders.telnyx;
 
 // v1.7 Phase 44-03: shared inbound SMS handler, mac-bridge profile.
 // ensureLinkedInProfileForFirstContact and createUnknownSenderText are hoisted
@@ -84,6 +87,25 @@ const macBridgeInbound = createInboundSmsHandler({
   readBody,
   sendJson,
   ackEarly: false,
+});
+
+// v1.7 Phase 44-04: shared inbound SMS handler, Telnyx profile. The option set
+// comes from buildTelnyxInboundOptions (registry.mjs) so the 44-05 chain test
+// uses exactly what the server uses. Replies go out through telnyxProvider.
+const telnyxInbound = createInboundSmsHandler({
+  ...buildTelnyxInboundOptions(),
+  provider: telnyxProvider,
+  store,
+  config,
+  screenMessage,
+  runStudentInboundWorkflow,
+  claimPairingCode,
+  parsePairingCode,
+  ensureLinkedInProfileForFirstContact,
+  createUnknownSenderText,
+  createWelcomeText,
+  readBody,
+  sendJson,
 });
 
 // v1.2 Phase 04: initialize Mastra in-process. Idempotent + side-effect-light
@@ -169,7 +191,12 @@ const server = createServer(async (req, res) => {
             config.cloudflareEmailAccountId && config.cloudflareEmailApiToken,
           ),
           brightdata: Boolean(config.brightdata?.apiToken),
+          // v1.7 Phase 44-04: Telnyx readiness, booleans only (no secrets).
+          telnyx: Boolean(config.telnyx.apiKey && config.telnyx.fromNumber && config.telnyx.publicKey),
+          telnyxWebhookKey: Boolean(config.telnyx.publicKey),
         },
+        // v1.7 Phase 44-04: the configured SMS_PROVIDER name (outbound default).
+        smsProvider: config.smsProviderName,
         // v1.2 Phase 04 (AGENT-01..03): Mastra readiness surface.
         // mastraReady     — Mastra in-process instance constructed.
         // pgvectorReady   — vector extension actually installed in Postgres.
@@ -859,6 +886,23 @@ const server = createServer(async (req, res) => {
     // BlueBubbles via macBridgeProvider.
     if (req.method === "POST" && url.pathname === "/webhooks/mac-bridge") {
       await macBridgeInbound(req, res);
+      return;
+    }
+
+    // ─── Inbound Telnyx SMS webhook (v1.7 Phase 44-04) ──────────────────────
+    //
+    // Telnyx webhook model: one URL per messaging profile, Ed25519-signed
+    // (verified in the handler via telnyxProvider.verifyWebhook), retried
+    // unless it gets a 2xx within 2 s, so the handler acks before Lakera and
+    // the agent. D34: the route is gated on TELNYX_WEBHOOK_PUBLIC_KEY, NOT on
+    // SMS_PROVIDER. Without the key it fails closed without reading the body.
+    // A store failure throws to the outer catch below (500), so Telnyx retries.
+    if (req.method === "POST" && url.pathname === "/webhooks/telnyx/sms") {
+      if (!isTelnyxRouteEnabled(config)) {
+        sendJson(res, 401, { error: "unauthorized", reason: "public_key_missing" });
+        return;
+      }
+      await telnyxInbound(req, res);
       return;
     }
 
