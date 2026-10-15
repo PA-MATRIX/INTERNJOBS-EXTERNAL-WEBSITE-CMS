@@ -43,3 +43,4 @@
 - Apply migration 0016 (`sms_opt_outs`) to the production student DB BEFORE setting `SMS_PROVIDER=telnyx`. Without it every Telnyx send fails closed (`opt_out_check_failed`).
 - D34: the Telnyx route goes live once `TELNYX_WEBHOOK_PUBLIC_KEY` is set (signed canary possible before the outbound flip). Check for double HELP replies (Telnyx auto-response vs ours).
 - Phase 44 merge needs its own recorded D10 exception (D33 covered Phase 43 only).
+- From 44-04 verification: on the Telnyx route a pairing `confirmation.error` still returns 422 (inherited handler behaviour), which makes Telnyx retry a message that can never succeed. Review in Phase 46 (prefer 200 + logged error for non-retryable outcomes).
