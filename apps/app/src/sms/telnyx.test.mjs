@@ -46,7 +46,7 @@ function signed(rawBody, ts, privateKey = MAIN.privateKey) {
 }
 
 function provider(overrides = {}, deps = {}) {
-  return createTelnyxSmsProvider(makeConfig(overrides), { now: () => NOW_MS, ...deps });
+  return createTelnyxSmsProvider(makeConfig(overrides), { now: () => NOW_MS, isOptedOut: async () => false, ...deps });
 }
 
 const BODY = JSON.stringify({ data: { event_type: "message.received", id: "evt-1" } });
@@ -88,7 +88,7 @@ test("verify: forged, tampered, stale and unkeyed requests are all rejected", ()
     assert.deepEqual(reject(signed(BODY, NOW_SEC), BODY, unkeyed), { ok: false, reason: "public_key_missing" });
   }
   // No telnyx block at all.
-  const bare = createTelnyxSmsProvider({}, { now: () => NOW_MS });
+  const bare = createTelnyxSmsProvider({}, { now: () => NOW_MS, isOptedOut: async () => false });
   assert.deepEqual(bare.verifyWebhook({ headers: signed(BODY, NOW_SEC) }, BODY), {
     ok: false,
     reason: "public_key_missing",
