@@ -9,10 +9,10 @@
 
 ### Lakera / Safety log (Phase 43, first — D30, D31, D32)
 
-- [ ] **LAK-01**: An operator (Ridhi, Raj) can press "Move to Inbox" on a blocked email row in the Workspace Safety Screening Log, and the quarantined email moves from that employee's Spam to their Inbox. Each move is audit-logged (actor, target employee, event id); the sender is NOT auto-trusted (D31). SMS rows and soft flags show no button.
-- [ ] **LAK-02**: Safety events keep the email's Message-ID (`source_id`) end to end (Worker → student app → table → API), so new rows link exactly to their stored email.
-- [ ] **LAK-03**: Rows logged before the fix are matched best-effort (Spam folder, preview prefix, time window) and moved only on exactly one match; otherwise the operator sees "not found — check Spam" (covers mail dropped 07-20..10-09) (D32).
-- [ ] **LAK-04**: Safety-log hygiene: the `lakera_flagged` reason shows a human label; "Mark all reviewed" persists for every row it marks; `apps/app/src/safety/screen.test.mjs` runs in CI (v1.5 gap 6).
+- [x] **LAK-01**: An operator (Ridhi, Raj) can press "Move to Inbox" on a blocked email row in the Workspace Safety Screening Log, and the quarantined email moves from that employee's Spam to their Inbox. Each move is audit-logged (actor, target employee, event id); the sender is NOT auto-trusted (D31). SMS rows and soft flags show no button.
+- [x] **LAK-02**: Safety events keep the email's Message-ID (`source_id`) end to end (Worker → student app → table → API), so new rows link exactly to their stored email.
+- [x] **LAK-03**: Rows logged before the fix are matched best-effort (Spam folder, preview prefix, time window) and moved only on exactly one match; otherwise the operator sees "not found — check Spam" (covers mail dropped 07-20..10-09) (D32).
+- [x] **LAK-04**: Safety-log hygiene: the `lakera_flagged` reason shows a human label; "Mark all reviewed" persists for every row it marks; `apps/app/src/safety/screen.test.mjs` runs in CI (v1.5 gap 6).
 - [ ] **LAK-05**: Live readback after deploy: the v1.5.1 quarantine readback stays GREEN, and the Trust-sender plus Move-to-Inbox UAT on production is recorded (closes the v1.5.1 human_needed item); Lakera tier/quota confirmed by Raj (LAKERA-V2-03).
 
 
@@ -77,11 +77,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAK-01 | Phase 43 | Pending |
-| LAK-02 | Phase 43 | Pending |
-| LAK-03 | Phase 43 | Pending |
-| LAK-04 | Phase 43 | Pending |
-| LAK-05 | Phase 43 | Pending |
+| LAK-01 | Phase 43 | Complete |
+| LAK-02 | Phase 43 | Complete |
+| LAK-03 | Phase 43 | Complete |
+| LAK-04 | Phase 43 | Complete |
+| LAK-05 | Phase 43 | Partial — readbacks GREEN + UAT done; Lakera tier/quota pending (Raj) |
 | SMS-01 | Phase 44 | Pending |
 | SMS-02 | Phase 44 | Pending |
 | SMS-03 | Phase 44 | Pending |
