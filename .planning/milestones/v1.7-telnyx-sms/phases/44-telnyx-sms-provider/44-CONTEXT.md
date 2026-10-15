@@ -25,3 +25,7 @@
 - TDD-first per task with negative controls; RED before GREEN in evidence; each must_have names its test.
 - Code in a worktree from origin/main (now 951e103, which includes Phase 43): e.g. `/Users/rajren/internjobs-cms-wt-44` on `feat/v1.7-44-telnyx-sms`. Planning docs stay on `docs/v1.7-telnyx-sms`.
 - Never print secrets; never call real Telnyx; tests use local keys and fake fetch.
+
+## D34 (2026-10-15): route gate
+- `/webhooks/telnyx/sms` is active when `TELNYX_WEBHOOK_PUBLIC_KEY` is configured (fail closed without it); NOT gated on `SMS_PROVIDER`. This enables a signed canary in Phase 45/46 before the outbound flip. Phase 46 still flips `SMS_PROVIDER` for outbound.
+- The 44-05 pairing-page visual check is deferred to the Phase 46 UAT (recorded decision, not just plan text).

@@ -204,3 +204,8 @@ Raj (AskUserQuestion): "Best-effort match". Rows without `source_id` (logged bef
 ## D33 (2026-10-14T04:32:56Z): Phase 43 production sequence approved, including the D10 exception
 
 Raj: "approve all" (answer to the 43-05 approval list A1–A6). A1 D10 exception (merge PR #29, head 7f3b948, into main), A2 prod migration 0015 (plus 0013/0014 if pending), A3 Fly deploy of the student app (rollback v57), A4 Workspace Worker deploy from the merge commit (rollback 77f32645), A5 prod UAT + synthetic readback row: YES. A6 not mentioned, so auto-rollback is NO for both units (stop and report). Recorded verbatim in phases/43-lakera-safety-move-to-inbox/evidence/APPROVAL-43.md.
+
+## D34 (2026-10-15T04:19:10Z): Telnyx webhook route is live once the Telnyx webhook key is set
+
+Raj (AskUserQuestion): "On once Telnyx key is set". `/webhooks/telnyx/sms` is gated on `TELNYX_WEBHOOK_PUBLIC_KEY` being configured, not on `SMS_PROVIDER=telnyx`. Without the key it rejects everything (fail closed). With the key it verifies signatures and processes inbound, which allows a signed live canary before the Phase 46 `SMS_PROVIDER` flip. Outbound still follows `SMS_PROVIDER`.
+Also recorded: 44-05 visual check of the pairing pages is deferred to the Phase 46 UAT (apps/app has no Playwright harness).
