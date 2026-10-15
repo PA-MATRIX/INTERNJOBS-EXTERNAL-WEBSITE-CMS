@@ -1,0 +1,37 @@
+# 44-03 hunk-range check: git diff -U0 origin/main -- apps/app/src/server.mjs
+# origin/main = 951e103
+# Route ranges on origin/main (old side):
+660:    if (req.method === "POST" && url.pathname === "/webhooks/photon") {
+824:    // ─── Inbound iMessage/SMS via self-hosted Mac bridge (v1.2 2026-05-17) ───
+836:    if (req.method === "POST" && url.pathname === "/webhooks/mac-bridge") {
+# Route ranges on the branch (new side):
+682:    if (req.method === "POST" && url.pathname === "/webhooks/photon") {
+860:    if (req.method === "POST" && url.pathname === "/webhooks/mac-bridge") {
+# Hunks:
+@@ -9,0 +10 @@ import { createMacBridgeSmsProvider } from "./sms/mac-bridge.mjs";
+@@ -66,0 +68,21 @@ const macBridgeProvider = createMacBridgeSmsProvider(config);
+@@ -832,4 +854,6 @@ const server = createServer(async (req, res) => {
+@@ -837,332 +861 @@ const server = createServer(async (req, res) => {
+
+# Hunk-range script (session scratchpad hunk-check.mjs), real diff:
+photon route (origin/main): lines 660-823
+hunk old 9,0 -> insert after 9: outside photon route
+hunk old 66,0 -> insert after 66: outside photon route
+hunk old 832,4 -> lines 832-835: outside photon route
+hunk old 837,332 -> lines 837-1168: outside photon route
+PASS: no hunk touches the photon route
+exit 0
+
+# Negative control: one comment appended to a line inside the photon route (working tree only):
+photon route (origin/main): lines 660-823
+hunk old 9,0 -> insert after 9: outside photon route
+hunk old 66,0 -> insert after 66: outside photon route
+hunk old 661,1 -> lines 661-661: INSIDE photon route
+hunk old 832,4 -> lines 832-835: outside photon route
+hunk old 837,332 -> lines 837-1168: outside photon route
+FAIL: 1 hunk(s) touch the photon route
+exit 1
+# restored
+
+# photon route byte-identity: old lines 660-823 vs new lines 682-845
+IDENTICAL

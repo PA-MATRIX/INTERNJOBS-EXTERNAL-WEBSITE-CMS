@@ -1,0 +1,36 @@
+## sanity (HEAD 30e4ffa): config + shared + mac-bridge
+# tests 30
+# pass 30
+# fail 0
+## sanity: telnyx + telnyx-optout + opt-out-store (no DB)
+# tests 29
+# pass 29
+# fail 0
+# skipped 0
+## pg e2e without TEST_DATABASE_URL (must skip, not fail)
+ok 1 - mac-bridge pairing path (real Postgres) # SKIP
+# tests 0
+# pass 0
+# fail 0
+# skipped 0
+## diff --stat origin/main (code)
+ apps/app/db/migrations/0016_v1_7_sms_opt_outs.sql |  23 +
+ apps/app/package.json                             |   2 +-
+ apps/app/src/config.mjs                           |  25 +
+ apps/app/src/config.test.mjs                      | 100 ++++
+ apps/app/src/server.mjs                           | 365 ++------------
+ apps/app/src/sms/inbound-handler.mjs              | 334 ++++++++++++
+ apps/app/src/sms/inbound-handler.test.mjs         | 588 ++++++++++++++++++++++
+ apps/app/src/sms/mac-bridge-route-pg.e2e.test.mjs | 301 +++++++++++
+ apps/app/src/sms/mac-bridge-route.e2e.test.mjs    | 110 ++++
+ apps/app/src/sms/mac-bridge.mjs                   |   9 +-
+ apps/app/src/sms/mac-bridge.test.mjs              | 105 ++++
+ apps/app/src/sms/opt-out-store.mjs                |  97 ++++
+ apps/app/src/sms/opt-out-store.test.mjs           | 159 ++++++
+ apps/app/src/sms/shared.mjs                       |  67 +++
+ apps/app/src/sms/shared.test.mjs                  |  83 +++
+ apps/app/src/sms/telnyx-optout.test.mjs           | 138 +++++
+ apps/app/src/sms/telnyx.mjs                       | 199 ++++++++
+ apps/app/src/sms/telnyx.test.mjs                  | 331 ++++++++++++
+ apps/app/src/store.mjs                            |   5 +
+ 19 files changed, 2696 insertions(+), 345 deletions(-)

@@ -1,0 +1,20 @@
+## e2e (DB-less) ok-lines: before (unchanged server, commit 2266131) vs after (refactor 30e4ffa working tree)
+ok 1 - unsigned POST is 401 missing_signature
+ok 2 - wrong signature (right length) is 401 invalid_signature
+ok 3 - signed unknown-sender message is 200 unmatched_inbound
+ok 4 - same providerEventId again is 200 duplicate
+ok 5 - START code with no matching code (no DB) is 422 pairing_code_invalid
+-- diff:
+(empty)
+
+## pg e2e ok-lines incl. indented subtests: before (unchanged server, commit 141233e) vs after
+    ok 1 - valid START code binds the sender (pairing_started)
+    ok 2 - same code again from another event is pairing_expired code_already_claimed
+    ok 3 - expired code is pairing_expired code_expired and binds nothing
+    ok 4 - code for a student with another confirmed phone is pairing_rejected phone_already_bound
+ok 1 - mac-bridge pairing path (real Postgres)
+-- diff:
+(empty)
+
+## test files unchanged between baseline and after runs:
+(no output above = unchanged)

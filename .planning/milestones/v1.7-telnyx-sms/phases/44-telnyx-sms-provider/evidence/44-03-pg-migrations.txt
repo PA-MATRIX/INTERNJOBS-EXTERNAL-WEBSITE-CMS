@@ -1,0 +1,22 @@
+44-03 real-Postgres characterization (src/sms/mac-bridge-route-pg.e2e.test.mjs)
+Cluster: local throwaway PostgreSQL 16.15 (Homebrew postgresql@16), initdb in session scratchpad,
+TCP-only on 127.0.0.1:54339, trust auth. Schema t44m_<hex>, created in before(), dropped in after().
+
+Migrations applied by the test's before() hook, in this order (REAL files from apps/app/db/migrations):
+  0001_waitlist_foundation.sql          (students, messaging_events, audit_events, pgcrypto)
+  0002_waitlist_threads_and_enrichment.sql (student_threads)
+  0003_v1_2_startup_identity.sql        (startups - FK target of inbound_messages)
+  0003b_email_inbound.sql               (inbound_messages + provider_event unique index)
+  0008_v1_2_pairing_sessions.sql        (pairing_sessions)
+  0009_v1_3_safety_events.sql           (safety_events)
+  0015_v1_7_safety_events_source_id.sql (safety_events.source_id)
+  0016_v1_7_sms_opt_outs.sql            (sms_opt_outs; not used by the route, harmless)
+
+NOT applied:
+  0004_v1_2_mastra_agent_core.sql, 0005_v1_2_workers_ai_embeddings.sql - need the pgvector `vector`
+    extension, absent from the local cluster and from the CI postgres:16 image. 0004's inbound_messages
+    block mirrors 0003b, which is applied; conversations/drafts are only touched by the fire-and-forget
+    agent workflow, whose failure is logged by the server and does not affect the response.
+  0007, 0010 (linkedin_profiles): ensureLinkedInProfileForFirstContact returns null without BrightData config.
+  0011-0014 (startup MCP / agent email / touchbase): not on the student pairing path.
+scripts/migrate.mjs was NOT used (it applies every file in order and would fail at 0004 on `create extension vector`).

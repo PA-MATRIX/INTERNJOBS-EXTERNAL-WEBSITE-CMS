@@ -1,0 +1,186 @@
+TAP version 13
+# Subtest: mac-bridge profile
+    # Subtest: LEGACY_HARD_BLOCK_REPLY is byte-identical to the original string
+    ok 1 - LEGACY_HARD_BLOCK_REPLY is byte-identical to the original string
+      ---
+      duration_ms: 0.353375
+      ...
+    # Subtest: unauthorized request is 401 and nothing else runs
+    ok 2 - unauthorized request is 401 and nothing else runs
+      ---
+      duration_ms: 1.760958
+      ...
+    # Subtest: first-contact START code
+    ok 3 - first-contact START code
+      ---
+      duration_ms: 0.66175
+      ...
+    # Subtest: providerName 'x' changes every provider string (provider is a parameter)
+    ok 4 - providerName 'x' changes every provider string (provider is a parameter)
+      ---
+      duration_ms: 1.596667
+      ...
+    # Subtest: claim failures
+    ok 5 - claim failures
+      ---
+      duration_ms: 1.402292
+      ...
+    # Subtest: START code without store.pool falls through to confirmPairingCode
+    ok 6 - START code without store.pool falls through to confirmPairingCode
+      ---
+      duration_ms: 0.179917
+      ...
+    # Subtest: Lakera parity
+        # Subtest: pairing: hard block (flagged true) records, replies and never runs the workflow
+        ok 1 - pairing: hard block (flagged true) records, replies and never runs the workflow
+          ---
+          duration_ms: 0.374
+          ...
+        # Subtest: pairing: hard block (score >= 0.8) records, replies and never runs the workflow
+        ok 2 - pairing: hard block (score >= 0.8) records, replies and never runs the workflow
+          ---
+          duration_ms: 0.190042
+          ...
+        # Subtest: pairing: soft flag records 'flagged' and still dispatches
+        ok 3 - pairing: soft flag records 'flagged' and still dispatches
+          ---
+          duration_ms: 0.301333
+          ...
+        # Subtest: pairing: pass records nothing and dispatches
+        ok 4 - pairing: pass records nothing and dispatches
+          ---
+          duration_ms: 0.385333
+          ...
+        # Subtest: student_reply: hard block (flagged true) records, replies and never runs the workflow
+        ok 5 - student_reply: hard block (flagged true) records, replies and never runs the workflow
+          ---
+          duration_ms: 0.253458
+          ...
+        # Subtest: student_reply: hard block (score >= 0.8) records, replies and never runs the workflow
+        ok 6 - student_reply: hard block (score >= 0.8) records, replies and never runs the workflow
+          ---
+          duration_ms: 0.153875
+          ...
+        # Subtest: student_reply: soft flag records 'flagged' and still dispatches
+        ok 7 - student_reply: soft flag records 'flagged' and still dispatches
+          ---
+          duration_ms: 0.130458
+          ...
+        # Subtest: student_reply: pass records nothing and dispatches
+        ok 8 - student_reply: pass records nothing and dispatches
+          ---
+          duration_ms: 0.132125
+          ...
+        # Subtest: hard-block reply send failure is logged, not thrown
+        ok 9 - hard-block reply send failure is logged, not thrown
+          ---
+          duration_ms: 0.225083
+          ...
+        # Subtest: default lakeraKey reads LAKERA_GUARD_API_KEY at call time
+        ok 10 - default lakeraKey reads LAKERA_GUARD_API_KEY at call time
+          ---
+          duration_ms: 0.27
+          ...
+        1..10
+    ok 7 - Lakera parity
+      ---
+      duration_ms: 2.660208
+      type: 'suite'
+      ...
+    # Subtest: reply and welcome paths: unmatched sends the unknown-sender reply
+    ok 8 - reply and welcome paths: unmatched sends the unknown-sender reply
+      ---
+      duration_ms: 0.143208
+      ...
+    # Subtest: reply and welcome paths: unknown-sender send failure is logged, still 200
+    ok 9 - reply and welcome paths: unknown-sender send failure is logged, still 200
+      ---
+      duration_ms: 0.150666
+      ...
+    # Subtest: reply and welcome paths: duplicate sends nothing
+    ok 10 - reply and welcome paths: duplicate sends nothing
+      ---
+      duration_ms: 0.1145
+      ...
+    # Subtest: reply and welcome paths: legacy hex code confirms, sends welcome, marks it sent
+    ok 11 - reply and welcome paths: legacy hex code confirms, sends welcome, marks it sent
+      ---
+      duration_ms: 0.175833
+      ...
+    # Subtest: reply and welcome paths: a store error returns 422
+    ok 12 - reply and welcome paths: a store error returns 422
+      ---
+      duration_ms: 0.113417
+      ...
+    # Subtest: reply and welcome paths: student_reply writes inbound (metadata as parsed) then screens and dispatches
+    ok 13 - reply and welcome paths: student_reply writes inbound (metadata as parsed) then screens and dispatches
+      ---
+      duration_ms: 0.552958
+      ...
+    # Subtest: reply and welcome paths: a workflow that rejects is logged and still returns 200
+    ok 14 - reply and welcome paths: a workflow that rejects is logged and still returns 200
+      ---
+      duration_ms: 1.722583
+      ...
+    # Subtest: a screen that throws (ackEarly false) surfaces as write_inbound_message_failed, still 200
+    ok 15 - a screen that throws (ackEarly false) surfaces as write_inbound_message_failed, still 200
+      ---
+      duration_ms: 0.164875
+      ...
+    1..15
+ok 1 - mac-bridge profile
+  ---
+  duration_ms: 12.228458
+  type: 'suite'
+  ...
+# Subtest: ackEarly
+    # Subtest: pairing path: response precedes ensureLinkedIn, screen and workflow
+    ok 1 - pairing path: response precedes ensureLinkedIn, screen and workflow
+      ---
+      duration_ms: 0.181125
+      ...
+    # Subtest: student_reply path: response precedes screen and workflow
+    ok 2 - student_reply path: response precedes screen and workflow
+      ---
+      duration_ms: 0.106792
+      ...
+    # Subtest: unknown-sender path: response precedes the reply send
+    ok 3 - unknown-sender path: response precedes the reply send
+      ---
+      duration_ms: 0.103875
+      ...
+    # Subtest: welcome path: response precedes the welcome send
+    ok 4 - welcome path: response precedes the welcome send
+      ---
+      duration_ms: 0.109417
+      ...
+    # Subtest: ackEarly false (mac-bridge): the same steps finish before the response
+    ok 5 - ackEarly false (mac-bridge): the same steps finish before the response
+      ---
+      duration_ms: 0.112833
+      ...
+    # Subtest: a step that throws after the ack is logged as sms_post_ack_step_failed; later steps still run
+    ok 6 - a step that throws after the ack is logged as sms_post_ack_step_failed; later steps still run
+      ---
+      duration_ms: 1.336375
+      ...
+    # Subtest: DB writes are never deferred
+    ok 7 - DB writes are never deferred
+      ---
+      duration_ms: 0.236166
+      ...
+    1..7
+ok 2 - ackEarly
+  ---
+  duration_ms: 2.348958
+  type: 'suite'
+  ...
+1..2
+# tests 31
+# suites 3
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 85.767959

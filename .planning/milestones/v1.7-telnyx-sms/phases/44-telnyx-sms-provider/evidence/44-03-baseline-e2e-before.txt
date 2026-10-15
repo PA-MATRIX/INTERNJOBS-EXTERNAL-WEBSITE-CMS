@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: unsigned POST is 401 missing_signature
+ok 1 - unsigned POST is 401 missing_signature
+  ---
+  duration_ms: 1276.02025
+  ...
+# Subtest: wrong signature (right length) is 401 invalid_signature
+ok 2 - wrong signature (right length) is 401 invalid_signature
+  ---
+  duration_ms: 1.329084
+  ...
+# Subtest: signed unknown-sender message is 200 unmatched_inbound
+ok 3 - signed unknown-sender message is 200 unmatched_inbound
+  ---
+  duration_ms: 2.24625
+  ...
+# Subtest: same providerEventId again is 200 duplicate
+ok 4 - same providerEventId again is 200 duplicate
+  ---
+  duration_ms: 1.378375
+  ...
+# Subtest: START code with no matching code (no DB) is 422 pairing_code_invalid
+ok 5 - START code with no matching code (no DB) is 422 pairing_code_invalid
+  ---
+  duration_ms: 1.754792
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1378.215792

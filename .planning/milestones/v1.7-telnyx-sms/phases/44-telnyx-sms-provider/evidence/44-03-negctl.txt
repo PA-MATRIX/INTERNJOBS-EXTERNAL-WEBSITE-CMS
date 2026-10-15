@@ -1,0 +1,81 @@
+=== NC1: hard-block branch removed (isHardBlock forced false in the branch: 'if (isHardBlock)' -> 'if (false)')
+1
+    not ok 4 - providerName 'x' changes every provider string (provider is a parameter)
+        not ok 1 - pairing: hard block (flagged true) records, replies and never runs the workflow
+        not ok 2 - pairing: hard block (score >= 0.8) records, replies and never runs the workflow
+        not ok 5 - student_reply: hard block (flagged true) records, replies and never runs the workflow
+        not ok 6 - student_reply: hard block (score >= 0.8) records, replies and never runs the workflow
+        not ok 9 - hard-block reply send failure is logged, not thrown
+    not ok 7 - Lakera parity
+not ok 1 - mac-bridge profile
+# pass 25
+# fail 6
+=== NC2: ackEarly reverted to always-await (run = async (fn) => fn())
+1
+    not ok 1 - pairing path: response precedes ensureLinkedIn, screen and workflow
+    not ok 2 - student_reply path: response precedes screen and workflow
+    not ok 3 - unknown-sender path: response precedes the reply send
+    not ok 4 - welcome path: response precedes the welcome send
+    not ok 6 - a step that throws after the ack is logged as sms_post_ack_step_failed; later steps still run
+not ok 2 - ackEarly
+# pass 26
+# fail 5
+=== NC3: provider literal hard-coded (providerName: "x" ignored; every 'provider: providerName' -> 'provider: "mac-bridge"')
+5
+    not ok 4 - providerName 'x' changes every provider string (provider is a parameter)
+not ok 1 - mac-bridge profile
+# pass 30
+# fail 1
+=== NC4: route wired to the wrong provider (provider: spectrumProvider) -> e2e
+1
+not ok 1 - unsigned POST is 401 missing_signature
+    + actual - expected
+    +   reason: 'webhook_secret_missing'
+    -   reason: 'missing_signature'
+not ok 2 - wrong signature (right length) is 401 invalid_signature
+    + actual - expected
+    +   reason: 'webhook_secret_missing'
+    -   reason: 'invalid_signature'
+not ok 3 - signed unknown-sender message is 200 unmatched_inbound
+  actual: 401
+not ok 4 - same providerEventId again is 200 duplicate
+  actual: 401
+not ok 5 - START code with no matching code (no DB) is 422 pairing_code_invalid
+  actual: 401
+# pass 0
+# fail 5
+=== NC5: same wrong wiring -> pg e2e
+    not ok 1 - valid START code binds the sender (pairing_started)
+    not ok 2 - same code again from another event is pairing_expired code_already_claimed
+    not ok 3 - expired code is pairing_expired code_expired and binds nothing
+    not ok 4 - code for a student with another confirmed phone is pairing_rejected phone_already_bound
+not ok 1 - mac-bridge pairing path (real Postgres)
+# pass 0
+# fail 4
+=== NC6: extracted handler wired with the wrong provider name (providerName: "spectrum") -> pg e2e
+1
+    not ok 1 - valid START code binds the sender (pairing_started)
+        + 'spectrum'
+        - 'mac-bridge'
+      expected: 'mac-bridge'
+      actual: 'spectrum'
+    not ok 2 - same code again from another event is pairing_expired code_already_claimed
+        + 'spectrum'
+        - 'mac-bridge'
+      expected: 'mac-bridge'
+      actual: 'spectrum'
+    not ok 3 - expired code is pairing_expired code_expired and binds nothing
+        +     provider: 'spectrum'
+        -     provider: 'mac-bridge'
+          provider: 'mac-bridge'
+          provider: 'spectrum'
+    not ok 4 - code for a student with another confirmed phone is pairing_rejected phone_already_bound
+        +     provider: 'spectrum',
+        -     provider: 'mac-bridge',
+          provider: 'mac-bridge'
+          provider: 'spectrum'
+=== restored
+ apps/app/package.json   |   2 +-
+ apps/app/src/server.mjs | 365 ++++--------------------------------------------
+ 2 files changed, 30 insertions(+), 337 deletions(-)
+handler restored byte-identical
