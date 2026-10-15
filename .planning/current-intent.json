@@ -1,7 +1,7 @@
 {
   "milestone_id": "v1.7 Students on Telnyx SMS (no Mac)",
   "phase_id": "44 Telnyx SMS provider (code)",
-  "plan_id": "none yet",
+  "plan_id": "44-03",
   "intent": "Plan Phase 44 TDD-first (SMS-01..04, OPT-01, PAIR-01); Phase 43 human items pending from Raj",
   "allowed_paths": [
     ".planning/",
@@ -16,9 +16,9 @@
     "D10 main freeze: merge/deploy needs recorded exception"
   ],
   "start_time": "2026-10-14T02:59:20.443296+00:00",
-  "saved_at": "2026-10-15T04:04:43.144073+00:00",
-  "updated_at": "2026-10-15T04:04:43.144073+00:00",
-  "active_plan": "/rrr:plan-phase 44",
+  "saved_at": "2026-10-15T04:35:51.060434+00:00",
+  "updated_at": "2026-10-15T04:35:51.060434+00:00",
+  "active_plan": "44-03 extract /webhooks/mac-bridge into createInboundSmsHandler with characterization (worktree ../internjobs-cms-wt-44)",
   "next": [
     "/rrr:plan-phase 44",
     "rrr-plan-checker",

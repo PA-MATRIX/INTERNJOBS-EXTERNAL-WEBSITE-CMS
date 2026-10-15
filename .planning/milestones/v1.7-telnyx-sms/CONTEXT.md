@@ -38,3 +38,8 @@
 - D28: Raj chose a new milestone v1.7 for this work instead of inserted Phase 39.1 in v1.6. The research was written as `39.1-RESEARCH.md` and now lives at `research/TELNYX-SMS-RESEARCH.md`. Where it says "Phase 39.1", read v1.7.
 - D29: Raj chose "Pause v1.6, v1.7 active". v1.6 pauses at Phase 39 (39-04 blocked on rotation D22/D24; 39-10 not started) and resumes after v1.7.
 - Decision source of truth for D26–D29: `.planning/milestones/v1.6-repo-split/CONTEXT.md` (where they were made); mirrored here.
+
+## Carry-forward to Phase 46 (cutover), from Phase 44
+- Apply migration 0016 (`sms_opt_outs`) to the production student DB BEFORE setting `SMS_PROVIDER=telnyx`. Without it every Telnyx send fails closed (`opt_out_check_failed`).
+- D34: the Telnyx route goes live once `TELNYX_WEBHOOK_PUBLIC_KEY` is set (signed canary possible before the outbound flip). Check for double HELP replies (Telnyx auto-response vs ours).
+- Phase 44 merge needs its own recorded D10 exception (D33 covered Phase 43 only).
