@@ -82,12 +82,12 @@
 | LAK-03 | Phase 43 | Complete |
 | LAK-04 | Phase 43 | Complete |
 | LAK-05 | Phase 43 | Partial — readbacks GREEN + UAT done; Lakera tier/quota pending (Raj) |
-| SMS-01 | Phase 44 | Pending |
-| SMS-02 | Phase 44 | Pending |
-| SMS-03 | Phase 44 | Pending |
-| SMS-04 | Phase 44 | Pending |
-| OPT-01 | Phase 44 | Pending |
-| PAIR-01 | Phase 44 | Pending |
+| SMS-01 | Phase 44 | Code complete (PR #30, verified); live at Phase 46 |
+| SMS-02 | Phase 44 | Code complete (PR #30, verified); live at Phase 46 |
+| SMS-03 | Phase 44 | Code complete (PR #30, verified); live at Phase 46 |
+| SMS-04 | Phase 44 | Code complete (PR #30, verified); live at Phase 46 |
+| OPT-01 | Phase 44 | Code complete (PR #30, verified); live at Phase 46 |
+| PAIR-01 | Phase 44 | Code complete (PR #30, verified); live at Phase 46 |
 | PAIR-02 | Phase 45 | Pending |
 | NUM-01 | Phase 45 | Pending |
 | NUM-02 | Phase 45 | Pending |

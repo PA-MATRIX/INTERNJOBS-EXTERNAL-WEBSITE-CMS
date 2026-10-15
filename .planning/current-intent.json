@@ -1,8 +1,8 @@
 {
   "milestone_id": "v1.7 Students on Telnyx SMS (no Mac)",
-  "phase_id": "44 Telnyx SMS provider (code)",
-  "plan_id": "44-06",
-  "intent": "Phase 44 plans 01-06 complete; draft PR #30 (DO NOT MERGE) CI-green; awaiting rrr-verifier on 44-06 and Raj's D10 exception for Phase 44 merge",
+  "phase_id": "45 Number port + 10DLC + iMessage-era students",
+  "plan_id": "none",
+  "intent": "Phase 43 live; Phase 44 code-complete (PR #30); waiting on Raj: LAK-05 items, D10 exception for PR #30, carrier+account+10DLC details",
   "allowed_paths": [
     ".planning/",
     "apps/parrot/",
@@ -16,13 +16,13 @@
     "D10 main freeze: merge/deploy needs recorded exception"
   ],
   "start_time": "2026-10-14T02:59:20.443296+00:00",
-  "saved_at": "2026-10-15T05:34:27.904714+00:00",
-  "updated_at": "2026-10-15T05:34:27.904714+00:00",
-  "active_plan": "44-06 complete: per-file loop 20/20, gitleaks clean (control exit 1), draft PR #30 all 7 CI jobs pass; awaiting verifier",
+  "saved_at": "2026-10-15T05:36:47.356395+00:00",
+  "updated_at": "2026-10-15T05:36:47.356395+00:00",
+  "active_plan": "blocked on Raj inputs",
   "next": [
-    "rrr-verifier 44-06",
-    "Phase 44 verification",
-    "Raj: D10 exception for Phase 44 merge (Phase 46)"
+    "Raj inputs",
+    "/rrr:plan-phase 45",
+    "/rrr:plan-phase 48 (security, can run now)"
   ],
   "handoff": ".planning/milestones/v1.7-telnyx-sms/",
   "paused": {
