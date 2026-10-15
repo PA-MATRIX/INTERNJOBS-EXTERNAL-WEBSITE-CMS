@@ -1,0 +1,9 @@
+## registration check, :(glob) pathspec (committed state, HEAD 917ab1c)
+registered: 6 src/config.test.mjs src/sms/mac-bridge.test.mjs src/sms/opt-out-store.test.mjs src/sms/shared.test.mjs src/sms/telnyx-optout.test.mjs src/sms/telnyx.test.mjs
+exit 0
+## negative control: drop src/sms/telnyx-optout.test.mjs from package.json (working tree only, restored)
+NOT REGISTERED: [ 'src/sms/telnyx-optout.test.mjs' ]
+exit 1
+## negative control: drop src/sms/opt-out-store.test.mjs (restored)
+NOT REGISTERED: [ 'src/sms/opt-out-store.test.mjs' ]
+exit 1

@@ -1,0 +1,23 @@
+=== NEGCTL 1: guard call in sendSms replaced with 'if (false)' ===
+0
+not ok 1 - never sends to an opted-out number
+not ok 2 - guard receives the normalised E.164 and runs before fetch
+not ok 3 - guard failure fails closed
+ok 4 - guard cannot be omitted
+ok 5 - Telnyx 40300 is recorded as opted out, not retried
+not ok 6 - routeAndSend surfaces an opted-out recipient as a failed draft
+# pass 2
+# fail 4
+=== NEGCTL 2: guard made optional (construction check removed, default () => false) ===
+0
+ok 1 - never sends to an opted-out number
+ok 2 - guard receives the normalised E.164 and runs before fetch
+ok 3 - guard failure fails closed
+not ok 4 - guard cannot be omitted
+ok 5 - Telnyx 40300 is recorded as opted out, not retried
+ok 6 - routeAndSend surfaces an opted-out recipient as a failed draft
+# pass 5
+# fail 1
+=== restored: rerun ===
+# pass 6
+# fail 0

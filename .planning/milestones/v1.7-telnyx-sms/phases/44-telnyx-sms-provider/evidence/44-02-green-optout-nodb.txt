@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: memory store
+    # Subtest: STOP -> isOptedOut true; a different number stays false
+    ok 1 - STOP -> isOptedOut true; a different number stays false
+      ---
+      duration_ms: 1.322291
+      ...
+    # Subtest: format variants of the same number hit one row
+    ok 2 - format variants of the same number hit one row
+      ---
+      duration_ms: 0.076916
+      ...
+    # Subtest: clear -> false; opt out again -> true with restored_at back to null
+    ok 3 - clear -> false; opt out again -> true with restored_at back to null
+      ---
+      duration_ms: 0.13725
+      ...
+    # Subtest: clearOptOut on a never-seen number is a no-op that returns {ok:true}
+    ok 4 - clearOptOut on a never-seen number is a no-op that returns {ok:true}
+      ---
+      duration_ms: 0.055459
+      ...
+    # Subtest: recordOptOut records keyword and source
+    ok 5 - recordOptOut records keyword and source
+      ---
+      duration_ms: 0.114166
+      ...
+    # Subtest: invalid phone: recordOptOut -> {ok:false, reason:'invalid_phone'}, isOptedOut -> false, no throw
+    ok 6 - invalid phone: recordOptOut -> {ok:false, reason:'invalid_phone'}, isOptedOut -> false, no throw
+      ---
+      duration_ms: 0.19775
+      ...
+    # Subtest: recordOptOut twice does not throw and refreshes opted_out_at
+    ok 7 - recordOptOut twice does not throw and refreshes opted_out_at
+      ---
+      duration_ms: 16.094375
+      ...
+    1..7
+ok 1 - memory store
+  ---
+  duration_ms: 18.406125
+  type: 'suite'
+  ...
+# Subtest: sms_opt_outs (real Postgres)
+ok 2 - sms_opt_outs (real Postgres) # SKIP
+  ---
+  duration_ms: 0.1475
+  type: 'suite'
+  ...
+# Subtest: createStore exposes optOuts
+    # Subtest: MemoryStore (databaseUrl '')
+    ok 1 - MemoryStore (databaseUrl '')
+      ---
+      duration_ms: 0.149041
+      ...
+    # Subtest: PostgresStore (postgres:// URL; constructing a Pool does not connect)
+    ok 2 - PostgresStore (postgres:// URL; constructing a Pool does not connect)
+      ---
+      duration_ms: 0.215333
+      ...
+    1..2
+ok 3 - createStore exposes optOuts
+  ---
+  duration_ms: 0.522666
+  type: 'suite'
+  ...
+1..3
+# tests 9
+# suites 3
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.890459

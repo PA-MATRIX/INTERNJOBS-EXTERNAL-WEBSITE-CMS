@@ -1,0 +1,25 @@
+=== NEGCTL 1: remove 'restored_at = null,' from the Postgres upsert ===
+0
+ok 1 - memory store
+    not ok 3 - clear -> false; opt out again -> true with restored_at back to null
+not ok 2 - sms_opt_outs (real Postgres)
+ok 3 - createStore exposes optOuts
+# pass 16
+# fail 1
+=== NEGCTL 2: remove this.optOuts in MemoryStore ===
+ok 1 - memory store
+ok 2 - sms_opt_outs (real Postgres)
+    not ok 1 - MemoryStore (databaseUrl '')
+not ok 3 - createStore exposes optOuts
+# pass 16
+# fail 1
+=== NEGCTL 3: remove this.optOuts in PostgresStore ===
+ok 1 - memory store
+ok 2 - sms_opt_outs (real Postgres)
+    not ok 2 - PostgresStore (postgres:// URL; constructing a Pool does not connect)
+not ok 3 - createStore exposes optOuts
+# pass 16
+# fail 1
+=== restored: rerun ===
+# pass 17
+# fail 0
